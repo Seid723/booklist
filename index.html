@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -7,94 +8,1415 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BookList — Student Reading Tracker</title>
 <style>
-  
 
-  :root {
-    --blue-deep:   #2B4C8C;
-    --blue-mid:    #4A6FA5;
-    --blue-light:  #7FA3D1;
-    --blue-ghost:  #E8EFF8;
-    --green-act:   #3BAF7A;
-    --green-light: #D4F0E4;
-    --amber:       #F0A500;
-    --amber-light: #FFF3CD;
-    --red:         #D94F4F;
-    --red-light:   #FDEAEA;
-    --purple:      #7b4cc0;
-    --gray-900:    #1A1A2E;
-    --gray-700:    #3D4460;
-    --gray-500:    #6B7280;
-    --gray-300:    #C8D0DC;
-    --gray-100:    #F4F6FA;
-    --white:       #FFFFFF;
+:root {
+–blue-deep:   #2B4C8C;
+–blue-mid:    #4A6FA5;
+–blue-light:  #7FA3D1;
+–blue-ghost:  #E8EFF8;
+–green-act:   #3BAF7A;
+–green-light: #D4F0E4;
+–amber:       #F0A500;
+–amber-light: #FFF3CD;
+–red:         #D94F4F;
+–red-light:   #FDEAEA;
+–purple:      #7b4cc0;
+–gray-900:    #1A1A2E;
+–gray-700:    #3D4460;
+–gray-500:    #6B7280;
+–gray-300:    #C8D0DC;
+–gray-100:    #F4F6FA;
+–white:       #FFFFFF;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, ‘Segoe UI’, Arial, sans-serif; background: #EAECF2; color: #1A1A2E; font-size: 13px; }
+
+/* ══ HEADER ══ */
+.header {
+background: #2B4C8C; height: 56px;
+display: flex; align-items: center; padding: 0 28px; gap: 0;
+position: sticky; top: 0; z-index: 200;
+box-shadow: 0 2px 12px rgba(43,76,140,.35);
+}
+.logo { font-size: 18px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 9px; margin-right: 24px; text-decoration: none; }
+.logo-icon { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 17px; }
+
+/* MENU BAR */
+.menu-items { display: flex; height: 56px; }
+.menu-item { position: relative; }
+.menu-item > button { font-family: -apple-system, BlinkMacSystemFont, ‘Segoe UI’, Arial, sans-serif; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.7); padding: 0 15px; height: 56px; border: none; background: none; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all .12s; }
+.menu-item > button:hover, .menu-item.open > button { background: rgba(255,255,255,0.12); color: #fff; }
+.drop-menu { display: none; position: absolute; top: 56px; left: 0; background: #FFFFFF; border: 1.5px solid #C8D0DC; border-radius: 9px; box-shadow: 0 8px 28px rgba(0,0,0,0.15); min-width: 200px; padding: 5px 0; z-index: 500; }
+.menu-item.open .drop-menu { display: block; }
+.drop-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; font-size: 12.5px; color: #3D4460; cursor: pointer; }
+.drop-item:hover { background: #E8EFF8; color: #2B4C8C; }
+.drop-item .ks { margin-left: auto; font-size: 10px; color: #C8D0DC; font-family: monospace; background: #F4F6FA; padding: 1px 5px; border-radius: 3px; }
+.drop-item.danger { color: #D94F4F; }
+.drop-item.danger:hover { background: #FDEAEA; }
+.drop-sep { height: 1px; background: #C8D0DC; margin: 4px 0; }
+
+/* NAV TABS */
+.nav-tabs { display: flex; gap: 3px; margin-left: auto; }
+.nav-tab { font-family: -apple-system, BlinkMacSystemFont, ‘Segoe UI’, Arial, sans-serif; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.65); padding: 7px 16px; border-radius: 7px; border: none; background: none; cursor: pointer; transition: all .12s; }
+.nav-tab:hover { color: #fff; background: rgba(255,255,255,0.1); }
+.nav-tab.active { background: rgba(255,255,255,0.2); color: #fff; font-weight: 700; }
+
+/* TOOLBAR */
+.toolbar { background: #FFFFFF; border-bottom: 1.5px solid #C8D0DC; padding: 7px 24px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.tb-btn { font-family: -apple-system, BlinkMacSystemFont, ‘Segoe UI’, Arial, sans-serif; font-size: 12px; font-weight: 600; color: #3D4460; background: #F4F6FA; border: 1.5px solid #C8D0DC; border-radius: 6px; padding: 5px 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all .12s; white-space: nowrap; }
+.tb-btn:hover { background: #E8EFF8; border-color: #4A6FA5; color: #2B4C8C; }
+.tb-btn.on { background: #4A6FA5; border-color: #4A6FA5; color: #fff; }
+.tb-sep { width: 1px; height: 22px; background: #C8D0DC; margin: 0 3px; }
+.prog-wrap { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.prog-label { font-size: 11px; color: #6B7280; }
+.prog-track { width: 90px; height: 6px; background: #C8D0DC; border-radius: 3px; overflow: hidden; }
+.prog-fill  { height: 100%; background: #3BAF7A; border-radius: 3px; transition: width .4s; }
+
+/* PAGES */
+.page { max-width: 1160px; margin: 0 auto; padding: 22px 20px 60px; display: none; }
+.page.active { display: block; }
+
+/* CONTEXT MENU */
+.ctx { display: none; position: fixed; background: #FFFFFF; border: 1.5px solid #C8D0DC; border-radius: 9px; box-shadow: 0 8px 24px rgba(0,0,0,0.16); padding: 5px 0; min-width: 185px; z-index: 800; }
+.ctx.open { display: block; }
+.ctx-item { display: flex; align-items: center; gap: 9px; padding: 8px 14px; font-size: 12.5px; color: #3D4460; cursor: pointer; }
+.ctx-item:hover { background: #E8EFF8; color: #2B4C8C; }
+.ctx-item.danger { color: #D94F4F; }
+.ctx-item.danger:hover { background: #FDEAEA; }
+.ctx-sep { height: 1px; background: #C8D0DC; margin: 4px 0; }
+
+/* MODAL */
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.38); z-index: 600; align-items: center; justify-content: center; }
+.overlay.open { display: flex; }
+.modal { background: #FFFFFF; border-radius: 12px; padding: 26px; max-width: 360px; width: 92%; box-shadow: 0 12px 48px rgba(0,0,0,.22); animation: mIn .18s ease; }
+@keyframes mIn { from { transform:scale(.93);opacity:0; } to { transform:scale(1);opacity:1; } }
+.modal h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.modal p  { font-size: 12.5px; color: #6B7280; line-height: 1.6; margin-bottom: 20px; }
+.modal-btns { display: flex; gap: 9px; justify-content: flex-end; }
+
+/* TOAST */
+.toast-wrap { position: fixed; bottom: 18px; right: 18px; z-index: 999; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
+.toast { background: #1A1A2E; color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 13px; display: flex; align-items: center; gap: 8px; opacity: 0; transform: translateY(8px); transition: all .2s; max-width: 300px; }
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.success { background: #1d6b47; }
+.toast.error   { background: #D94F4F; }
+.toast.info    { background: #4A6FA5; }
+.toast.warning { background: #7a5c00; }
+
+/* CARDS */
+.card { background: #FFFFFF; border: 1.5px solid #C8D0DC; border-radius: 12px; overflow: hidden; }
+.card-head { background: #4A6FA5; padding: 11px 16px; display: flex; align-items: center; justify-content: space-between; }
+.card-head h2 { font-size: 13px; font-weight: 700; color: #fff; }
+
+/* TABLE */
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl thead tr { background: #2B4C8C; }
+.tbl thead th { font-size: 11px; font-weight: 700; color: #fff; padding: 10px 12px; text-align: left; cursor: pointer; user-select: none; }
+.tbl thead th:hover { background: rgba(255,255,255,.08); }
+.tbl tbody tr { border-bottom: 1px solid #EEF1F6; cursor: pointer; transition: background .1s; }
+.tbl tbody tr:nth-child(even) { background: #F4F6FA; }
+.tbl tbody tr:nth-child(odd)  { background: #FFFFFF; }
+.tbl tbody tr:hover           { background: #E8EFF8 !important; }
+.tbl tbody tr.selected        { background: #d9e8f6 !important; border-left: 3px solid #4A6FA5; }
+.tbl td { font-size: 12.5px; padding: 9px 12px; color: #3D4460; vertical-align: middle; }
+.tbl td:first-child { font-weight: 600; color: #1A1A2E; }
+.tbl tfoot td { background: #F4F6FA; font-size: 11px; color: #6B7280; padding: 8px 14px; border-top: 1px solid #C8D0DC; }
+.empty-row td { text-align: center; padding: 32px; color: #6B7280; }
+
+/* BADGES */
+.badge { display: inline-flex; align-items: center; font-size: 10.5px; font-weight: 600; padding: 3px 8px; border-radius: 20px; }
+.badge-read     { background: #D4F0E4; color: #1d6b47; cursor: pointer; }
+.badge-toread   { background: #FFF3CD; color: #7a5c00; cursor: pointer; }
+.badge-fiction  { background: #e8eeff; color: #3d4cc0; }
+.badge-scifi    { background: #eef4ff; color: #2563b0; }
+.badge-nonfic   { background: #f0e8ff; color: #6b35c0; }
+.badge-dystopia { background: #fff0e8; color: #c05a20; }
+.badge-mystery  { background: #e8fff2; color: #1d6b47; }
+.badge-fantasy  { background: #fde8ff; color: #8b00c0; }
+
+/* BUTTONS */
+.btn { display: inline-flex; align-items: center; gap: 5px; font-family: -apple-system, BlinkMacSystemFont, ‘Segoe UI’, Arial, sans-serif; font-weight: 600; cursor: pointer; border: none; border-radius: 7px; font-size: 13px; padding: 9px 17px; transition: all .14s; white-space: nowrap; }
+.btn:active { transform: scale(.97); }
+.btn-primary { background: #4A6FA5; color: #fff; }
+.btn-primary:hover { background: #2B4C8C; }
+.btn-success { background: #3BAF7A; color: #fff; }
+.btn-success:hover { background: #2d9668; }
+.btn-ghost   { background: #FFFFFF; color: #6B7280; border: 1.5px solid #C8D0DC; }
+.btn-ghost:hover { background: #F4F6FA; }
+.btn-danger  { background: #FDEAEA; color: #D94F4F; border: 1.5px solid #D94F4F; font-size: 11px; padding: 4px 10px; border-radius: 5px; }
+.btn-danger:hover { background: #D94F4F; color: #fff; }
+.btn-outline { background: transparent; color: #4A6FA5; border: 1.5px solid #4A6FA5; }
+.btn-outline:hover { background: #E8EFF8; }
+.btn-sm { font-size: 12px; padding: 7px 14px; }
+.btn-xs { font-size: 11px; padding: 4px 10px; border-radius: 5px; }
+
+/* FILTERS */
+.filter-bar { background: #FFFFFF; border: 1.5px solid #C8D0DC; border-radius: 10px; padding: 10px 15px; margin-bottom: 13px; display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.srch-wrap { position: relative; }
+.srch-wrap span { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: #6B7280; pointer-events: none; }
+.srch-inp { font-family: -apple-system, BlinkMacSystemFont, ‘Segoe UI’, Arial, sans-serif; font-size: 13px; border: 1.5px solid #C8D0DC; border-radius: 7px; padding: 8px 9px 8px 28px; width: 200px; background: #FFFFFF; color: #1A1A2E; }
+.srch-inp:focus { outline: none; border-color: #4A6FA5; box-shadow: 0 0 0 3px rgba(74,111,165,0.13); }
+.srch-inp::placeholder { color: #C8D0DC; }
+.sel { font-family: -apple-system, BlinkMacSystemFont, ‘Segoe UI’, Arial, sans-serif; font-size: 13px; border: 1.5px solid #C8D0DC; border-radius: 7px; padding: 8px 24px 8px 9px; background: #FFFFFF; color: #3D4460; appearance: none; background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘10’ height=‘6’%3E%3Cpath d=‘M1 1l4 4 4-4’ stroke=’%236B7280’ stroke-width=‘1.4’ fill=‘none’ stroke-linecap=‘round’/%3E%3C/svg%3E”); background-repeat: no-repeat; background-position: right 8px center; cursor: pointer; }
+.cnt-badge { background: #E8EFF8; color: #2B4C8C; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; margin-left: auto; }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 300px; gap: 14px; align-items: start; }
+
+/* DETAIL PANEL */
+.det-head { background: #2B4C8C; padding: 11px 14px; }
+.det-head h3 { font-size: 13px; font-weight: 700; color: #fff; }
+.det-head p  { font-size: 10.5px; color: rgba(255,255,255,.6); margin-top: 1px; }
+.det-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.det-title  { font-size: 14px; font-weight: 700; color: #2B4C8C; }
+.det-author { font-size: 12px; color: #6B7280; margin-top: 2px; }
+.divider { height: 1px; background: #C8D0DC; }
+.det-row { display: flex; justify-content: space-between; align-items: center; }
+.det-key { font-size: 11px; font-weight: 600; color: #6B7280; }
+.det-notes { font-size: 12px; color: #3D4460; background: #F4F6FA; padding: 9px 10px; border-radius: 7px; line-height: 1.55; }
+.det-actions { display: flex; flex-direction: column; gap: 7px; }
+.no-sel { text-align: center; padding: 36px 14px; color: #6B7280; font-size: 12px; line-height: 1.7; }
+
+/* ADD FORM */
+.add-card { background: #FFFFFF; border: 1.5px solid #C8D0DC; border-radius: 11px; overflow: hidden; margin-top: 13px; }
+.add-head { background: #3BAF7A; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
+.add-head h3 { font-size: 13px; font-weight: 700; color: #fff; }
+.add-body { padding: 14px; }
+.frm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-bottom: 11px; }
+.lbl { font-size: 11px; font-weight: 600; color: #3D4460; display: block; margin-bottom: 4px; }
+.req { color: #D94F4F; }
+.inp { font-family: -apple-system, BlinkMacSystemFont, ‘Segoe UI’, Arial, sans-serif; font-size: 13px; border: 1.5px solid #C8D0DC; border-radius: 7px; padding: 8px 9px; width: 100%; background: #FFFFFF; color: #1A1A2E; }
+.inp:focus { outline: none; border-color: #4A6FA5; box-shadow: 0 0 0 3px rgba(74,111,165,0.13); }
+.inp::placeholder { color: #C8D0DC; }
+.inp.err { border-color: #D94F4F; background: #fff8f8; }
+.err-msg { font-size: 10px; color: #D94F4F; margin-top: 3px; display: none; }
+.radio-row { display: flex; gap: 12px; margin-top: 6px; }
+.radio-item { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+.rdot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #4A6FA5; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.rdot.on::after { content: ‘’; width: 6px; height: 6px; border-radius: 50%; background: #4A6FA5; }
+.frm-actions { display: flex; gap: 8px; justify-content: flex-end; padding-top: 11px; border-top: 1px solid #C8D0DC; }
+
+/* HISTORY BAR */
+.hist-bar { background: #FFFFFF; border: 1.5px solid #C8D0DC; border-radius: 10px; padding: 8px 14px; margin-bottom: 13px; display: flex; align-items: center; gap: 8px; }
+.hist-lbl { font-size: 11px; font-weight: 700; color: #6B7280; white-space: nowrap; }
+.hist-list { display: flex; gap: 5px; flex: 1; overflow: hidden; }
+.hist-chip { font-size: 10.5px; background: #F4F6FA; border: 1px solid #C8D0DC; color: #6B7280; padding: 2px 9px; border-radius: 20px; white-space: nowrap; }
+.hist-chip.latest { background: #E8EFF8; border-color: #4A6FA5; color: #2B4C8C; font-weight: 600; }
+
+/* ══ HOME PAGE ══ */
+.hero { background: #FFFFFF; border: 1.5px solid #C8D0DC; border-radius: 12px; padding: 52px 32px; text-align: center; margin-bottom: 20px; }
+.hero h2 { font-size: 26px; font-weight: 700; color: #2B4C8C; margin-bottom: 10px; }
+.hero p  { font-size: 14px; color: #6B7280; margin-bottom: 26px; }
+.stat-strip { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+.stat-c { background: #FFFFFF; border: 1.5px solid #C8D0DC; border-radius: 10px; padding: 16px; text-align: center; }
+.stat-n { font-size: 30px; font-weight: 700; margin-bottom: 3px; }
+.stat-l { font-size: 11px; color: #6B7280; }
+.step-strip { display: flex; gap: 0; border: 1.5px solid #C8D0DC; border-radius: 10px; overflow: hidden; background: #FFFFFF; }
+.step { flex: 1; padding: 16px 12px; text-align: center; border-right: 1px solid #C8D0DC; position: relative; }
+.step:last-child { border-right: none; }
+.step::after { content: ‘→’; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); color: #4A6FA5; font-weight: 700; font-size: 16px; z-index: 2; }
+.step:last-child::after { display: none; }
+.step-num { width: 26px; height: 26px; border-radius: 50%; background: #4A6FA5; color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 7px; }
+.step-icon { font-size: 20px; margin-bottom: 5px; }
+.step-title { font-size: 12px; font-weight: 700; color: #2B4C8C; margin-bottom: 3px; }
+.step-desc  { font-size: 10.5px; color: #6B7280; line-height: 1.4; }
+
+/* ══ STATS PAGE ══ */
+.sec { background: #FFFFFF; border: 1.5px solid #C8D0DC; border-radius: 12px; margin-bottom: 20px; overflow: hidden; }
+.sec-hd { background: #2B4C8C; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
+.sec-hd h2 { font-size: 13.5px; font-weight: 700; color: #fff; }
+.sec-tag { background: rgba(255,255,255,.18); color: #fff; font-size: 10.5px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.sec-bd { padding: 20px; }
+.sec-desc { font-size: 11.5px; color: #6B7280; background: #E8EFF8; border-left: 3px solid #4A6FA5; padding: 8px 13px; border-radius: 0 6px 6px 0; margin-bottom: 16px; line-height: 1.6; }
+.chart-title { font-family: -apple-system, BlinkMacSystemFont, ‘Segoe UI’, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #2B4C8C; }
+.tick-l { font-family: -apple-system, BlinkMacSystemFont, ‘Segoe UI’, Arial, sans-serif; font-size: 9.5px; fill: #3D4460; }
+.axis-l { font-family: -apple-system, BlinkMacSystemFont, ‘Segoe UI’, Arial, sans-serif; font-size: 10px; fill: #6B7280; }
+.data-l { font-family: -apple-system, BlinkMacSystemFont, ‘Segoe UI’, Arial, sans-serif; font-size: 10px; font-weight: 600; }
+.grid-l { stroke: #C8D0DC; stroke-width: 1; stroke-dasharray: 3,3; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+.leg-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #3D4460; }
+.leg-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.leg-rect { width: 14px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.chart-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+svg { overflow: visible; }
+
+footer { background: #1A1A2E; color: rgba(255,255,255,.4); text-align: center; font-size: 11px; padding: 14px; margin-top: 20px; }
+</style>
+
+</head>
+<body>
+
+<!-- ══════════════════ HEADER ══════════════════ -->
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">📚</div>
+    BookList
+  </div>
+
+  <div class="menu-items">
+    <div class="menu-item" id="mFile">
+      <button onclick="toggleMenu('mFile')">File ▾</button>
+      <div class="drop-menu">
+        <div class="drop-item" onclick="toast('New list created','success')">📄 New List <span class="ks">Ctrl+N</span></div>
+        <div class="drop-item" onclick="toast('Saved!','success')">💾 Save <span class="ks">Ctrl+S</span></div>
+        <div class="drop-item" onclick="toast('Exported as CSV','info')">⬇️ Export CSV</div>
+        <div class="drop-sep"></div>
+        <div class="drop-item danger" onclick="toast('Signed out','warning')">🚪 Sign Out</div>
+      </div>
+    </div>
+    <div class="menu-item" id="mEdit">
+      <button onclick="toggleMenu('mEdit')">Edit ▾</button>
+      <div class="drop-menu">
+        <div class="drop-item" onclick="doUndo()">↩ Undo <span class="ks">Ctrl+Z</span></div>
+        <div class="drop-item" onclick="doRedo()">↪ Redo <span class="ks">Ctrl+Y</span></div>
+        <div class="drop-sep"></div>
+        <div class="drop-item" onclick="clearF()">🔄 Reset Filters</div>
+        <div class="drop-item" onclick="sortBooks('title')">🔤 Sort A–Z</div>
+      </div>
+    </div>
+    <div class="menu-item" id="mView">
+      <button onclick="toggleMenu('mView')">View ▾</button>
+      <div class="drop-menu">
+        <div class="drop-item" onclick="showPage('home')">🏠 Home</div>
+        <div class="drop-item" onclick="showPage('books')">📋 My Books</div>
+        <div class="drop-item" onclick="showPage('stats')">📊 Statistics</div>
+      </div>
+    </div>
+    <div class="menu-item" id="mHelp">
+      <button onclick="toggleMenu('mHelp')">Help ▾</button>
+      <div class="drop-menu">
+        <div class="drop-item" onclick="toast('Ctrl+Z Undo · Ctrl+N Add · Del Remove · T Toggle','info')">⌨️ Keyboard Shortcuts</div>
+        <div class="drop-item" onclick="toast('BookList v1.0 · Design Interface 1 · 2026','info')">ℹ️ About</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav-tabs">
+    <button class="nav-tab active" id="nt-home"  onclick="showPage('home')">🏠 Home</button>
+    <button class="nav-tab"        id="nt-books" onclick="showPage('books')">📋 My Books</button>
+    <button class="nav-tab"        id="nt-stats" onclick="showPage('stats')">📊 Statistics</button>
+    <button class="nav-tab"        id="nt-forms" onclick="showPage('forms')" style="background:rgba(59,175,122,0.25);color:#fff;font-weight:700;">📝 Forms</button>
+  </nav>
+</header>
+
+<!-- TOOLBAR (only on books page) -->
+
+<div class="toolbar" id="toolbar" style="display:none;">
+  <button class="tb-btn" onclick="doUndo()" title="Undo (Ctrl+Z)">↩ Undo</button>
+  <button class="tb-btn" onclick="doRedo()" title="Redo (Ctrl+Y)">↪ Redo</button>
+  <div class="tb-sep"></div>
+  <button class="tb-btn" onclick="sortBooks('title')">🔤 A–Z</button>
+  <button class="tb-btn" onclick="sortBooks('status')">📊 Status</button>
+  <div class="tb-sep"></div>
+  <button class="tb-btn" onclick="toggleForm()" id="addBtn">➕ Add Book</button>
+  <button class="tb-btn" onclick="clearF()">✕ Clear Filters</button>
+  <div class="prog-wrap">
+    <span class="prog-label" id="progLabel">0% read</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+
+<div class="toast-wrap" id="toasts"></div>
+
+<!-- CONTEXT MENU -->
+
+<div class="ctx" id="ctx">
+  <div class="ctx-item" onclick="ctxToggle()">🔄 Toggle Status</div>
+  <div class="ctx-item" onclick="ctxView()">👁 View Details</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item danger" onclick="ctxRemove()">✕ Remove Book</div>
+</div>
+
+<!-- MODAL -->
+
+<div class="overlay" id="modal">
+  <div class="modal">
+    <div style="font-size:28px;margin-bottom:10px;">🗑️</div>
+    <h3>Remove Book?</h3>
+    <p>Are you sure you want to remove <strong id="modalTitle"></strong>? This cannot be undone.</p>
+    <div class="modal-btns">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-sm" style="background:#D94F4F;color:#fff;" onclick="doRemove()">Yes, Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ HOME PAGE ══════════════════ -->
+
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div style="font-size:52px;margin-bottom:14px;">📚</div>
+    <h2>Welcome to BookList</h2>
+    <p>Your personal student reading tracker — add books, track your progress, and explore statistics.</p>
+    <button class="btn btn-primary" style="font-size:14px;padding:11px 28px;" onclick="showPage('books')">📋 Go to My Books →</button>
+  </div>
+
+  <div class="stat-strip" id="homeStats">
+    <div class="stat-c"><div class="stat-n" style="color:#4A6FA5;" id="hTotal">10</div><div class="stat-l">Total Books</div></div>
+    <div class="stat-c"><div class="stat-n" style="color:#3BAF7A;" id="hRead">6</div><div class="stat-l">Books Read</div></div>
+    <div class="stat-c"><div class="stat-n" style="color:#F0A500;" id="hToRead">4</div><div class="stat-l">To Read</div></div>
+    <div class="stat-c"><div class="stat-n" style="color:#7b4cc0;" id="hPct">60%</div><div class="stat-l">Completion</div></div>
+  </div>
+
+  <div class="step-strip">
+    <div class="step" style="background:#f0f4fb;"><div class="step-icon">📖</div><div class="step-num">1</div><div class="step-title">Open BookList</div><div class="step-desc">Log in to your student account.</div></div>
+    <div class="step" style="background:#f0faf5;"><div class="step-icon">➕</div><div class="step-num">2</div><div class="step-title">Add a Book</div><div class="step-desc">Fill in title, author, genre, status.</div></div>
+    <div class="step" style="background:#fff8e8;"><div class="step-icon">🔍</div><div class="step-num">3</div><div class="step-title">Search & Filter</div><div class="step-desc">Find books by title, author or genre.</div></div>
+    <div class="step" style="background:#fdeaea;"><div class="step-icon">🔄</div><div class="step-num">4</div><div class="step-title">Toggle Status</div><div class="step-desc">Click badge to switch Read / To Read.</div></div>
+    <div class="step" style="background:#f0e8ff;"><div class="step-icon">📊</div><div class="step-num">5</div><div class="step-title">View Stats</div><div class="step-desc">See charts on the Statistics page.</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════ MY BOOKS PAGE ══════════════════ -->
+
+<div class="page" id="page-books">
+
+  <!-- History bar -->
+
+  <div class="hist-bar">
+    <span class="hist-lbl">⏱ History:</span>
+    <div class="hist-list" id="histList"><span class="hist-chip" style="color:#C8D0DC;">No actions yet</span></div>
+    <button class="btn btn-ghost btn-xs" onclick="doUndo()">↩ Undo</button>
+    <button class="btn btn-ghost btn-xs" onclick="doRedo()">↪ Redo</button>
+  </div>
+
+  <!-- Filter bar -->
+
+  <div class="filter-bar">
+    <div class="srch-wrap"><span>🔍</span><input class="srch-inp" id="searchQ" type="text" placeholder="Search title or author…" oninput="renderTable()"></div>
+    <select class="sel" id="selSt" onchange="renderTable()">
+      <option value="">All Statuses</option>
+      <option value="Read">✓ Read</option>
+      <option value="To Read">⏳ To Read</option>
+    </select>
+    <select class="sel" id="selGn" onchange="renderTable()">
+      <option value="">All Genres</option>
+      <option>Fiction</option><option>Non-Fiction</option>
+      <option>Sci-Fi</option><option>Dystopian</option>
+      <option>Mystery</option><option>Fantasy</option>
+    </select>
+    <button class="btn btn-ghost btn-sm" onclick="clearF()">✕ Clear</button>
+    <span class="cnt-badge" id="cnt">10 books</span>
+  </div>
+
+  <div class="main-grid">
+    <!-- Table -->
+    <div>
+      <div class="card">
+        <div class="card-head">
+          <h2>📋 Book List</h2>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-xs btn-ghost" onclick="selectAll()">☑ All</button>
+            <button class="btn btn-xs" style="background:rgba(255,255,255,.18);color:#fff;border:none;" onclick="toggleForm()" id="addBtnTop">➕ Add Book</button>
+          </div>
+        </div>
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th onclick="sortBooks('title')">Title ↕</th>
+              <th onclick="sortBooks('author')">Author ↕</th>
+              <th>Genre</th>
+              <th onclick="sortBooks('status')">Status ↕</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+          <tfoot><tr><td colspan="5" id="tfoot"></td></tr></tfoot>
+        </table>
+      </div>
+
+```
+  <!-- Add form -->
+  <div class="add-card" id="addCard" style="display:none;">
+    <div class="add-head">
+      <h3>➕ Add New Book</h3>
+      <button class="btn btn-xs" style="background:rgba(255,255,255,.2);color:#fff;border:none;" onclick="toggleForm()">✕ Cancel</button>
+    </div>
+    <div class="add-body">
+      <div class="frm-row">
+        <div><label class="lbl">Title <span class="req">*</span></label><input class="inp" id="fTitle" placeholder="Book title…"><div class="err-msg" id="eTitle">Required.</div></div>
+        <div><label class="lbl">Author <span class="req">*</span></label><input class="inp" id="fAuthor" placeholder="Author name…"><div class="err-msg" id="eAuthor">Required.</div></div>
+      </div>
+      <div class="frm-row">
+        <div>
+          <label class="lbl">Genre</label>
+          <select class="inp" id="fGenre"><option value="">Select…</option><option>Fiction</option><option>Non-Fiction</option><option>Sci-Fi</option><option>Dystopian</option><option>Mystery</option><option>Fantasy</option></select>
+        </div>
+        <div>
+          <label class="lbl">Status <span class="req">*</span></label>
+          <div class="radio-row">
+            <label class="radio-item" onclick="setSt('Read')"><div class="rdot" id="rdR"></div><span>Read</span></label>
+            <label class="radio-item" onclick="setSt('To Read')"><div class="rdot on" id="rdT"></div><span>To Read</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="frm-actions">
+        <button class="btn btn-ghost btn-sm" onclick="resetForm()">✕ Clear</button>
+        <button class="btn btn-success btn-sm" onclick="addBook()">✓ Add Book</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail panel -->
+<div class="card">
+  <div class="det-head"><h3>📖 Book Details</h3><p>Click a row to see details</p></div>
+  <div class="det-body" id="detBody"><div class="no-sel">👆 Click any row<br>to see details here.</div></div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ══════════════════ STATISTICS PAGE ══════════════════ -->
+
+<div class="page" id="page-stats">
+
+  <!-- Stat summary -->
+
+  <div class="sec">
+    <div class="sec-hd"><h2>📈 Reading Overview</h2><span class="sec-tag">Summary · Infographic</span></div>
+    <div class="sec-bd">
+      <div class="sec-desc"><strong>Tidwell: Data Picture.</strong> Key numbers at a glance — total books, read, to-read, completion rate. Updates live as you add/remove books in My Books.</div>
+      <div class="stat-strip">
+        <div class="stat-c"><div class="stat-n" style="color:#4A6FA5;" id="sTotal">10</div><div class="stat-l">Total Books</div></div>
+        <div class="stat-c"><div class="stat-n" style="color:#3BAF7A;" id="sRead">6</div><div class="stat-l">Read</div></div>
+        <div class="stat-c"><div class="stat-n" style="color:#F0A500;" id="sToRead">4</div><div class="stat-l">To Read</div></div>
+        <div class="stat-c"><div class="stat-n" style="color:#7b4cc0;" id="sPct">60%</div><div class="stat-l">Completion</div></div>
+      </div>
+      <div style="background:#F4F6FA;border:1.5px solid #C8D0DC;border-radius:10px;padding:14px 18px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-size:12px;font-weight:700;color:#2B4C8C;">Overall Reading Progress</span><span style="font-size:12px;font-weight:700;color:#3BAF7A;" id="sPctBar">60%</span></div>
+        <div style="width:100%;height:18px;background:#C8D0DC;border-radius:9px;overflow:hidden;position:relative;">
+          <div style="height:100%;background:linear-gradient(90deg,#3BAF7A,#5dd49a);border-radius:9px;transition:width .4s;" id="sPctFill"></div>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;font-weight:700;color:#fff;" id="sPctText">6 of 10 Read</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-2col">
+    <!-- BAR CHART -->
+    <div class="sec">
+      <div class="sec-hd"><h2>📊 Books by Genre</h2><span class="sec-tag">Bar Chart</span></div>
+      <div class="sec-bd">
+        <div class="sec-desc"><strong>Tidwell: Bar chart.</strong> Distribution of books across genres.</div>
+        <svg width="100%" height="240" viewBox="0 0 380 240">
+          <line x1="40" y1="15" x2="40" y2="190" stroke="#C8D0DC" stroke-width="1.5"/>
+          <line x1="40" y1="190" x2="370" y2="190" stroke="#C8D0DC" stroke-width="1.5"/>
+          <line x1="40" y1="140" x2="370" y2="140" class="grid-l"/>
+          <line x1="40" y1="90"  x2="370" y2="90"  class="grid-l"/>
+          <line x1="40" y1="40"  x2="370" y2="40"  class="grid-l"/>
+          <text x="32" y="194" class="tick-l" text-anchor="end">0</text>
+          <text x="32" y="144" class="tick-l" text-anchor="end">1</text>
+          <text x="32" y="94"  class="tick-l" text-anchor="end">2</text>
+          <text x="32" y="44"  class="tick-l" text-anchor="end">3</text>
+          <rect x="50"  y="40"  width="44" height="150" rx="4" fill="#3d4cc0" opacity=".82"/>
+          <text x="72"  y="34"  class="data-l" fill="#3d4cc0" text-anchor="middle">3</text>
+          <text x="72"  y="208" class="tick-l" text-anchor="middle">Fiction</text>
+          <rect x="108" y="90"  width="44" height="100" rx="4" fill="#2563b0" opacity=".82"/>
+          <text x="130" y="84"  class="data-l" fill="#2563b0" text-anchor="middle">2</text>
+          <text x="130" y="208" class="tick-l" text-anchor="middle">Sci-Fi</text>
+          <rect x="166" y="90"  width="44" height="100" rx="4" fill="#6b35c0" opacity=".82"/>
+          <text x="188" y="84"  class="data-l" fill="#6b35c0" text-anchor="middle">2</text>
+          <text x="188" y="208" class="tick-l" text-anchor="middle">Non-Fic</text>
+          <rect x="224" y="90"  width="44" height="100" rx="4" fill="#c05a20" opacity=".82"/>
+          <text x="246" y="84"  class="data-l" fill="#c05a20" text-anchor="middle">2</text>
+          <text x="246" y="208" class="tick-l" text-anchor="middle">Dystopian</text>
+          <rect x="282" y="140" width="44" height="50"  rx="4" fill="#1d6b47" opacity=".82"/>
+          <text x="304" y="134" class="data-l" fill="#1d6b47" text-anchor="middle">1</text>
+          <text x="304" y="208" class="tick-l" text-anchor="middle">Mystery</text>
+          <text x="200" y="228" class="axis-l" text-anchor="middle">Genre</text>
+          <text x="200" y="12"  class="chart-title" text-anchor="middle">Books by Genre</text>
+        </svg>
+      </div>
+    </div>
+
+```
+<!-- PIE / DONUT CHART -->
+<div class="sec">
+  <div class="sec-hd"><h2>🥧 Read vs To Read</h2><span class="sec-tag">Pie Chart</span></div>
+  <div class="sec-bd">
+    <div class="sec-desc"><strong>Tidwell: Pie chart.</strong> Proportion of Read vs To Read books.</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap;">
+      <svg width="160" height="160" viewBox="0 0 220 220">
+        <text x="110" y="103" class="chart-title" text-anchor="middle" font-size="26" fill="#2B4C8C" id="pieLabel">60%</text>
+        <text x="110" y="122" class="axis-l" text-anchor="middle" font-size="11">Read</text>
+        <path d="M110,20 A90,90 0 1,1 51.6,186.4" fill="none" stroke="#3BAF7A" stroke-width="34" stroke-linecap="round"/>
+        <path d="M51.6,186.4 A90,90 0 0,1 110,20" fill="none" stroke="#F0A500" stroke-width="34" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="legend" style="flex-direction:column;align-items:flex-start;">
+          <div class="leg-item"><div class="leg-dot" style="background:#3BAF7A"></div><span id="legRead">Read — 6 (60%)</span></div>
+          <div class="leg-item"><div class="leg-dot" style="background:#F0A500"></div><span id="legToRead">To Read — 4 (40%)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- LINE CHART -->
+
+  <div class="sec">
+    <div class="sec-hd"><h2>📈 Books Added Over Time</h2><span class="sec-tag">Line Chart · Trend</span></div>
+    <div class="sec-bd">
+      <div class="sec-desc"><strong>Tidwell: Line chart / trend graph.</strong> Monthly books added vs read over 2026. Shows reading momentum.</div>
+      <div style="display:flex;justify-content:center;">
+        <svg width="100%" height="220" viewBox="0 0 580 220">
+          <line x1="50" y1="15" x2="50" y2="180" stroke="#C8D0DC" stroke-width="1.5"/>
+          <line x1="50" y1="180" x2="560" y2="180" stroke="#C8D0DC" stroke-width="1.5"/>
+          <line x1="50" y1="130" x2="560" y2="130" class="grid-l"/>
+          <line x1="50" y1="80"  x2="560" y2="80"  class="grid-l"/>
+          <line x1="50" y1="30"  x2="560" y2="30"  class="grid-l"/>
+          <text x="42" y="184" class="tick-l" text-anchor="end">0</text>
+          <text x="42" y="134" class="tick-l" text-anchor="end">1</text>
+          <text x="42" y="84"  class="tick-l" text-anchor="end">2</text>
+          <text x="42" y="34"  class="tick-l" text-anchor="end">3</text>
+          <text x="110" y="198" class="tick-l" text-anchor="middle">Jan</text>
+          <text x="220" y="198" class="tick-l" text-anchor="middle">Feb</text>
+          <text x="330" y="198" class="tick-l" text-anchor="middle">Mar</text>
+          <text x="440" y="198" class="tick-l" text-anchor="middle">Apr</text>
+          <text x="520" y="198" class="tick-l" text-anchor="middle">May</text>
+          <polyline points="110,130 220,80 330,80 440,30 520,80" fill="none" stroke="#4A6FA5" stroke-width="2.5" stroke-linejoin="round"/>
+          <circle cx="110" cy="130" r="5" fill="#4A6FA5"/><circle cx="220" cy="80" r="5" fill="#4A6FA5"/>
+          <circle cx="330" cy="80"  r="5" fill="#4A6FA5"/><circle cx="440" cy="30" r="5" fill="#4A6FA5"/>
+          <circle cx="520" cy="80"  r="5" fill="#4A6FA5"/>
+          <polyline points="110,130 220,130 330,80 440,130 520,130" fill="none" stroke="#3BAF7A" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="6,3"/>
+          <circle cx="110" cy="130" r="5" fill="#3BAF7A"/><circle cx="220" cy="130" r="5" fill="#3BAF7A"/>
+          <circle cx="330" cy="80"  r="5" fill="#3BAF7A"/><circle cx="440" cy="130" r="5" fill="#3BAF7A"/>
+          <circle cx="520" cy="130" r="5" fill="#3BAF7A"/>
+          <text x="290" y="12" class="chart-title" text-anchor="middle">Books Added &amp; Read per Month (2026)</text>
+        </svg>
+      </div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#4A6FA5"></div>Books Added</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#3BAF7A"></div>Books Read (dashed)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DENDROGRAM -->
+
+  <div class="sec">
+    <div class="sec-hd"><h2>🌳 Book Category Dendrogram</h2><span class="sec-tag">Dendrogram · Tree Diagram</span></div>
+    <div class="sec-bd">
+      <div class="sec-desc"><strong>Tidwell: Dendrogram / Tree diagram.</strong> Hierarchical grouping of all books by reading status and genre. Mirrors the information architecture of BookList.</div>
+      <div style="overflow-x:auto;">
+        <svg width="860" height="300" viewBox="0 0 860 300">
+          <rect x="360" y="8" width="140" height="34" rx="7" fill="#2B4C8C"/>
+          <text x="430" y="30" class="data-l" fill="#fff" text-anchor="middle" font-size="12">📚 My Books (10)</text>
+          <line x1="430" y1="42" x2="430" y2="60" stroke="#C8D0DC" stroke-width="1.5"/>
+          <line x1="170" y1="60" x2="700" y2="60" stroke="#C8D0DC" stroke-width="1.5"/>
+          <line x1="170" y1="60" x2="170" y2="78" stroke="#C8D0DC" stroke-width="1.5"/>
+          <line x1="430" y1="60" x2="430" y2="78" stroke="#C8D0DC" stroke-width="1.5"/>
+          <line x1="700" y1="60" x2="700" y2="78" stroke="#C8D0DC" stroke-width="1.5"/>
+          <rect x="100" y="78" width="140" height="30" rx="6" fill="#3BAF7A"/>
+          <text x="170" y="97" class="data-l" fill="#fff" text-anchor="middle">✓ Read (6)</text>
+          <rect x="360" y="78" width="140" height="30" rx="6" fill="#F0A500"/>
+          <text x="430" y="97" class="data-l" fill="#fff" text-anchor="middle">⏳ To Read (4)</text>
+          <rect x="630" y="78" width="140" height="30" rx="6" fill="#4A6FA5"/>
+          <text x="700" y="97" class="data-l" fill="#fff" text-anchor="middle">📂 By Genre (5)</text>
+          <!-- Read children -->
+          <line x1="170" y1="108" x2="170" y2="126" stroke="#C8D0DC" stroke-width="1.3"/>
+          <line x1="60" y1="126" x2="280" y2="126" stroke="#C8D0DC" stroke-width="1.3"/>
+          <line x1="60"  y1="126" x2="60"  y2="142" stroke="#C8D0DC" stroke-width="1.3"/>
+          <line x1="170" y1="126" x2="170" y2="142" stroke="#C8D0DC" stroke-width="1.3"/>
+          <line x1="280" y1="126" x2="280" y2="142" stroke="#C8D0DC" stroke-width="1.3"/>
+          <rect x="14"  y="142" width="92" height="26" rx="5" fill="#e8eeff" stroke="#3d4cc0" stroke-width="1.2"/>
+          <text x="60"  y="159" class="tick-l" fill="#3d4cc0" text-anchor="middle" font-weight="700">Fiction (3)</text>
+          <rect x="124" y="142" width="92" height="26" rx="5" fill="#f0e8ff" stroke="#6b35c0" stroke-width="1.2"/>
+          <text x="170" y="159" class="tick-l" fill="#6b35c0" text-anchor="middle" font-weight="700">Non-Fic (1)</text>
+          <rect x="234" y="142" width="92" height="26" rx="5" fill="#e8fff2" stroke="#1d6b47" stroke-width="1.2"/>
+          <text x="280" y="159" class="tick-l" fill="#1d6b47" text-anchor="middle" font-weight="700">Mystery (1)</text>
+          <!-- Fiction books -->
+          <line x1="60" y1="168" x2="60" y2="184" stroke="#C8D0DC" stroke-width="1.2"/>
+          <line x1="20" y1="184" x2="100" y2="184" stroke="#C8D0DC" stroke-width="1.2"/>
+          <line x1="20"  y1="184" x2="20"  y2="196" stroke="#C8D0DC" stroke-width="1.2"/>
+          <line x1="60"  y1="184" x2="60"  y2="196" stroke="#C8D0DC" stroke-width="1.2"/>
+          <line x1="100" y1="184" x2="100" y2="196" stroke="#C8D0DC" stroke-width="1.2"/>
+          <rect x="0"   y="196" width="40" height="20" rx="3" fill="#2B4C8C"/>
+          <text x="20"  y="210" fill="#fff" font-size="7.5" text-anchor="middle" font-family="DM Sans,sans-serif">Gatsby</text>
+          <rect x="42"  y="196" width="40" height="20" rx="3" fill="#2B4C8C"/>
+          <text x="62"  y="210" fill="#fff" font-size="7.5" text-anchor="middle" font-family="DM Sans,sans-serif">Mocking.</text>
+          <rect x="82"  y="196" width="40" height="20" rx="3" fill="#2B4C8C"/>
+          <text x="102" y="210" fill="#fff" font-size="7.5" text-anchor="middle" font-family="DM Sans,sans-serif">Gatsby+</text>
+          <!-- To Read children -->
+          <line x1="430" y1="108" x2="430" y2="126" stroke="#C8D0DC" stroke-width="1.3"/>
+          <line x1="370" y1="126" x2="490" y2="126" stroke="#C8D0DC" stroke-width="1.3"/>
+          <line x1="370" y1="126" x2="370" y2="142" stroke="#C8D0DC" stroke-width="1.3"/>
+          <line x1="490" y1="126" x2="490" y2="142" stroke="#C8D0DC" stroke-width="1.3"/>
+          <rect x="324" y="142" width="92" height="26" rx="5" fill="#eef4ff" stroke="#2563b0" stroke-width="1.2"/>
+          <text x="370" y="159" class="tick-l" fill="#2563b0" text-anchor="middle" font-weight="700">Sci-Fi (1)</text>
+          <rect x="444" y="142" width="92" height="26" rx="5" fill="#fff0e8" stroke="#c05a20" stroke-width="1.2"/>
+          <text x="490" y="159" class="tick-l" fill="#c05a20" text-anchor="middle" font-weight="700">Dystopian (2)</text>
+          <line x1="370" y1="168" x2="370" y2="184" stroke="#C8D0DC" stroke-width="1.2"/>
+          <rect x="348" y="184" width="44" height="20" rx="3" fill="#4A6FA5"/>
+          <text x="370" y="198" fill="#fff" font-size="8" text-anchor="middle" font-family="DM Sans,sans-serif">Dune</text>
+          <line x1="490" y1="168" x2="490" y2="184" stroke="#C8D0DC" stroke-width="1.2"/>
+          <line x1="468" y1="184" x2="512" y2="184" stroke="#C8D0DC" stroke-width="1.2"/>
+          <line x1="468" y1="184" x2="468" y2="196" stroke="#C8D0DC" stroke-width="1.2"/>
+          <line x1="512" y1="184" x2="512" y2="196" stroke="#C8D0DC" stroke-width="1.2"/>
+          <rect x="448" y="196" width="44" height="20" rx="3" fill="#c05a20"/>
+          <text x="470" y="210" fill="#fff" font-size="8" text-anchor="middle" font-family="DM Sans,sans-serif">1984</text>
+          <rect x="494" y="196" width="44" height="20" rx="3" fill="#c05a20"/>
+          <text x="516" y="210" fill="#fff" font-size="8" text-anchor="middle" font-family="DM Sans,sans-serif">Brave New</text>
+          <!-- Genre column -->
+          <line x1="700" y1="108" x2="700" y2="126" stroke="#C8D0DC" stroke-width="1.3"/>
+          <line x1="614" y1="126" x2="786" y2="126" stroke="#C8D0DC" stroke-width="1.3"/>
+          <line x1="614" y1="126" x2="614" y2="142" stroke="#C8D0DC" stroke-width="1.3"/>
+          <line x1="700" y1="126" x2="700" y2="142" stroke="#C8D0DC" stroke-width="1.3"/>
+          <line x1="786" y1="126" x2="786" y2="142" stroke="#C8D0DC" stroke-width="1.3"/>
+          <rect x="568" y="142" width="92" height="26" rx="5" fill="#fdecea" stroke="#D94F4F" stroke-width="1.2"/>
+          <text x="614" y="159" class="tick-l" fill="#D94F4F" text-anchor="middle" font-weight="700">Sapiens</text>
+          <rect x="654" y="142" width="92" height="26" rx="5" fill="#e8fff2" stroke="#1d6b47" stroke-width="1.2"/>
+          <text x="700" y="159" class="tick-l" fill="#1d6b47" text-anchor="middle" font-weight="700">Gone Girl</text>
+          <rect x="740" y="142" width="92" height="26" rx="5" fill="#E8EFF8" stroke="#4A6FA5" stroke-width="1.2"/>
+          <text x="786" y="159" class="tick-l" fill="#2B4C8C" text-anchor="middle" font-weight="700">Atomic Habits</text>
+          <text x="430" y="285" class="chart-title" text-anchor="middle">BookList — Hierarchical Category Dendrogram (10 books)</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- STACKED BAR + SPARKLINES row -->
+
+  <div class="chart-2col">
+    <!-- STACKED BAR -->
+    <div class="sec">
+      <div class="sec-hd"><h2>📊 Status by Genre</h2><span class="sec-tag">Stacked Bar Chart</span></div>
+      <div class="sec-bd">
+        <div class="sec-desc"><strong>Tidwell: Stacked bar chart.</strong> Read vs To Read per genre at a glance.</div>
+        <svg width="100%" height="220" viewBox="0 0 360 220">
+          <line x1="40" y1="15" x2="40" y2="180" stroke="#C8D0DC" stroke-width="1.5"/>
+          <line x1="40" y1="180" x2="350" y2="180" stroke="#C8D0DC" stroke-width="1.5"/>
+          <text x="32" y="184" class="tick-l" text-anchor="end">0</text>
+          <text x="32" y="134" class="tick-l" text-anchor="end">1</text>
+          <text x="32" y="84"  class="tick-l" text-anchor="end">2</text>
+          <line x1="40" y1="130" x2="350" y2="130" class="grid-l"/>
+          <line x1="40" y1="80"  x2="350" y2="80"  class="grid-l"/>
+          <!-- Fiction: 2R + 1T -->
+          <rect x="50"  y="80"  width="40" height="100" rx="0" fill="#3BAF7A" opacity=".85"/>
+          <rect x="50"  y="56"  width="40" height="24"  rx="4 4 0 0" fill="#F0A500" opacity=".85"/>
+          <text x="70"  y="198" class="tick-l" text-anchor="middle">Fiction</text>
+          <!-- Sci-Fi: 1R+1T -->
+          <rect x="104" y="130" width="40" height="50" rx="0" fill="#3BAF7A" opacity=".85"/>
+          <rect x="104" y="106" width="40" height="24" rx="4 4 0 0" fill="#F0A500" opacity=".85"/>
+          <text x="124" y="198" class="tick-l" text-anchor="middle">Sci-Fi</text>
+          <!-- Non-Fic: 2R -->
+          <rect x="158" y="80" width="40" height="100" rx="4" fill="#3BAF7A" opacity=".85"/>
+          <text x="178" y="198" class="tick-l" text-anchor="middle">N-Fic</text>
+          <!-- Dystopian: 2T -->
+          <rect x="212" y="80" width="40" height="100" rx="4" fill="#F0A500" opacity=".85"/>
+          <text x="232" y="198" class="tick-l" text-anchor="middle">Dyst.</text>
+          <!-- Mystery: 1R -->
+          <rect x="266" y="130" width="40" height="50" rx="4" fill="#3BAF7A" opacity=".85"/>
+          <text x="286" y="198" class="tick-l" text-anchor="middle">Mystery</text>
+          <text x="195" y="12" class="chart-title" text-anchor="middle">Status by Genre</text>
+        </svg>
+        <div class="legend">
+          <div class="leg-item"><div class="leg-rect" style="background:#3BAF7A"></div>Read</div>
+          <div class="leg-item"><div class="leg-rect" style="background:#F0A500"></div>To Read</div>
+        </div>
+      </div>
+    </div>
+
+```
+<!-- SPARKLINES -->
+<div class="sec">
+  <div class="sec-hd"><h2>✨ Trend Sparklines</h2><span class="sec-tag">Sparklines · Inline Charts</span></div>
+  <div class="sec-bd">
+    <div class="sec-desc"><strong>Tidwell: Sparklines.</strong> Tiny inline charts showing monthly trends without taking up space.</div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="background:#FFFFFF;border:1.5px solid #C8D0DC;border-radius:9px;padding:13px;">
+        <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:3px;">Books Added / Month</div>
+        <div style="font-size:22px;font-weight:700;color:#4A6FA5;">10 <span style="font-size:11px;color:#3BAF7A;">↑+3</span></div>
+        <svg width="100%" height="32" viewBox="0 0 140 32"><polyline points="5,28 33,20 61,20 89,6 117,20 135,20" fill="none" stroke="#4A6FA5" stroke-width="2" stroke-linejoin="round"/><circle cx="89" cy="6" r="3" fill="#4A6FA5"/></svg>
+      </div>
+      <div style="background:#FFFFFF;border:1.5px solid #C8D0DC;border-radius:9px;padding:13px;">
+        <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:3px;">Books Read / Month</div>
+        <div style="font-size:22px;font-weight:700;color:#3BAF7A;">6 <span style="font-size:11px;color:#3BAF7A;">↑+2</span></div>
+        <svg width="100%" height="32" viewBox="0 0 140 32"><polyline points="5,28 33,28 61,14 89,28 117,28 135,22" fill="none" stroke="#3BAF7A" stroke-width="2" stroke-linejoin="round"/><circle cx="61" cy="14" r="3" fill="#3BAF7A"/></svg>
+      </div>
+      <div style="background:#FFFFFF;border:1.5px solid #C8D0DC;border-radius:9px;padding:13px;">
+        <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:3px;">Completion Rate</div>
+        <div style="font-size:22px;font-weight:700;color:#7b4cc0;">60% <span style="font-size:11px;color:#3BAF7A;">↑</span></div>
+        <svg width="100%" height="32" viewBox="0 0 140 32"><polyline points="5,30 33,24 61,18 89,12 117,8 135,5" fill="none" stroke="#7b4cc0" stroke-width="2" stroke-linejoin="round"/><circle cx="135" cy="5" r="3" fill="#7b4cc0"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- TREEMAP -->
+
+  <div class="sec">
+    <div class="sec-hd"><h2>🟩 Treemap — Books by Genre</h2><span class="sec-tag">Treemap · Area Chart</span></div>
+    <div class="sec-bd">
+      <div class="sec-desc"><strong>Tidwell: Treemap.</strong> Area of each rectangle is proportional to the number of books in that genre — instant visual comparison.</div>
+      <svg width="100%" height="200" viewBox="0 0 700 200">
+        <rect x="4"   y="4"   width="186" height="128" rx="7" fill="#3d4cc0" opacity=".82"/>
+        <text x="97"  y="62"  class="data-l" fill="#fff" text-anchor="middle" font-size="13">Fiction</text>
+        <text x="97"  y="80"  class="data-l" fill="rgba(255,255,255,.8)" text-anchor="middle" font-size="10">3 books</text>
+        <rect x="194" y="4"   width="124" height="128" rx="7" fill="#2563b0" opacity=".82"/>
+        <text x="256" y="62"  class="data-l" fill="#fff" text-anchor="middle" font-size="12">Sci-Fi</text>
+        <text x="256" y="78"  class="data-l" fill="rgba(255,255,255,.8)" text-anchor="middle" font-size="10">2 books</text>
+        <rect x="322" y="4"   width="124" height="128" rx="7" fill="#6b35c0" opacity=".82"/>
+        <text x="384" y="62"  class="data-l" fill="#fff" text-anchor="middle" font-size="12">Non-Fic</text>
+        <text x="384" y="78"  class="data-l" fill="rgba(255,255,255,.8)" text-anchor="middle" font-size="10">2 books</text>
+        <rect x="4"   y="136" width="320" height="58" rx="7" fill="#c05a20" opacity=".82"/>
+        <text x="164" y="169" class="data-l" fill="#fff" text-anchor="middle" font-size="12">Dystopian — 2 books</text>
+        <rect x="450" y="4"   width="246" height="190" rx="7" fill="#1d6b47" opacity=".82"/>
+        <text x="573" y="96"  class="data-l" fill="#fff" text-anchor="middle" font-size="13">Mystery</text>
+        <text x="573" y="114" class="data-l" fill="rgba(255,255,255,.8)" text-anchor="middle" font-size="10">1 book</text>
+        <rect x="328" y="136" width="118" height="58" rx="7" fill="#7b4cc0" opacity=".82"/>
+        <text x="387" y="169" class="data-l" fill="#fff" text-anchor="middle" font-size="11">Fantasy — 1</text>
+        <text x="350" y="215" class="chart-title" text-anchor="middle">Treemap: Area proportional to book count per genre</text>
+      </svg>
+    </div>
+  </div>
+
+</div>
+
+<footer>BookList App · Fully Interactive · Tasks 3–8 · Design Interface 1 · 2026</footer>
+
+<script>
+/* ═══ DATA ═══ */
+const gC = { Fiction:'badge-fiction','Sci-Fi':'badge-scifi','Non-Fiction':'badge-nonfic',Dystopian:'badge-dystopia',Mystery:'badge-mystery',Fantasy:'badge-fantasy' };
+const covers = ['#2B4C8C','#3BAF7A','#D94F4F','#F0A500','#7b4cc0','#3d9cb5','#c07050','#50a080'];
+
+let books = [
+  { id:1, title:'The Great Gatsby',      author:'F. Scott Fitzgerald', genre:'Fiction',     status:'Read',    notes:'Classic American literature. ⭐⭐⭐⭐⭐' },
+  { id:2, title:'Dune',                  author:'Frank Herbert',        genre:'Sci-Fi',      status:'To Read', notes:'Epic sci-fi on my must-read list.' },
+  { id:3, title:'Sapiens',               author:'Yuval Noah Harari',    genre:'Non-Fiction', status:'Read',    notes:'Mind-expanding history of humankind. ⭐⭐⭐⭐⭐' },
+  { id:4, title:'1984',                  author:'George Orwell',        genre:'Dystopian',   status:'To Read', notes:'Classic dystopia — required reading.' },
+  { id:5, title:'To Kill a Mockingbird', author:'Harper Lee',           genre:'Fiction',     status:'Read',    notes:'Timeless story about justice. ⭐⭐⭐⭐⭐' },
+  { id:6, title:'Gone Girl',             author:'Gillian Flynn',        genre:'Mystery',     status:'Read',    notes:'Gripping thriller. ⭐⭐⭐⭐' },
+  { id:7, title:'Atomic Habits',         author:'James Clear',          genre:'Non-Fiction', status:'To Read', notes:'Highly recommended.' },
+  { id:8, title:'The Name of the Wind',  author:'Patrick Rothfuss',     genre:'Fantasy',     status:'To Read', notes:'Fantasy epic — on my list.' },
+  { id:9, title:'Brave New World',       author:'Aldous Huxley',        genre:'Dystopian',   status:'Read',    notes:'Essential dystopian classic.' },
+  { id:10,title:'The Hitchhiker\'s Guide',author:'Douglas Adams',       genre:'Sci-Fi',      status:'Read',    notes:'Hilarious and philosophical. ⭐⭐⭐⭐' },
+];
+let nid=11, sel=null, pending=null, ctxId=null, newSt='To Read';
+let hist=[], redoStack=[];
+
+/* ═══ PAGES ═══ */
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.getElementById('nt-'+p).classList.add('active');
+  document.getElementById('toolbar').style.display = p==='books' ? 'flex' : 'none';
+  if(p==='stats') updateStats();
+  if(p==='home')  updateHomeStats();
+}
+
+/* ═══ STATS UPDATE ═══ */
+function updateStats() {
+  const r = books.filter(b=>b.status==='Read').length;
+  const t = books.length;
+  const pct = t ? Math.round(r/t*100) : 0;
+  document.getElementById('sTotal').textContent = t;
+  document.getElementById('sRead').textContent  = r;
+  document.getElementById('sToRead').textContent= t-r;
+  document.getElementById('sPct').textContent   = pct+'%';
+  document.getElementById('sPctBar').textContent = pct+'%';
+  document.getElementById('sPctFill').style.width = pct+'%';
+  document.getElementById('sPctText').textContent = r+' of '+t+' Read';
+  document.getElementById('legRead').textContent   = 'Read — '+r+' ('+pct+'%)';
+  document.getElementById('legToRead').textContent = 'To Read — '+(t-r)+' ('+(100-pct)+'%)';
+}
+function updateHomeStats() {
+  const r=books.filter(b=>b.status==='Read').length, t=books.length;
+  const pct=t?Math.round(r/t*100):0;
+  document.getElementById('hTotal').textContent  = t;
+  document.getElementById('hRead').textContent   = r;
+  document.getElementById('hToRead').textContent = t-r;
+  document.getElementById('hPct').textContent    = pct+'%';
+}
+
+/* ═══ RENDER TABLE ═══ */
+function renderTable() {
+  const q  = document.getElementById('searchQ').value.trim().toLowerCase();
+  const st = document.getElementById('selSt').value;
+  const gn = document.getElementById('selGn').value;
+  const list = books.filter(b =>
+    (!q||b.title.toLowerCase().includes(q)||b.author.toLowerCase().includes(q))&&
+    (!st||b.status===st)&&(!gn||b.genre===gn)
+  );
+  document.getElementById('cnt').textContent = list.length+' book'+(list.length!==1?'s':'');
+  const r=books.filter(b=>b.status==='Read').length, t=books.length;
+  const pct=t?Math.round(r/t*100):0;
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progLabel').textContent=pct+'% read';
+  const tb=document.getElementById('tbody');
+  if(!list.length){ tb.innerHTML=`<tr class="empty-row"><td colspan="5">😕 No books found.</td></tr>`; }
+  else {
+    tb.innerHTML=list.map(b=>`
+      <tr id="r${b.id}" class="${sel===b.id?'selected':''}" onclick="selectBook(${b.id})" oncontextmenu="openCtx(event,${b.id})">
+        <td>${b.title}</td>
+        <td style="color:#6B7280;">${b.author}</td>
+        <td><span class="badge ${gC[b.genre]||''}">${b.genre||'—'}</span></td>
+        <td><span class="badge ${b.status==='Read'?'badge-read':'badge-toread'}" onclick="toggleSt(event,${b.id})" title="Click to toggle">${b.status==='Read'?'✓ Read':'⏳ To Read'}</span></td>
+        <td><button class="btn btn-danger" onclick="openModal(event,${b.id})">✕ Remove</button></td>
+      </tr>`).join('');
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #EAECF2; color: #1A1A2E; font-size: 13px; }
+  document.getElementById('tfoot').textContent=`${list.length} of ${books.length} · ${r} Read · ${t-r} To Read · Right-click for context menu`;
+  if(sel) renderDetail();
+  updateHomeStats();
+}
 
-  /* ══ HEADER ══ */
-  .header {
-    background: #2B4C8C; height: 56px;
-    display: flex; align-items: center; padding: 0 28px; gap: 0;
-    position: sticky; top: 0; z-index: 200;
-    box-shadow: 0 2px 12px rgba(43,76,140,.35);
-  }
-  .logo { font-size: 18px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 9px; margin-right: 24px; text-decoration: none; }
-  .logo-icon { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 17px; }
+/* ═══ SELECT + DETAIL ═══ */
+function selectBook(id){ sel=id; renderTable(); renderDetail(); }
+function renderDetail(){
+  const b=books.find(x=>x.id===sel);
+  const db=document.getElementById('detBody');
+  if(!b){ db.innerHTML=`<div class="no-sel">👆 Click any row<br>to see details here.</div>`; return; }
+  const bg=covers[(b.id-1)%covers.length];
+  db.innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:40px;height:54px;border-radius:5px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📚</div>
+      <div><div class="det-title">${b.title}</div><div class="det-author">${b.author}</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="det-row"><span class="det-key">Status</span><span class="badge ${b.status==='Read'?'badge-read':'badge-toread'}" onclick="toggleSt(null,${b.id})">${b.status==='Read'?'✓ Read':'⏳ To Read'}</span></div>
+    <div class="det-row"><span class="det-key">Genre</span><span class="badge ${gC[b.genre]||''}">${b.genre||'—'}</span></div>
+    <div class="divider"></div>
+    <div class="det-notes">${b.notes}</div>
+    <div class="det-actions">
+      <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;" onclick="toggleSt(null,${b.id})">✏️ Toggle Status</button>
+      <button class="btn btn-danger btn-sm" style="width:100%;justify-content:center;" onclick="openModal(null,${b.id})">✕ Remove</button>
+    </div>`;
+}
 
-  /* MENU BAR */
-  .menu-items { display: flex; height: 56px; }
-  .menu-item { position: relative; }
-  .menu-item > button { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.7); padding: 0 15px; height: 56px; border: none; background: none; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all .12s; }
-  .menu-item > button:hover, .menu-item.open > button { background: rgba(255,255,255,0.12); color: #fff; }
-  .drop-menu { display: none; position: absolute; top: 56px; left: 0; background: #FFFFFF; border: 1.5px solid #C8D0DC; border-radius: 9px; box-shadow: 0 8px 28px rgba(0,0,0,0.15); min-width: 200px; padding: 5px 0; z-index: 500; }
-  .menu-item.open .drop-menu { display: block; }
-  .drop-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; font-size: 12.5px; color: #3D4460; cursor: pointer; }
-  .drop-item:hover { background: #E8EFF8; color: #2B4C8C; }
-  .drop-item .ks { margin-left: auto; font-size: 10px; color: #C8D0DC; font-family: monospace; background: #F4F6FA; padding: 1px 5px; border-radius: 3px; }
-  .drop-item.danger { color: #D94F4F; }
-  .drop-item.danger:hover { background: #FDEAEA; }
-  .drop-sep { height: 1px; background: #C8D0DC; margin: 4px 0; }
+/* ═══ SORT ═══ */
+let sortF=null, sortD=1;
+function sortBooks(f){
+  if(sortF===f) sortD*=-1; else{sortF=f;sortD=1;}
+  books.sort((a,b)=>{const av=(a[f]||'').toLowerCase(),bv=(b[f]||'').toLowerCase();return av<bv?-sortD:av>bv?sortD:0;});
+  pushHist('Sort by '+f); renderTable(); toast('Sorted by '+f,'info');
+}
 
-  /* NAV TABS */
-  .nav-tabs { display: flex; gap: 3px; margin-left: auto; }
-  .nav-tab { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.65); padding: 7px 16px; border-radius: 7px; border: none; background: none; cursor: pointer; transition: all .12s; }
-  .nav-tab:hover { color: #fff; background: rgba(255,255,255,0.1); }
-  .nav-tab.active { background: rgba(255,255,255,0.2); color: #fff; font-weight: 700; }
+/* ═══ TOGGLE STATUS ═══ */
+function toggleSt(e,id){
+  if(e) e.stopPropagation();
+  const b=books.find(x=>x.id===id); if(!b) return;
+  pushHist(`"${b.title}" was ${b.status}`);
+  b.status=b.status==='Read'?'To Read':'Read';
+  renderTable(); toast(`"${b.title}" → ${b.status}`,b.status==='Read'?'success':'warning');
+}
 
-  /* TOOLBAR */
-  .toolbar { background: #FFFFFF; border-bottom: 1.5px solid #C8D0DC; padding: 7px 24px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .tb-btn { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 12px; font-weight: 600; color: #3D4460; background: #F4F6FA; border: 1.5px solid #C8D0DC; border-radius: 6px; padding: 5px 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all .12s; white-space: nowrap; }
-  .tb-btn:hover { background: #E8EFF8; border-color: #4A6FA5; color: #2B4C8C; }
-  .tb-btn.on { background: #4A6FA5; border-color: #4A6FA5; color: #fff; }
-  .tb-sep { width: 1px; height: 22px; background: #C8D0DC; margin: 0 3px; }
-  .prog-wrap { display: flex; align-items: center; gap: 8px; margin-left: auto; }
-  .prog-label { font-size: 11px; color: #6B7280; }
-  .prog-track { width: 90px; height: 6px; background: #C8D0DC; border-radius: 3px; overflow: hidden; }
-  .prog-fill  { height: 100%; background: #3BAF7A; border-radius: 3px; transition: width .4s; }
+/* ═══ REMOVE ═══ */
+function openModal(e,id){ if(e) e.stopPropagation(); pending=id; document.getElementById('modalTitle').textContent='"'+books.find(x=>x.id===id).title+'"'; document.getElementById('modal').classList.add('open'); closeCtx(); }
+function closeModal(){ document.getElementById('modal').classList.remove('open'); pending=null; }
+function doRemove(){
+  const b=books.find(x=>x.id===pending); if(!b){closeModal();return;}
+  pushHist(`Removed "${b.title}"`);
+  books=books.filter(x=>x.id!==pending);
+  if(sel===pending){sel=null;document.getElementById('detBody').innerHTML=`<div class="no-sel">👆 Click any row<br>to see details here.</div>`;}
+  closeModal(); renderTable(); toast(`"${b.title}" removed`,'error');
+}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
 
-  /* PAGES */
-  .page { max-width: 1160px; margin: 0 auto; padding: 22px 20px 60px; display: none; }
-  .page.active { display: block; }
+/* ═══ CONTEXT MENU ═══ */
+function openCtx(e,id){ e.preventDefault(); ctxId=id; sel=id; renderTable(); const m=document.getElementById('ctx'); m.style.left=e.clientX+'px'; m.style.top=e.clientY+'px'; m.classList.add('open'); }
+function closeCtx(){ document.getElementById('ctx').classList.remove('open'); }
+function ctxToggle(){ toggleSt(null,ctxId); closeCtx(); }
+function ctxRemove(){ openModal(null,ctxId); }
+function ctxView(){ selectBook(ctxId); closeCtx(); }
 
-  /* CONTEXT MENU */
-  .ctx { display: none; position: fixed; background: #FFFFFF; border: 1.5px solid #C8D0DC; border-radius: 9px; box-shadow: 0 8px 24px rgba(0,0,0,0.16); padding: 5px 0; min-width: 185px; z-index: 800; }
-  .ctx.open { display: block; }
-  .ctx-item { display: flex; align-items: center; gap: 9px; padding: 8px 14px; font-size: 12.5px; color: #3D4460; cursor: pointer; }
-  .ctx-item:hover { background: #E8EFF8; color: #2B4C8C; }
-  .ctx-item.danger { color: #D94F4F; }
-  .ctx-item.danger:hover { background: #FDEAEA; }
-  .ctx-sep { height: 1px; background: #C8D0DC; margin: 4px 0; }
+/* ═══ FILTER CLEAR ═══ */
+function clearF(){ document.getElementById('searchQ').value=''; document.getElementById('selSt').value=''; document.getElementById('selGn').value=''; renderTable(); toast('Filters cleared','info'); }
 
-  /* MODAL */
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.38); z-index: 600; align-items: center; justify-content: center; }
-  .overlay.open { display: flex; }
-  .modal { background: #FFFFFF; border-radius: 12px; padding: 26px; max-width: 360px; width: 92%; box-shadow: 0 12px 48px rgba(0,0,0,.22); animation: mIn .18s ease; }
-  @keyframes mIn { from { transform:scale(.93);opacity:0; } to { transform:scale(1);opacity:1; } }
-  .modal h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
-  .modal p  { font-size: 12.5px; color: #6B7280; line-height: 1.6; margin-bottom: 20px; }
-  .modal-btns { display: flex; gap: 9px; justify-content: flex-end; }
+/* ═══ ADD BOOK ═══ */
+function toggleForm(){ const c=document.getElementById('addCard'),btn=document.getElementById('addBtn'),btn2=document.getElementById('addBtnTop'); const open=c.style.display!=='none'; c.style.display=open?'none':'block'; btn.textContent=open?'➕ Add Book':'✕ Cancel'; btn2.textContent=open?'➕ Add Book':'✕ Cancel'; }
+function setSt(s){ newSt=s; document.getElementById('rdR').className='rdot'+(s==='Read'?' on':''); document.getElementById('rdT').className='rdot'+(s==='To Read'?' on':''); }
+function resetForm(){ ['fTitle','fAuthor'].forEach(id=>{document.getElementById(id).value='';document.getElementById(id).classList.remove('err');}); document.getElementById('fGenre').value=''; setSt('To Read'); ['eTitle','eAuthor'].forEach(id=>document.getElementById(id).style.display='none'); }
+function addBook(){
+  const t=document.getElementById('fTitle').value.trim(), a=document.getElementById('fAuthor').value.trim();
+  let ok=true;
+  if(!t){document.getElementById('fTitle').classList.add('err');document.getElementById('eTitle').style.display='block';ok=false;}
+  if(!a){document.getElementById('fAuthor').classList.add('err');document.getElementById('eAuthor').style.display='block';ok=false;}
+  if(!ok) return;
+  const b={id:nid++,title:t,author:a,genre:document.getElementById('fGenre').value||'Other',status:newSt,notes:'Added '+new Date().toLocaleDateString()};
+  pushHist(`Added "${t}"`);
+  books.push(b);
+  resetForm(); toggleForm(); renderTable(); toast(`"${t}" added! 📚`,'success');
+}
 
-  /* TOAST */
-  .toast-wrap { position: fixed; bottom: 18px; right: 18px; z-index: 999; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
-  .toast { background: #1A1A2E; color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 13px; display: flex; align-items: center; gap: 8px; opacity: 0; transform: translateY(8px); transition: all .2s; max-width: 300px; }
-  .toast.show { opacity: 1; transform: translateY(0); }
+/* ═══ UNDO/REDO ═══ */
+function pushHist(label){ hist.push({snapshot:[...books.map(b=>({...b}))],label}); if(hist.length>10) hist.shift(); redoStack=[]; updateHistBar(); }
+function doUndo(){ if(!hist.length){toast('Nothing to undo','info');return;} const h=hist.pop(); redoStack.push({snapshot:[...books.map(b=>({...b}))],label:'Redo: '+h.label}); books=h.snapshot.map(b=>({...b})); renderTable(); toast('Undone: '+h.label,'warning'); updateHistBar(); }
+function doRedo(){ if(!redoStack.length){toast('Nothing to redo','info');return;} const r=redoStack.pop(); hist.push({snapshot:[...books.map(b=>({...b}))],label:r.label}); books=r.snapshot.map(b=>({...b})); renderTable(); toast(r.label,'info'); updateHistBar(); }
+function updateHistBar(){ const hl=document.getElementById('histList'); if(!hist.length){hl.innerHTML=`<span class="hist-chip" style="color:#C8D0DC;">No actions yet</span>`;return;} const last=hist.slice(-4); hl.innerHTML=last.map((h,i)=>`<span class="hist-chip ${i===last.length-1?'latest':''}">${h.label}</span>`).join(''); }
+
+/* ═══ MISC ═══ */
+function selectAll(){ toast('All books selected','info'); }
+function toggleMenu(id){ const el=document.getElementById(id); const was=el.classList.contains('open'); closeMenus(); if(!was)el.classList.add('open'); }
+function closeMenus(){ document.querySelectorAll('.menu-item.open').forEach(m=>m.classList.remove('open')); }
+document.addEventListener('click',e=>{ if(!e.target.closest('.menu-item'))closeMenus(); if(!e.target.closest('#ctx'))closeCtx(); });
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT') return;
+  if((e.ctrlKey||e.metaKey)&&e.key==='z'){doUndo();e.preventDefault();}
+  if((e.ctrlKey||e.metaKey)&&e.key==='y'){doRedo();e.preventDefault();}
+  if((e.ctrlKey||e.metaKey)&&e.key==='n'){toggleForm();e.preventDefault();}
+  if(e.key==='Escape'){closeModal();closeCtx();closeMenus();}
+  if(e.key==='Delete'&&sel)openModal(null,sel);
+  if((e.key==='t'||e.key==='T')&&sel)toggleSt(null,sel);
+});
+
+function toast(msg,type='success'){
+  const icons={success:'✅',error:'🗑️',info:'ℹ️',warning:'🔄'};
+  const w=document.getElementById('toasts');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`${icons[type]} ${msg}`;
+  w.appendChild(t);
+  requestAnimationFrame(()=>t.classList.add('show'));
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),250);},2800);
+}
+
+/* INIT */
+renderTable();
+updateHomeStats();
+
+/* ═══ FORMS PAGE LOGIC ═══ */
+function vReq(id,msgId,msg){const el=document.getElementById(id),m=document.getElementById(msgId);if(!el||!m)return true;if(!el.value.trim()){el.style.borderColor='#D94F4F';el.style.background='#fff8f8';m.style.display='flex';m.textContent='⚠ '+msg;return false;}el.style.borderColor='#3BAF7A';el.style.background='#f8fffe';m.style.display='none';return true;}
+function vEmail(id,msgId){const el=document.getElementById(id),m=document.getElementById(msgId);if(!el||!m)return true;const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim());if(!el.value.trim()){el.style.borderColor='#C8D0DC';m.style.display='none';return true;}if(!ok){el.style.borderColor='#D94F4F';el.style.background='#fff8f8';m.style.display='flex';return false;}el.style.borderColor='#3BAF7A';el.style.background='#f8fffe';m.style.display='none';return true;}
+function vNum(id,msgId,min,max){const el=document.getElementById(id),m=document.getElementById(msgId);if(!el||!m)return true;const v=parseInt(el.value);if(!el.value){el.style.borderColor='#C8D0DC';m.style.display='none';return true;}if(isNaN(v)||v<min||v>max){el.style.borderColor='#D94F4F';m.style.display='flex';m.textContent='⚠ Must be '+min+'–'+max;return false;}el.style.borderColor='#3BAF7A';m.style.display='none';return true;}
+function tgChk(id){const el=document.getElementById(id);if(!el)return;const on=el.classList.toggle('on');el.style.background=on?'#4A6FA5':'#FFFFFF';el.style.color=on?'#fff':'transparent';}
+function tgSw(id,lId){const tr=document.getElementById(id);if(!tr)return;tr.classList.toggle('on');const on=tr.classList.contains('on');tr.style.background=on?'#3BAF7A':'#C8D0DC';const th=tr.querySelector('.sthumb');if(th)th.style.left=on?'22px':'2px';const parts=document.getElementById(lId).innerHTML.split(':');document.getElementById(lId).innerHTML=parts[0]+': <strong>'+(on?'On':'Off')+'</strong>';toast((on?'Enabled':'Disabled')+' — '+parts[0],'info');}
+function tgPw(id,btn){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'👁':'🙈';}
+function chStr(){const v=document.getElementById('rPw').value,f=document.getElementById('strFill'),l=document.getElementById('strLbl');if(!v){f.style.width='0%';l.textContent='Enter password';l.style.color='#6B7280';return;}let s=0;if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;const lv=[{w:'25%',c:'#D94F4F',t:'Weak'},{w:'50%',c:'#F0A500',t:'Fair'},{w:'75%',c:'#7FA3D1',t:'Good'},{w:'100%',c:'#3BAF7A',t:'Strong'}];const d=lv[Math.max(0,s-1)];f.style.width=d.w;f.style.background=d.c;l.textContent=d.t;l.style.color=d.c;}
+function chMatch(){const p1=document.getElementById('rPw').value,p2=document.getElementById('rPw2').value,m=document.getElementById('matchMsg');if(!m||!p2){if(m)m.style.display='none';return;}if(p1===p2){m.style.display='flex';m.style.color='#3BAF7A';m.textContent='✓ Passwords match';}else{m.style.display='flex';m.style.color='#D94F4F';m.textContent='⚠ Passwords do not match';}}
+function chCount(){const v=document.getElementById('bkNotes').value.length,c=document.getElementById('notesCount');if(!c)return;c.textContent=v+' / 300';c.style.color=v>270?'#D94F4F':v>240?'#F0A500':'#6B7280';}
+let bkStatus='To Read';
+function setBkSt(s){bkStatus=s;document.getElementById('bkRd').className='rdot'+(s==='Read'?' on':'');document.getElementById('bkTr').className='rdot'+(s==='To Read'?' on':'');}
+let rating=0;
+function setR(n){rating=n;['r1','r2','r3','r4','r5'].forEach((id,i)=>{const el=document.getElementById(id);el.textContent=i<n?'★':'☆';el.style.color=i<n?'#F0A500':'#C8D0DC';});}
+
+function submitLogin(){const e=vEmail('lEmail','lEmailMsg'),p=vReq('lPw','lPwMsg','Password is required.');if(e&&p!==false)toast('Signed in! Welcome back 🎉','success');else toast('Please fix the errors above','error');}
+function submitReg(){const errs=[];if(!vReq('rFirst','rFirstMsg','First name required'))errs.push('First name');if(!vReq('rLast','rLastMsg','Last name required'))errs.push('Last name');if(!vEmail('rEmail','rEmailMsg'))errs.push('Valid email');const pw=document.getElementById('rPw').value;if(pw.length<8){errs.push('Password (min 8 chars)');document.getElementById('rPw').style.borderColor='#D94F4F';}if(document.getElementById('rPw').value!==document.getElementById('rPw2').value)errs.push('Passwords match');if(!document.getElementById('chTerms').classList.contains('on')){errs.push('Accept terms');document.getElementById('termsMsg').style.display='flex';}if(errs.length){toast('Fix: '+errs.join(', '),'error');}else{toast('Account created! Welcome 🎉','success');}}
+function submitBook(){if(vReq('bkTitle','bkTitleMsg','Title is required.')&&vReq('bkAuthor','bkAuthorMsg','Author is required.')){const t=document.getElementById('bkTitle').value.trim();document.getElementById('bookAdded').style.display='flex';document.getElementById('bookAddedMsg').textContent='"'+t+'" added!';toast('"'+t+'" added to your list 📚','success');}else toast('Fill in required fields','error');}
+function submitSettings(){if(!vEmail('setEmail','setEmailMsg'))return toast('Fix email address','error');toast('Settings saved ✓','success');}
+
+let wizStep=1, wizSt2='To Read';
+function setWizSt(s){wizSt2=s;document.getElementById('wRd').className='rdot'+(s==='Read'?' on':'');document.getElementById('wTr').className='rdot'+(s==='To Read'?' on':'');}
+function wizGo(n){if(n===2){if(!vReq('w1T','w1TMsg','Title required')||!vReq('w1A','w1AMsg','Author required'))return toast('Fill required fields','error');}if(n===3){document.getElementById('wizSum').innerHTML=['Title','Author','Genre','Status'].map((k,i)=>{const vals=[document.getElementById('w1T').value,document.getElementById('w1A').value,document.getElementById('w2G').value||'—',wizSt2];return'<div style="display:flex;gap:8px;font-size:12.5px;"><span style="font-weight:600;color:#6B7280;min-width:60px;">'+k+':</span><span>'+vals[i]+'</span></div>';}).join('');}wizStep=n;[1,2,3].forEach(i=>{document.getElementById('wStep'+i).style.display=i===n?'block':'none';const c=document.getElementById('wc'+i),l=document.getElementById('wl'+i);if(i<n){c.style.background='#3BAF7A';c.textContent='✓';}else if(i===n){c.style.background='#4A6FA5';c.textContent=i;}else{c.style.background='#C8D0DC';c.textContent=i;}l.style.color=i<=n?'#2B4C8C':'#6B7280';if(i<3){const ln=document.getElementById('wline'+i);if(ln)ln.style.background=i<n?'#3BAF7A':'#C8D0DC';}});}
+function wizDone(){document.getElementById('wizSuccess').style.display='flex';toast('Book added via wizard! 🎉','success');}
+
+/* FORMS search filter */
+const fBooks=[{title:'The Great Gatsby',author:'F. Scott Fitzgerald',genre:'Fiction',status:'Read'},{title:'Dune',author:'Frank Herbert',genre:'Sci-Fi',status:'To Read'},{title:'Sapiens',author:'Yuval Noah Harari',genre:'Non-Fiction',status:'Read'},{title:'1984',author:'George Orwell',genre:'Dystopian',status:'To Read'},{title:'To Kill a Mockingbird',author:'Harper Lee',genre:'Fiction',status:'Read'},{title:'Gone Girl',author:'Gillian Flynn',genre:'Mystery',status:'Read'},{title:'Atomic Habits',author:'James Clear',genre:'Non-Fiction',status:'To Read'},{title:'Brave New World',author:'Aldous Huxley',genre:'Dystopian',status:'Read'}];
+function fFilter(){const q=document.getElementById('sfQ').value.toLowerCase(),st=document.getElementById('sfSt').value,gn=document.getElementById('sfGn').value;const list=fBooks.filter(b=>(!q||b.title.toLowerCase().includes(q)||b.author.toLowerCase().includes(q))&&(!st||b.status===st)&&(!gn||b.genre===gn));document.getElementById('sfCnt').textContent=list.length+' books';document.getElementById('sfBody').innerHTML=list.length?list.map((b,i)=>`<tr style="background:${i%2?'#F4F6FA':'#fff'};border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;font-weight:600;font-size:12.5px;">${b.title}</td><td style="padding:8px 12px;color:#6B7280;font-size:12px;">${b.author}</td><td style="padding:8px 12px;"><span style="background:#e8eeff;color:#3d4cc0;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;">${b.genre}</span></td><td style="padding:8px 12px;"><span style="background:${b.status==='Read'?'#D4F0E4':'#FFF3CD'};color:${b.status==='Read'?'#1d6b47':'#7a5c00'};font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;">${b.status==='Read'?'✓ Read':'⏳ To Read'}</span></td></tr>`).join(''):`<tr><td colspan="4" style="text-align:center;padding:24px;color:#6B7280;">No books found.</td></tr>`;}
+function sfClear(){['sfQ','sfSt','sfGn'].forEach(id=>document.getElementById(id).value='');fFilter();}
+</script>
+
+<!-- ══════════════════ FORMS PAGE ══════════════════ -->
+
+<style>
+.fpage{max-width:1100px;margin:0 auto;padding:22px 20px 60px;display:none;}
+.fpage.active{display:block;}
+.fsec{background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;margin-bottom:22px;overflow:hidden;}
+.fsec-hd{background:#2B4C8C;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;}
+.fsec-hd h2{font-size:13.5px;font-weight:700;color:#fff;}
+.fsec-tag{background:rgba(255,255,255,.18);color:#fff;font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.fsec-bd{padding:22px;}
+.fdesc{font-size:11.5px;color:#6B7280;background:#E8EFF8;border-left:3px solid #4A6FA5;padding:8px 13px;border-radius:0 6px 6px 0;margin-bottom:18px;line-height:1.6;}
+.fcard{background:#F4F6FA;border:1.5px solid #C8D0DC;border-radius:10px;overflow:hidden;}
+.fcard-hd{padding:13px 18px;display:flex;align-items:center;justify-content:space-between;}
+.fcard-hd h3{font-size:13.5px;font-weight:700;color:#fff;}
+.fcard-hd p{font-size:11px;color:rgba(255,255,255,.75);margin-top:2px;}
+.fbody{padding:20px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;}
+.ffull{margin-bottom:14px;}
+.fgrp{display:flex;flex-direction:column;}
+.flbl{font-size:11.5px;font-weight:600;color:#3D4460;margin-bottom:5px;display:flex;align-items:center;gap:4px;}
+.freq{color:#D94F4F;}
+.fhint{font-size:10.5px;color:#6B7280;margin-top:4px;}
+.finp{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:9px 12px;background:#fff;color:#1A1A2E;width:100%;transition:border-color .15s,box-shadow .15s;}
+.finp:focus{outline:none;border-color:#4A6FA5;box-shadow:0 0 0 3px rgba(74,111,165,0.14);}
+.finp::placeholder{color:#C8D0DC;}
+.fsel{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:9px 28px 9px 12px;background:#fff;color:#3D4460;width:100%;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B7280' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;transition:border-color .15s;}
+.fsel:focus{outline:none;border-color:#4A6FA5;box-shadow:0 0 0 3px rgba(74,111,165,0.14);}
+.fta{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:9px 12px;background:#fff;color:#1A1A2E;width:100%;resize:vertical;min-height:80px;transition:border-color .15s;}
+.fta:focus{outline:none;border-color:#4A6FA5;box-shadow:0 0 0 3px rgba(74,111,165,0.14);}
+.fta::placeholder{color:#C8D0DC;}
+.pw-w{position:relative;}
+.pw-w .finp{padding-right:38px;}
+.pw-tog{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:15px;color:#6B7280;}
+.fmsg{font-size:10.5px;margin-top:4px;display:none;align-items:center;gap:4px;}
+.fmsg.err{color:#D94F4F;} .fmsg.ok{color:#3BAF7A;} .fmsg.info{color:#4A6FA5;}
+.chk{width:18px;height:18px;border-radius:4px;border:2px solid #C8D0DC;background:#fff;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;font-size:11px;color:transparent;transition:all .12s;}
+.chk.on{background:#4A6FA5;border-color:#4A6FA5;color:#fff;}
+.rdot2{width:17px;height:17px;border-radius:50%;border:2px solid #4A6FA5;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rdot2.on::after{content:'';width:7px;height:7px;border-radius:50%;background:#4A6FA5;}
+.sw-track{width:44px;height:24px;border-radius:12px;background:#C8D0DC;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;display:inline-block;}
+.sw-track.on{background:#3BAF7A;}
+.sthumb{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:2px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.15);}
+.sw-track.on .sthumb{left:22px;}
+.str-track{height:5px;background:#C8D0DC;border-radius:3px;overflow:hidden;margin:5px 0 3px;}
+.str-fill{height:100%;border-radius:3px;transition:width .3s,background .3s;width:0%;}
+.steps{display:flex;align-items:center;margin-bottom:22px;}
+.sc{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#fff;transition:background .2s;}
+.sline{flex:1;height:2px;background:#C8D0DC;margin:0 8px;transition:background .3s;}
+.sl{font-size:11px;font-weight:600;transition:color .2s;}
+.fbtn{display:inline-flex;align-items:center;gap:5px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-weight:600;cursor:pointer;border:none;border-radius:7px;font-size:13px;padding:9px 18px;transition:all .14s;white-space:nowrap;}
+.fbtn:active{transform:scale(.97);}
+.fbtn-p{background:#4A6FA5;color:#fff;} .fbtn-p:hover{background:#2B4C8C;}
+.fbtn-s{background:#3BAF7A;color:#fff;} .fbtn-s:hover{background:#2d9668;}
+.fbtn-g{background:#fff;color:#6B7280;border:1.5px solid #C8D0DC;} .fbtn-g:hover{background:#F4F6FA;}
+.fbtn-d{background:#FDEAEA;color:#D94F4F;border:1.5px solid #D94F4F;} .fbtn-d:hover{background:#D94F4F;color:#fff;}
+.fbtn-sm{font-size:12px;padding:7px 14px;}
+.faction{display:flex;gap:9px;justify-content:flex-end;padding-top:14px;border-top:1px solid #C8D0DC;margin-top:6px;}
+.fdivider{display:flex;align-items:center;gap:12px;margin:16px 0;}
+.fdivider::before,.fdivider::after{content:'';flex:1;height:1px;background:#C8D0DC;}
+.fdivider span{font-size:11px;color:#6B7280;white-space:nowrap;}
+.suc-ban{background:#D4F0E4;border:1.5px solid #3BAF7A;border-radius:9px;padding:13px 16px;display:flex;align-items:center;gap:11px;margin-top:14px;}
+.err-ban{background:#FDEAEA;border:1.5px solid #D94F4F;border-radius:9px;padding:12px 15px;display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;}
+</style>
+
+<div class="fpage" id="page-forms">
+  <div style="display:inline-block;background:#2B4C8C;color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:8px;">Task 9 · Data Input Forms & Controls — Ch.8 Tidwell</div>
+  <h1 style="font-size:22px;font-weight:700;color:#2B4C8C;margin-bottom:3px;">📝 Data Input Forms &amp; Controls</h1>
+  <p style="font-size:12px;color:#6B7280;margin-bottom:22px;">All forms match the BookList UI theme. Every field is validated — try submitting with empty or invalid fields to see error states.</p>
+
+  <!-- FORM 1: LOGIN -->
+
+  <div class="fsec">
+    <div class="fsec-hd"><h2>🔐 Form 1 — Login / Sign In</h2><span class="fsec-tag">Authentication Form</span></div>
+    <div class="fsec-bd">
+      <div class="fdesc"><strong>Tidwell Ch.8: Login form.</strong> Email + password with show/hide toggle, "Remember me" checkbox, forgot password link, Google sign-in option. Inline validation on submit.</div>
+      <div style="max-width:420px;margin:0 auto;">
+        <div class="fcard">
+          <div class="fcard-hd" style="background:#2B4C8C;"><div><h3>Welcome back 👋</h3><p>Sign in to your BookList account</p></div></div>
+          <div class="fbody">
+            <div class="ffull">
+              <label class="flbl">Email Address <span class="freq">*</span></label>
+              <input class="finp" id="lEmail" type="email" placeholder="student@email.com" oninput="vEmail('lEmail','lEmailMsg')">
+              <div class="fmsg err" id="lEmailMsg">⚠ Please enter a valid email address.</div>
+            </div>
+            <div class="ffull">
+              <label class="flbl">Password <span class="freq">*</span></label>
+              <div class="pw-w"><input class="finp" id="lPw" type="password" placeholder="Enter your password…" oninput="vReq('lPw','lPwMsg','Password is required.')"><button class="pw-tog" onclick="tgPw('lPw',this)" type="button">👁</button></div>
+              <div class="fmsg err" id="lPwMsg"></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+              <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;">
+                <span class="chk" id="chRem" onclick="tgChk('chRem')"></span> Remember me
+              </label>
+              <a href="#" style="font-size:12px;color:#4A6FA5;text-decoration:none;" onclick="event.preventDefault();toast('Password reset email sent','info')">Forgot password?</a>
+            </div>
+            <div style="display:flex;gap:9px;">
+              <button class="fbtn fbtn-g fbtn-sm" style="flex:1;justify-content:center;" onclick="['lEmail','lPw'].forEach(id=>{document.getElementById(id).value='';document.getElementById(id).style.borderColor='#C8D0DC';})">Clear</button>
+              <button class="fbtn fbtn-p" style="flex:2;justify-content:center;" onclick="submitLogin()">🔐 Sign In</button>
+            </div>
+            <div class="fdivider"><span>or continue with</span></div>
+            <button class="fbtn fbtn-g fbtn-sm" style="width:100%;justify-content:center;" onclick="toast('Google sign-in (demo)','info')">🌐 Continue with Google</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM 2: REGISTRATION -->
+
+  <div class="fsec">
+    <div class="fsec-hd"><h2>📋 Form 2 — Registration / Create Account</h2><span class="fsec-tag">Multi-field · Validation · Password Strength</span></div>
+    <div class="fsec-bd">
+      <div class="fdesc"><strong>Tidwell Ch.8: Registration form.</strong> Multi-field with inline validation, password strength meter, password confirm matching, terms checkbox, favourite genres checkboxes, notification toggles.</div>
+      <div class="fcard">
+        <div class="fcard-hd" style="background:#4A6FA5;"><div><h3>Create Account ✨</h3><p>Join BookList and start tracking your reading</p></div></div>
+        <div class="fbody">
+          <div class="frow">
+            <div class="fgrp">
+              <label class="flbl">First Name <span class="freq">*</span></label>
+              <input class="finp" id="rFirst" type="text" placeholder="Anna" oninput="vReq('rFirst','rFirstMsg','First name required.')">
+              <div class="fmsg err" id="rFirstMsg"></div>
+            </div>
+            <div class="fgrp">
+              <label class="flbl">Last Name <span class="freq">*</span></label>
+              <input class="finp" id="rLast" type="text" placeholder="Smith" oninput="vReq('rLast','rLastMsg','Last name required.')">
+              <div class="fmsg err" id="rLastMsg"></div>
+            </div>
+          </div>
+          <div class="ffull">
+            <label class="flbl">Email Address <span class="freq">*</span></label>
+            <input class="finp" id="rEmail" type="email" placeholder="anna@student.edu" oninput="vEmail('rEmail','rEmailMsg')">
+            <div class="fmsg err" id="rEmailMsg">⚠ Invalid email address.</div>
+          </div>
+          <div class="frow">
+            <div class="fgrp">
+              <label class="flbl">Password <span class="freq">*</span></label>
+              <div class="pw-w"><input class="finp" id="rPw" type="password" placeholder="Min. 8 characters…" oninput="chStr();chMatch()"><button class="pw-tog" onclick="tgPw('rPw',this)" type="button">👁</button></div>
+              <div class="str-track"><div class="str-fill" id="strFill"></div></div>
+              <span id="strLbl" style="font-size:10.5px;font-weight:600;color:#6B7280;">Enter a password</span>
+            </div>
+            <div class="fgrp">
+              <label class="flbl">Confirm Password <span class="freq">*</span></label>
+              <div class="pw-w"><input class="finp" id="rPw2" type="password" placeholder="Repeat password…" oninput="chMatch()"><button class="pw-tog" onclick="tgPw('rPw2',this)" type="button">👁</button></div>
+              <div class="fmsg" id="matchMsg"></div>
+            </div>
+          </div>
+          <div class="frow">
+            <div class="fgrp">
+              <label class="flbl">Reading Goal (books/year)</label>
+              <input class="finp" id="rGoal" type="number" min="1" max="365" placeholder="e.g. 20" oninput="vNum('rGoal','rGoalMsg',1,365)">
+              <div class="fmsg err" id="rGoalMsg"></div>
+              <div class="fhint">Between 1 and 365 books.</div>
+            </div>
+            <div class="fgrp">
+              <label class="flbl">Language</label>
+              <select class="fsel" id="rLang"><option value="">Select…</option><option>English</option><option>Polish</option><option>German</option><option>French</option></select>
+            </div>
+          </div>
+          <div class="ffull">
+            <label class="flbl">Favourite Genres</label>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:4px;">
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;"><span class="chk" id="gF" onclick="tgChk('gF')"></span>Fiction</label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;"><span class="chk" id="gN" onclick="tgChk('gN')"></span>Non-Fiction</label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;"><span class="chk on" id="gM" style="background:#4A6FA5;border-color:#4A6FA5;color:#fff;" onclick="tgChk('gM')">✓</span>Mystery</label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;"><span class="chk" id="gS" onclick="tgChk('gS')"></span>Sci-Fi</label>
+            </div>
+          </div>
+          <div class="ffull">
+            <label class="flbl">Notifications</label>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="sw-track on" id="sw1" onclick="tgSw('sw1','swL1')"><div class="sthumb"></div></div>
+                <span id="swL1">Email notifications: <strong>On</strong></span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="sw-track" id="sw2" onclick="tgSw('sw2','swL2')"><div class="sthumb"></div></div>
+                <span id="swL2">Weekly summary: <strong>Off</strong></span>
+              </div>
+            </div>
+          </div>
+          <div class="ffull">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+              <span class="chk" id="chTerms" onclick="tgChk('chTerms');document.getElementById('termsMsg').style.display='none'"></span>
+              I agree to the <a href="#" style="color:#4A6FA5;" onclick="event.preventDefault()">Terms of Service</a> and <a href="#" style="color:#4A6FA5;" onclick="event.preventDefault()">Privacy Policy</a> <span class="freq">*</span>
+            </label>
+            <div class="fmsg err" id="termsMsg">⚠ You must accept the terms to continue.</div>
+          </div>
+          <div class="faction">
+            <button class="fbtn fbtn-g fbtn-sm" onclick="['rFirst','rLast','rEmail','rPw','rPw2','rGoal'].forEach(id=>{document.getElementById(id).value='';document.getElementById(id).style.borderColor='#C8D0DC';})">✕ Clear</button>
+            <button class="fbtn fbtn-s" onclick="submitReg()">✓ Create Account</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM 3: ADD BOOK -->
+
+  <div class="fsec">
+    <div class="fsec-hd"><h2>➕ Form 3 — Add Book (Main App Form)</h2><span class="fsec-tag">Data Entry · Inline Validation · Char Counter</span></div>
+    <div class="fsec-bd">
+      <div class="fdesc"><strong>Tidwell Ch.8: Data entry form.</strong> Core BookList form — add a book with title, author, genre dropdown, status radio buttons, and personal notes textarea with character counter. Validates required fields.</div>
+      <div class="fcard">
+        <div class="fcard-hd" style="background:#3BAF7A;"><div><h3>➕ Add New Book</h3><p>Fill in the details and click Add Book.</p></div></div>
+        <div class="fbody">
+          <div class="frow">
+            <div class="fgrp">
+              <label class="flbl">Book Title <span class="freq">*</span></label>
+              <input class="finp" id="bkTitle" type="text" placeholder="e.g. The Great Gatsby" oninput="vReq('bkTitle','bkTitleMsg','Title is required.')">
+              <div class="fmsg err" id="bkTitleMsg"></div>
+            </div>
+            <div class="fgrp">
+              <label class="flbl">Author <span class="freq">*</span></label>
+              <input class="finp" id="bkAuthor" type="text" placeholder="e.g. F. Scott Fitzgerald" oninput="vReq('bkAuthor','bkAuthorMsg','Author is required.')">
+              <div class="fmsg err" id="bkAuthorMsg"></div>
+            </div>
+          </div>
+          <div class="frow">
+            <div class="fgrp">
+              <label class="flbl">Genre</label>
+              <select class="fsel" id="bkGenre"><option value="">Select genre…</option><option>Fiction</option><option>Non-Fiction</option><option>Sci-Fi</option><option>Dystopian</option><option>Mystery</option><option>Fantasy</option></select>
+              <div class="fhint">Optional. Used for filtering.</div>
+            </div>
+            <div class="fgrp">
+              <label class="flbl">Reading Status <span class="freq">*</span></label>
+              <div style="display:flex;gap:14px;margin-top:8px;">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="setBkSt('Read')"><div class="rdot2" id="bkRd"></div><span>✓ Read</span></label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="setBkSt('To Read')"><div class="rdot2 on" id="bkTr"></div><span>⏳ To Read</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="ffull">
+            <label class="flbl">Personal Notes</label>
+            <textarea class="fta" id="bkNotes" placeholder="Your thoughts, rating, why you want to read this…" maxlength="300" oninput="chCount()"></textarea>
+            <div style="display:flex;justify-content:space-between;margin-top:3px;">
+              <span class="fhint">Optional. Max 300 characters.</span>
+              <span id="notesCount" style="font-size:10px;color:#6B7280;">0 / 300</span>
+            </div>
+          </div>
+          <div class="faction">
+            <button class="fbtn fbtn-g fbtn-sm" onclick="['bkTitle','bkAuthor'].forEach(id=>{document.getElementById(id).value='';document.getElementById(id).style.borderColor='#C8D0DC';});document.getElementById('bkNotes').value='';document.getElementById('bkGenre').value='';setBkSt('To Read');document.getElementById('bookAdded').style.display='none';document.getElementById('notesCount').textContent='0 / 300';">✕ Clear</button>
+            <button class="fbtn fbtn-s" onclick="submitBook()">✓ Add Book</button>
+          </div>
+          <div id="bookAdded" style="display:none;" class="suc-ban">
+            <span style="font-size:22px;">🎉</span>
+            <div><div style="font-size:13px;font-weight:700;color:#1d6b47;" id="bookAddedMsg">Book added!</div><div style="font-size:11px;color:#2d8f5a;margin-top:2px;">Added to your reading list.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM 4: SEARCH & FILTER -->
+
+  <div class="fsec">
+    <div class="fsec-hd"><h2>🔍 Form 4 — Search &amp; Filter Controls</h2><span class="fsec-tag">Search Form · Live Filter</span></div>
+    <div class="fsec-bd">
+      <div class="fdesc"><strong>Tidwell Ch.8: Search / filter form.</strong> Live search input combined with dropdown filters for status and genre. Results update instantly as you type or change any control.</div>
+      <div class="fcard" style="background:#fff;">
+        <div style="padding:12px 16px;background:#F4F6FA;border-bottom:1.5px solid #C8D0DC;display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
+          <div style="position:relative;flex:1;min-width:160px;">
+            <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:#6B7280;pointer-events:none;">🔍</span>
+            <input class="finp" id="sfQ" type="text" placeholder="Search by title or author…" style="padding-left:28px;" oninput="fFilter()">
+          </div>
+          <select class="fsel" id="sfSt" style="width:140px;" onchange="fFilter()"><option value="">All Statuses</option><option value="Read">✓ Read</option><option value="To Read">⏳ To Read</option></select>
+          <select class="fsel" id="sfGn" style="width:130px;" onchange="fFilter()"><option value="">All Genres</option><option>Fiction</option><option>Non-Fiction</option><option>Sci-Fi</option><option>Dystopian</option><option>Mystery</option></select>
+          <button class="fbtn fbtn-g fbtn-sm" onclick="sfClear()">✕ Clear</button>
+          <span style="background:#E8EFF8;color:#2B4C8C;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;" id="sfCnt">8 books</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;">
+          <thead style="background:#2B4C8C;"><tr>
+            <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:#fff;">Title</th>
+            <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:#fff;">Author</th>
+            <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:#fff;">Genre</th>
+            <th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:#fff;">Status</th>
+          </tr></thead>
+          <tbody id="sfBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM 5: SETTINGS -->
+
+  <div class="fsec">
+    <div class="fsec-hd"><h2>⚙️ Form 5 — Profile &amp; Settings Form</h2><span class="fsec-tag">Settings · Toggle Switches · Danger Zone</span></div>
+    <div class="fsec-bd">
+      <div class="fdesc"><strong>Tidwell Ch.8: Settings form.</strong> Edit user profile (name, email, reading goal, language), notification toggle switches, privacy checkboxes, save button with validation, and a danger zone with delete account button.</div>
+      <div class="fcard">
+        <div class="fcard-hd" style="background:#4A6FA5;"><div><h3>⚙️ Account Settings</h3><p>Manage your profile and preferences</p></div></div>
+        <div class="fbody">
+          <div style="font-size:12px;font-weight:700;color:#2B4C8C;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid #C8D0DC;padding-bottom:8px;margin-bottom:14px;">👤 Profile</div>
+          <div class="frow">
+            <div class="fgrp"><label class="flbl">Display Name</label><input class="finp" id="setName" type="text" value="Anna Smith"></div>
+            <div class="fgrp"><label class="flbl">Email <span class="freq">*</span></label><input class="finp" id="setEmail" type="email" value="anna@student.edu" oninput="vEmail('setEmail','setEmailMsg')"><div class="fmsg err" id="setEmailMsg">⚠ Invalid email.</div></div>
+          </div>
+          <div class="frow">
+            <div class="fgrp"><label class="flbl">Reading Goal (books/year)</label><input class="finp" id="setGoal" type="number" min="1" max="365" value="20" oninput="vNum('setGoal','setGoalMsg',1,365)"><div class="fmsg err" id="setGoalMsg"></div></div>
+            <div class="fgrp"><label class="flbl">Language</label><select class="fsel"><option selected>English</option><option>Polish</option><option>German</option></select></div>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:#2B4C8C;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid #C8D0DC;padding-bottom:8px;margin-bottom:14px;margin-top:6px;">🔔 Notifications</div>
+          <div style="display:flex;flex-direction:column;gap:11px;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;"><div class="sw-track on" id="nsw1" onclick="tgSw('nsw1','nswL1')"><div class="sthumb"></div></div><span id="nswL1">Email reminders: <strong>On</strong></span></div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;"><div class="sw-track on" id="nsw2" onclick="tgSw('nsw2','nswL2')"><div class="sthumb"></div></div><span id="nswL2">Weekly reading summary: <strong>On</strong></span></div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;"><div class="sw-track" id="nsw3" onclick="tgSw('nsw3','nswL3')"><div class="sthumb"></div></div><span id="nswL3">New feature announcements: <strong>Off</strong></span></div>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:#2B4C8C;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid #C8D0DC;padding-bottom:8px;margin-bottom:14px;">🔒 Privacy</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;"><span class="chk" id="prPub" onclick="tgChk('prPub')"></span>Make my reading list public</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;"><span class="chk on" id="prSt" style="background:#4A6FA5;border-color:#4A6FA5;color:#fff;" onclick="tgChk('prSt')">✓</span>Show reading statistics on profile</label>
+          </div>
+          <div class="faction">
+            <button class="fbtn fbtn-g fbtn-sm" onclick="toast('Changes discarded','info')">Discard</button>
+            <button class="fbtn fbtn-p" onclick="submitSettings()">💾 Save Settings</button>
+          </div>
+          <div style="margin-top:20px;padding:14px;background:#FDEAEA;border:1.5px solid #D94F4F;border-radius:9px;">
+            <div style="font-size:12.5px;font-weight:700;color:#D94F4F;margin-bottom:6px;">⚠️ Danger Zone</div>
+            <div style="font-size:12px;color:#D94F4F;margin-bottom:10px;">Deleting your account is permanent. All books and data will be lost.</div>
+            <button class="fbtn fbtn-d fbtn-sm" onclick="toast('Confirmation required — demo only','error')">🗑️ Delete Account</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM 6: WIZARD -->
+
+  <div class="fsec">
+    <div class="fsec-hd"><h2>🪄 Form 6 — Multi-Step Form (Add Book Wizard)</h2><span class="fsec-tag">Wizard · Progress Indicator · Step-by-Step</span></div>
+    <div class="fsec-bd">
+      <div class="fdesc"><strong>Tidwell Ch.8: Wizard / multi-step form.</strong> Breaks the Add Book process into 3 focused steps with a progress indicator. Each step validates before proceeding. Back/Next controls. Based on Tidwell's Step-by-Step pattern.</div>
+      <div class="fcard">
+        <div class="fcard-hd" style="background:#7b4cc0;"><div><h3>🪄 Add Book Wizard</h3><p>3-step guided book entry</p></div></div>
+        <div class="fbody">
+          <!-- Steps indicator -->
+          <div class="steps">
+            <div style="display:flex;align-items:center;gap:7px;flex:1;">
+              <div class="sc" id="wc1" style="background:#4A6FA5;">1</div>
+              <span class="sl" id="wl1" style="color:#2B4C8C;">Book Info</span>
+              <div class="sline" id="wline1"></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;flex:1;">
+              <div class="sc" id="wc2" style="background:#C8D0DC;">2</div>
+              <span class="sl" id="wl2" style="color:#6B7280;">Details</span>
+              <div class="sline" id="wline2"></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;">
+              <div class="sc" id="wc3" style="background:#C8D0DC;">3</div>
+              <span class="sl" id="wl3" style="color:#6B7280;">Confirm</span>
+            </div>
+          </div>
+          <!-- Step 1 -->
+          <div id="wStep1">
+            <div class="frow">
+              <div class="fgrp"><label class="flbl">Book Title <span class="freq">*</span></label><input class="finp" id="w1T" type="text" placeholder="Enter title…" oninput="vReq('w1T','w1TMsg','Title required.')"><div class="fmsg err" id="w1TMsg"></div></div>
+              <div class="fgrp"><label class="flbl">Author <span class="freq">*</span></label><input class="finp" id="w1A" type="text" placeholder="Enter author…" oninput="vReq('w1A','w1AMsg','Author required.')"><div class="fmsg err" id="w1AMsg"></div></div>
+            </div>
+            <div class="frow">
+              <div class="fgrp"><label class="flbl">Year Published</label><input class="finp" id="w1Y" type="number" min="1000" max="2026" placeholder="e.g. 1984" oninput="vNum('w1Y','w1YMsg',1000,2026)"><div class="fmsg err" id="w1YMsg"></div></div>
+              <div class="fgrp"><label class="flbl">ISBN (optional)</label><input class="finp" id="w1I" type="text" placeholder="978-…"><div class="fhint">10 or 13 digits.</div></div>
+            </div>
+            <div class="faction"><button class="fbtn fbtn-p" onclick="wizGo(2)">Next → Details</button></div>
+          </div>
+          <!-- Step 2 -->
+          <div id="wStep2" style="display:none;">
+            <div class="frow">
+              <div class="fgrp"><label class="flbl">Genre</label><select class="fsel" id="w2G"><option value="">Select…</option><option>Fiction</option><option>Non-Fiction</option><option>Sci-Fi</option><option>Dystopian</option><option>Mystery</option><option>Fantasy</option></select></div>
+              <div class="fgrp"><label class="flbl">Status <span class="freq">*</span></label><div style="display:flex;gap:14px;margin-top:8px;"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="setWizSt('Read')"><div class="rdot2" id="wRd"></div><span>✓ Read</span></label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="setWizSt('To Read')"><div class="rdot2 on" id="wTr"></div><span>⏳ To Read</span></label></div></div>
+            </div>
+            <div class="ffull">
+              <label class="flbl">My Rating</label>
+              <div style="display:flex;gap:8px;margin-top:4px;">
+                <span style="font-size:26px;cursor:pointer;color:#C8D0DC;" id="r1" onclick="setR(1)" onmouseover="setR(1)">☆</span>
+                <span style="font-size:26px;cursor:pointer;color:#C8D0DC;" id="r2" onclick="setR(2)" onmouseover="setR(2)">☆</span>
+                <span style="font-size:26px;cursor:pointer;color:#C8D0DC;" id="r3" onclick="setR(3)" onmouseover="setR(3)">☆</span>
+                <span style="font-size:26px;cursor:pointer;color:#C8D0DC;" id="r4" onclick="setR(4)" onmouseover="setR(4)">☆</span>
+                <span style="font-size:26px;cursor:pointer;color:#C8D0DC;" id="r5" onclick="setR(5)" onmouseover="setR(5)">☆</span>
+              </div>
+            </div>
+            <div class="faction"><button class="fbtn fbtn-g fbtn-sm" onclick="wizGo(1)">← Back</button><button class="fbtn fbtn-p" onclick="wizGo(3)">Next → Confirm</button></div>
+          </div>
+          <!-- Step 3 -->
+          <div id="wStep3" style="display:none;">
+            <div style="background:#F4F6FA;border:1.5px solid #C8D0DC;border-radius:9px;padding:14px;margin-bottom:14px;">
+              <div style="font-size:12px;font-weight:700;color:#2B4C8C;margin-bottom:10px;">📋 Confirm your book details:</div>
+              <div id="wizSum"></div>
+            </div>
+            <div class="faction"><button class="fbtn fbtn-g fbtn-sm" onclick="wizGo(2)">← Edit</button><button class="fbtn fbtn-s" onclick="wizDone()">✓ Add to My Books</button></div>
+            <div id="wizSuccess" style="display:none;" class="suc-ban"><span style="font-size:22px;">🎉</span><div><div style="font-size:13px;font-weight:700;color:#1d6b47;">Book added successfully!</div><div style="font-size:11px;color:#2d8f5a;margin-top:2px;">It has been added to your reading list.</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Init forms search
+fFilter();
+</script>
