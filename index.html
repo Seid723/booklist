@@ -85,7 +85,7 @@ body{font-family:'DM Sans',sans-serif;background:#EAECF2;color:#1A1A2E;font-size
 .tbl td:first-child{font-weight:600;color:#1A1A2E;}
 .tbl tfoot td{background:#F4F6FA;font-size:11px;color:#6B7280;padding:8px 14px;border-top:1px solid #C8D0DC;}
 
-/* BADGE */
+/* BADGES */
 .badge{display:inline-flex;align-items:center;font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:20px;}
 .badge-read{background:#D4F0E4;color:#1d6b47;cursor:pointer;}
 .badge-toread{background:#FFF3CD;color:#7a5c00;cursor:pointer;}
@@ -336,6 +336,17 @@ footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size
   <div class="page" id="page-books">
     <h1 class="page-title">📋 My Books</h1>
     <p class="page-sub">Manage your reading list. Click a row to see details, click a badge to toggle status.</p>
+
+    <!-- ACTION HISTORY BAR -->
+    <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:10px;padding:8px 14px;margin-bottom:13px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:11px;font-weight:700;color:#6B7280;white-space:nowrap;">⏱ History:</span>
+      <div style="display:flex;gap:5px;flex:1;overflow:hidden;" id="histList">
+        <span style="font-size:10.5px;background:#F4F6FA;border:1px solid #C8D0DC;color:#C8D0DC;padding:2px 9px;border-radius:20px;">No actions yet</span>
+      </div>
+      <button class="ibtn ibtn-ghost" style="font-size:11.5px;padding:5px 11px;" onclick="doUndo()">↩ Undo</button>
+      <button class="ibtn ibtn-ghost" style="font-size:11.5px;padding:5px 11px;" onclick="doRedo()">↪ Redo</button>
+    </div>
+
     <div class="filter-bar">
       <div class="srch-wrap"><span>🔍</span><input class="srch-inp" id="searchQ" type="text" placeholder="Search…" oninput="renderTable()"></div>
       <select class="sel" id="selSt" onchange="renderTable()"><option value="">All Statuses</option><option value="Read">✓ Read</option><option value="To Read">⏳ To Read</option></select>
@@ -677,17 +688,53 @@ function renderDetail(){
     </div>`;
 }
 
+/* ═══ UNDO / REDO ═══ */
+let hist=[], redoStack=[];
+
+function pushHist(label) {
+  hist.push({ snapshot: books.map(b=>({...b})), label });
+  if(hist.length>10) hist.shift();
+  redoStack=[];
+  updateHistBar();
+}
+
+function doUndo() {
+  if(!hist.length){ toast('Nothing to undo','info'); return; }
+  const h=hist.pop();
+  redoStack.push({ snapshot: books.map(b=>({...b})), label:'Redo: '+h.label });
+  books=h.snapshot.map(b=>({...b}));
+  if(sel && !books.find(x=>x.id===sel)){ sel=null; document.getElementById('detBody').innerHTML=`<div class="no-sel">👆 Click any row<br>to see details here.</div>`; }
+  renderTable(); toast('Undone: '+h.label,'info'); updateHistBar();
+}
+
+function doRedo() {
+  if(!redoStack.length){ toast('Nothing to redo','info'); return; }
+  const r=redoStack.pop();
+  hist.push({ snapshot: books.map(b=>({...b})), label:r.label });
+  books=r.snapshot.map(b=>({...b}));
+  renderTable(); toast(r.label,'info'); updateHistBar();
+}
+
+function updateHistBar() {
+  const hl=document.getElementById('histList');
+  if(!hl) return;
+  if(!hist.length){ hl.innerHTML=`<span style="font-size:10.5px;background:#F4F6FA;border:1px solid #C8D0DC;color:#C8D0DC;padding:2px 9px;border-radius:20px;">No actions yet</span>`; return; }
+  hl.innerHTML=hist.slice(-5).map((h,i,a)=>`<span style="font-size:10.5px;background:${i===a.length-1?'#E8EFF8':'#F4F6FA'};border:1px solid ${i===a.length-1?'#4A6FA5':'#C8D0DC'};color:${i===a.length-1?'#2B4C8C':'#6B7280'};font-weight:${i===a.length-1?'600':'400'};padding:2px 9px;border-radius:20px;white-space:nowrap;">${h.label}</span>`).join('');
+}
+
 /* ═══ SORT ═══ */
 function sortBooks(f){
   if(sortF===f)sortD*=-1;else{sortF=f;sortD=1;}
+  pushHist('Sort by '+f);
   books.sort((a,b)=>{const av=(a[f]||'').toLowerCase(),bv=(b[f]||'').toLowerCase();return av<bv?-sortD:av>bv?sortD:0;});
-  renderTable();
+  renderTable(); toast('Sorted by '+f,'info');
 }
 
 /* ═══ TOGGLE STATUS ═══ */
 function toggleSt(e,id){
   if(e)e.stopPropagation();
   const b=books.find(x=>x.id===id);if(!b)return;
+  pushHist(`"${b.title}" was ${b.status}`);
   b.status=b.status==='Read'?'To Read':'Read';
   renderTable();toast(`"${b.title}" → ${b.status}`,b.status==='Read'?'success':'info');
 }
@@ -695,7 +742,13 @@ function toggleSt(e,id){
 /* ═══ REMOVE ═══ */
 function openModal(e,id){if(e)e.stopPropagation();pending=id;document.getElementById('modalTitle').textContent='"'+books.find(x=>x.id===id).title+'"';document.getElementById('modal').classList.add('open');}
 function closeModal(){document.getElementById('modal').classList.remove('open');pending=null;}
-function doRemove(){const b=books.find(x=>x.id===pending);if(!b){closeModal();return;}books=books.filter(x=>x.id!==pending);if(sel===pending){sel=null;document.getElementById('detBody').innerHTML=`<div class="no-sel">👆 Click any row<br>to see details here.</div>`;}closeModal();renderTable();toast(`"${b.title}" removed`,'error');}
+function doRemove(){
+  const b=books.find(x=>x.id===pending);if(!b){closeModal();return;}
+  pushHist(`Removed "${b.title}"`);
+  books=books.filter(x=>x.id!==pending);
+  if(sel===pending){sel=null;document.getElementById('detBody').innerHTML=`<div class="no-sel">👆 Click any row<br>to see details here.</div>`;}
+  closeModal();renderTable();toast(`"${b.title}" removed`,'error');
+}
 document.getElementById('modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
 
 /* ═══ CLEAR FILTERS ═══ */
@@ -711,6 +764,7 @@ function addBook(){
   if(!t){document.getElementById('fTitle').classList.add('err');document.getElementById('eTitle').style.display='block';ok=false;}else{document.getElementById('fTitle').classList.remove('err');document.getElementById('eTitle').style.display='none';}
   if(!a){document.getElementById('fAuthor').classList.add('err');document.getElementById('eAuthor').style.display='block';ok=false;}else{document.getElementById('fAuthor').classList.remove('err');document.getElementById('eAuthor').style.display='none';}
   if(!ok)return;
+  pushHist(`Added "${t}"`);
   books.push({id:nid++,title:t,author:a,genre:document.getElementById('fGenre').value||'Other',status:newSt,notes:'Added '+new Date().toLocaleDateString()});
   resetForm();toggleForm();renderTable();toast(`"${t}" added! 📚`,'success');
 }
