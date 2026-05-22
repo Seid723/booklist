@@ -4,1001 +4,499 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BookList — Student Reading Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ═══ ANIMATIONS ═══ */
-@keyframes fadeInDown   { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
-@keyframes fadeInUp     { from{opacity:0;transform:translateY(20px)}  to{opacity:1;transform:translateY(0)} }
-@keyframes fadeIn       { from{opacity:0} to{opacity:1} }
-@keyframes slideInLeft  { from{opacity:0;transform:translateX(-30px)} to{opacity:1;transform:translateX(0)} }
-@keyframes pulse        { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
-@keyframes spin         { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-@keyframes bounce       { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-@keyframes shimmer      { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
-@keyframes progressFill { from{width:0%} to{width:var(--target-width,60%)} }
-@keyframes popIn        { 0%{transform:scale(0.7);opacity:0} 80%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
-@keyframes floatUp      { 0%{transform:translateY(0)} 50%{transform:translateY(-6px)} 100%{transform:translateY(0)} }
-@keyframes bgShift      { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-@keyframes typeCursor   { 0%,100%{opacity:1} 50%{opacity:0} }
-@keyframes ripple       { 0%{transform:scale(0);opacity:1} 100%{transform:scale(4);opacity:0} }
-@keyframes toastSlide   { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-@keyframes rowHighlight { 0%{background:#d9e8f6} 100%{background:transparent} }
-@keyframes spin2        { to{transform:rotate(360deg)} }
-@keyframes navPop       { 0%{transform:scale(.9);opacity:0} 100%{transform:scale(1);opacity:1} }
-@keyframes coverPop     { 0%{transform:scale(.8);opacity:0} 100%{transform:scale(1);opacity:1} }
-@keyframes drawLine     { from{stroke-dashoffset:1000} to{stroke-dashoffset:0} }
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#EAECF2;color:#1A1A2E;font-size:13px;min-height:100vh;}
 
-/* ═══ BASE ═══ */
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Outfit',sans-serif;background:#EAECF2;color:#1A1A2E;font-size:13px}
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;}
 
-/* ═══ HEADER ═══ */
-.header{background:#2B4C8C;height:56px;display:flex;align-items:center;padding:0 20px;gap:0;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(43,76,140,.4);animation:fadeInDown .4s ease}
-.logo{font-size:17px;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;margin-right:16px;cursor:pointer;transition:opacity .2s;letter-spacing:-.3px}
-.logo:hover{opacity:.85}
-.logo-icon{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:16px;animation:floatUp 3s ease-in-out infinite}
-.menu-items{display:flex;height:56px}
-.menu-item{position:relative}
-.menu-item>button{font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:500;color:rgba(255,255,255,0.7);padding:0 13px;height:56px;border:none;background:none;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .15s}
-.menu-item>button:hover,.menu-item.open>button{background:rgba(255,255,255,0.13);color:#fff}
-.drop-menu{display:none;position:absolute;top:56px;left:0;background:#fff;border:1.5px solid #C8D0DC;border-radius:9px;box-shadow:0 8px 28px rgba(0,0,0,0.15);min-width:195px;padding:5px 0;z-index:500;animation:navPop .15s ease}
-.menu-item.open .drop-menu{display:block}
-.drop-item{display:flex;align-items:center;gap:10px;padding:9px 15px;font-size:12.5px;color:#3D4460;cursor:pointer;transition:background .1s}
-.drop-item:hover{background:#E8EFF8;color:#2B4C8C}
-.drop-item .ks{margin-left:auto;font-size:10px;color:#C8D0DC;font-family:monospace;background:#F4F6FA;padding:1px 5px;border-radius:3px}
-.drop-item.danger{color:#D94F4F}
-.drop-item.danger:hover{background:#FDEAEA}
-.drop-sep{height:1px;background:#C8D0DC;margin:4px 0}
-.nav-tabs{display:flex;gap:3px;margin-left:auto}
-.nav-tab{font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;color:rgba(255,255,255,.65);padding:6px 12px;border-radius:6px;border:none;background:none;cursor:pointer;transition:all .15s;white-space:nowrap}
-.nav-tab:hover{color:#fff;background:rgba(255,255,255,.1)}
-.nav-tab.active{background:rgba(255,255,255,.2);color:#fff;font-weight:700}
+/* ── AUTH SCREENS (login/register) ── */
+.auth-screen{align-items:center;justify-content:center;background:linear-gradient(135deg,#2B4C8C 0%,#4A6FA5 50%,#3BAF7A 100%);padding:20px;}
+.auth-box{background:#fff;border-radius:16px;padding:36px 32px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.auth-logo{text-align:center;margin-bottom:24px;}
+.auth-logo .icon{font-size:44px;margin-bottom:8px;}
+.auth-logo h1{font-size:22px;font-weight:700;color:#2B4C8C;}
+.auth-logo p{font-size:12px;color:#6B7280;margin-top:3px;}
+.auth-title{font-size:16px;font-weight:700;color:#1A1A2E;margin-bottom:4px;}
+.auth-sub{font-size:12px;color:#6B7280;margin-bottom:22px;}
+.form-group{margin-bottom:14px;}
+.lbl{font-size:11.5px;font-weight:600;color:#3D4460;display:block;margin-bottom:5px;}
+.inp{font-family:'DM Sans',sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:8px;padding:10px 13px;width:100%;background:#fff;color:#1A1A2E;transition:border-color .15s,box-shadow .15s;}
+.inp:focus{outline:none;border-color:#4A6FA5;box-shadow:0 0 0 3px rgba(74,111,165,.13);}
+.inp::placeholder{color:#C8D0DC;}
+.inp.err{border-color:#D94F4F;background:#fff8f8;}
+.pw-wrap{position:relative;}
+.pw-wrap .inp{padding-right:40px;}
+.pw-eye{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:15px;color:#6B7280;}
+.err-msg{font-size:10.5px;color:#D94F4F;margin-top:4px;display:none;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;border:none;border-radius:8px;font-size:13px;padding:11px 20px;transition:all .15s;width:100%;}
+.btn:active{transform:scale(.98);}
+.btn-primary{background:#2B4C8C;color:#fff;}
+.btn-primary:hover{background:#1e3566;}
+.btn-ghost{background:#F4F6FA;color:#3D4460;border:1.5px solid #C8D0DC;}
+.btn-ghost:hover{background:#E8EFF8;}
+.auth-link{text-align:center;margin-top:18px;font-size:12.5px;color:#6B7280;}
+.auth-link a{color:#4A6FA5;font-weight:600;text-decoration:none;cursor:pointer;}
+.auth-link a:hover{text-decoration:underline;}
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#C8D0DC;}
+.divider span{font-size:11px;color:#6B7280;}
 
-/* ═══ TOOLBAR ═══ */
-.toolbar{background:#fff;border-bottom:1.5px solid #C8D0DC;padding:7px 20px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.tb-btn{font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;color:#3D4460;background:#F4F6FA;border:1.5px solid #C8D0DC;border-radius:6px;padding:5px 11px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap}
-.tb-btn:hover{background:#E8EFF8;border-color:#4A6FA5;color:#2B4C8C}
-.tb-btn.on{background:#4A6FA5;border-color:#4A6FA5;color:#fff}
-.tb-sep{width:1px;height:22px;background:#C8D0DC;margin:0 3px}
-.prog-wrap{display:flex;align-items:center;gap:8px;margin-left:auto}
-.prog-label{font-size:11px;color:#6B7280;font-weight:600}
-.prog-track{width:90px;height:6px;background:#C8D0DC;border-radius:3px;overflow:hidden}
-.prog-fill{height:100%;background:linear-gradient(90deg,#3BAF7A,#5dd49a);border-radius:3px;transition:width .5s ease}
+/* ── APP SCREEN ── */
+.app-screen{flex-direction:column;background:#EAECF2;}
 
-/* ═══ PAGES ═══ */
-.page{max-width:1160px;margin:0 auto;padding:22px 20px 60px;display:none}
-.page.active{display:block;animation:fadeIn .3s ease}
+/* HEADER */
+.header{background:#2B4C8C;height:56px;display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(43,76,140,.3);}
+.logo{font-size:17px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;}
+.logo-icon{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.nav-tabs{display:flex;gap:3px;margin-left:auto;}
+.nav-tab{font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;color:rgba(255,255,255,.65);padding:6px 14px;border-radius:6px;border:none;background:none;cursor:pointer;transition:all .15s;}
+.nav-tab:hover{color:#fff;background:rgba(255,255,255,.1);}
+.nav-tab.active{background:rgba(255,255,255,.2);color:#fff;font-weight:700;}
+.user-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:none;border-radius:20px;padding:5px 12px 5px 6px;cursor:pointer;color:#fff;font-family:'DM Sans',sans-serif;font-size:12.5px;transition:background .15s;}
+.user-btn:hover{background:rgba(255,255,255,.2);}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:#4A6FA5;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
 
-/* ═══ CONTEXT MENU ═══ */
-.ctx{display:none;position:fixed;background:#fff;border:1.5px solid #C8D0DC;border-radius:9px;box-shadow:0 8px 24px rgba(0,0,0,.16);padding:5px 0;min-width:185px;z-index:800}
-.ctx.open{display:block;animation:navPop .15s ease}
-.ctx-item{display:flex;align-items:center;gap:9px;padding:8px 14px;font-size:12.5px;color:#3D4460;cursor:pointer;font-weight:500}
-.ctx-item:hover{background:#E8EFF8;color:#2B4C8C}
-.ctx-item.danger{color:#D94F4F}
-.ctx-item.danger:hover{background:#FDEAEA}
-.ctx-sep{height:1px;background:#C8D0DC;margin:4px 0}
+/* PAGES */
+.page{max-width:1100px;margin:0 auto;padding:22px 20px 60px;display:none;width:100%;}
+.page.active{display:block;}
+.page-title{font-size:22px;font-weight:700;color:#2B4C8C;margin-bottom:4px;}
+.page-sub{font-size:12px;color:#6B7280;margin-bottom:20px;}
 
-/* ═══ MODAL ═══ */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:600;align-items:center;justify-content:center}
-.overlay.open{display:flex}
-.modal{background:#fff;border-radius:14px;padding:28px;max-width:360px;width:92%;box-shadow:0 12px 48px rgba(0,0,0,.22);animation:popIn .2s ease}
-.modal h3{font-size:15px;font-weight:700;margin-bottom:8px}
-.modal p{font-size:12.5px;color:#6B7280;line-height:1.6;margin-bottom:20px}
-.modal-btns{display:flex;gap:9px;justify-content:flex-end}
+/* CARDS */
+.card{background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;overflow:hidden;}
+.card-head{background:#4A6FA5;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;}
+.card-head h2{font-size:13px;font-weight:700;color:#fff;}
 
-/* ═══ TOAST ═══ */
-.toast-wrap{position:fixed;bottom:18px;right:18px;z-index:999;display:flex;flex-direction:column;gap:6px;pointer-events:none}
-.toast{background:#1A1A2E;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(8px);transition:all .2s;max-width:300px;animation:toastSlide .2s ease forwards}
-.toast.show{opacity:1;transform:translateY(0)}
-.toast.success{background:#1d6b47}
-.toast.error{background:#D94F4F}
-.toast.info{background:#4A6FA5}
-.toast.warning{background:#7a5c00}
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl thead tr{background:#2B4C8C;}
+.tbl thead th{font-size:11px;font-weight:700;color:#fff;padding:10px 12px;text-align:left;cursor:pointer;}
+.tbl thead th:hover{background:rgba(255,255,255,.08);}
+.tbl tbody tr{border-bottom:1px solid #EEF1F6;cursor:pointer;transition:background .1s;}
+.tbl tbody tr:nth-child(even){background:#F4F6FA;}
+.tbl tbody tr:nth-child(odd){background:#fff;}
+.tbl tbody tr:hover{background:#E8EFF8!important;}
+.tbl tbody tr.selected{background:#d9e8f6!important;border-left:3px solid #4A6FA5;}
+.tbl td{font-size:12.5px;padding:9px 12px;color:#3D4460;vertical-align:middle;}
+.tbl td:first-child{font-weight:600;color:#1A1A2E;}
+.tbl tfoot td{background:#F4F6FA;font-size:11px;color:#6B7280;padding:8px 14px;border-top:1px solid #C8D0DC;}
 
-/* ═══ CARDS ═══ */
-.card{background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;overflow:hidden}
-.card-head{background:linear-gradient(135deg,#4A6FA5,#2B4C8C);padding:11px 16px;display:flex;align-items:center;justify-content:space-between}
-.card-head h2{font-size:13px;font-weight:700;color:#fff}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:20px;}
+.badge-read{background:#D4F0E4;color:#1d6b47;cursor:pointer;}
+.badge-toread{background:#FFF3CD;color:#7a5c00;cursor:pointer;}
+.badge-fiction{background:#e8eeff;color:#3d4cc0;}
+.badge-scifi{background:#eef4ff;color:#2563b0;}
+.badge-nonfic{background:#f0e8ff;color:#6b35c0;}
+.badge-dystopia{background:#fff0e8;color:#c05a20;}
+.badge-mystery{background:#e8fff2;color:#1d6b47;}
+.badge-fantasy{background:#fde8ff;color:#8b00c0;}
 
-/* ═══ TABLE ═══ */
-.tbl{width:100%;border-collapse:collapse}
-.tbl thead tr{background:#2B4C8C}
-.tbl thead th{font-size:11px;font-weight:700;color:#fff;padding:10px 12px;text-align:left;cursor:pointer;user-select:none;letter-spacing:.3px}
-.tbl thead th:hover{background:rgba(255,255,255,.08)}
-.tbl tbody tr{border-bottom:1px solid #EEF1F6;cursor:pointer;transition:background .15s}
-.tbl tbody tr:nth-child(even){background:#F4F6FA}
-.tbl tbody tr:nth-child(odd){background:#fff}
-.tbl tbody tr:hover{background:#E8EFF8 !important}
-.tbl tbody tr.selected{background:#d9e8f6 !important;border-left:3px solid #4A6FA5}
-.tbl tbody tr.row-added{animation:rowHighlight 1.5s ease}
-.tbl td{font-size:12.5px;padding:9px 12px;color:#3D4460;vertical-align:middle}
-.tbl td:first-child{font-weight:600;color:#1A1A2E}
-.tbl tfoot td{background:#F4F6FA;font-size:11px;color:#6B7280;padding:8px 14px;border-top:1px solid #C8D0DC}
+/* BUTTONS (inline) */
+.ibtn{display:inline-flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;border:none;border-radius:7px;font-size:12px;padding:6px 13px;transition:all .15s;white-space:nowrap;}
+.ibtn:active{transform:scale(.97);}
+.ibtn-primary{background:#4A6FA5;color:#fff;}
+.ibtn-primary:hover{background:#2B4C8C;}
+.ibtn-success{background:#3BAF7A;color:#fff;}
+.ibtn-success:hover{background:#2d9668;}
+.ibtn-ghost{background:#fff;color:#6B7280;border:1.5px solid #C8D0DC;}
+.ibtn-ghost:hover{background:#F4F6FA;}
+.ibtn-danger{background:#FDEAEA;color:#D94F4F;border:1.5px solid #D94F4F;font-size:11px;padding:4px 9px;}
+.ibtn-danger:hover{background:#D94F4F;color:#fff;}
+.ibtn-outline{background:transparent;color:#4A6FA5;border:1.5px solid #4A6FA5;}
+.ibtn-outline:hover{background:#E8EFF8;}
 
-/* ═══ BOOK COVER (NEW) ═══ */
-.book-cover-mini{width:28px;height:38px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;box-shadow:1px 1px 4px rgba(0,0,0,.2);letter-spacing:0}
-.title-cell{display:flex;align-items:center;gap:9px}
-.book-cover-lg{width:52px;height:70px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0;box-shadow:2px 2px 10px rgba(0,0,0,.25);animation:coverPop .3s ease}
+/* FILTER BAR */
+.filter-bar{background:#fff;border:1.5px solid #C8D0DC;border-radius:10px;padding:10px 14px;margin-bottom:13px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.srch-wrap{position:relative;}
+.srch-wrap span{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:#6B7280;pointer-events:none;}
+.srch-inp{font-family:'DM Sans',sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:8px 9px 8px 28px;width:200px;background:#fff;color:#1A1A2E;transition:border-color .15s;}
+.srch-inp:focus{outline:none;border-color:#4A6FA5;box-shadow:0 0 0 3px rgba(74,111,165,.13);}
+.srch-inp::placeholder{color:#C8D0DC;}
+.sel{font-family:'DM Sans',sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:8px 24px 8px 9px;background:#fff;color:#3D4460;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B7280' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;cursor:pointer;}
+.sel:focus{outline:none;border-color:#4A6FA5;}
+.cnt-badge{background:#E8EFF8;color:#2B4C8C;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;margin-left:auto;}
 
-/* ═══ BADGES ═══ */
-.badge{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;transition:transform .15s,opacity .15s;letter-spacing:.2px}
-.badge:hover{transform:scale(1.06)}
-.badge-read{background:#D4F0E4;color:#1d6b47;cursor:pointer}
-.badge-toread{background:#FFF3CD;color:#7a5c00;cursor:pointer}
-.badge-fiction{background:#e8eeff;color:#3d4cc0}
-.badge-scifi{background:#eef4ff;color:#2563b0}
-.badge-nonfic{background:#f0e8ff;color:#6b35c0}
-.badge-dystopia{background:#fff0e8;color:#c05a20}
-.badge-mystery{background:#e8fff2;color:#1d6b47}
-.badge-fantasy{background:#fde8ff;color:#8b00c0}
-.badge-other{background:#F4F6FA;color:#6B7280}
+/* MAIN GRID */
+.main-grid{display:grid;grid-template-columns:1fr 290px;gap:14px;align-items:start;}
 
-/* ═══ BUTTONS ═══ */
-.btn{display:inline-flex;align-items:center;gap:5px;font-family:'Outfit',sans-serif;font-weight:700;cursor:pointer;border:none;border-radius:8px;font-size:13px;padding:9px 17px;transition:all .15s;white-space:nowrap;position:relative;overflow:hidden;letter-spacing:.1px}
-.btn:active{transform:scale(.97)}
-.btn-primary{background:linear-gradient(135deg,#4A6FA5,#2B4C8C);color:#fff}
-.btn-primary:hover{background:linear-gradient(135deg,#2B4C8C,#1e3a6e)}
-.btn-success{background:linear-gradient(135deg,#3BAF7A,#2d9668);color:#fff}
-.btn-success:hover{background:linear-gradient(135deg,#2d9668,#22774f)}
-.btn-ghost{background:#fff;color:#6B7280;border:1.5px solid #C8D0DC}
-.btn-ghost:hover{background:#F4F6FA}
-.btn-danger{background:#FDEAEA;color:#D94F4F;border:1.5px solid #D94F4F;font-size:11px;padding:4px 10px;border-radius:6px}
-.btn-danger:hover{background:#D94F4F;color:#fff}
-.btn-outline{background:transparent;color:#4A6FA5;border:1.5px solid #4A6FA5}
-.btn-outline:hover{background:#E8EFF8}
-.btn-sm{font-size:12px;padding:7px 14px}
-.btn-xs{font-size:11px;padding:4px 10px;border-radius:5px}
-.btn .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.4);animation:ripple .6s linear;pointer-events:none}
+/* DETAIL PANEL */
+.det-head{background:#2B4C8C;padding:11px 14px;}
+.det-head h3{font-size:13px;font-weight:700;color:#fff;}
+.det-head p{font-size:10.5px;color:rgba(255,255,255,.6);margin-top:1px;}
+.det-body{padding:14px;display:flex;flex-direction:column;gap:10px;}
+.det-title{font-size:14px;font-weight:700;color:#2B4C8C;}
+.det-author{font-size:12px;color:#6B7280;margin-top:2px;}
+.divider{height:1px;background:#C8D0DC;}
+.det-row{display:flex;justify-content:space-between;align-items:center;}
+.det-key{font-size:11px;font-weight:600;color:#6B7280;}
+.det-notes{font-size:12px;color:#3D4460;background:#F4F6FA;padding:9px 10px;border-radius:7px;line-height:1.55;}
+.no-sel{text-align:center;padding:36px 14px;color:#6B7280;font-size:12px;line-height:1.7;}
 
-/* ═══ FILTER BAR ═══ */
-.filter-bar{background:#fff;border:1.5px solid #C8D0DC;border-radius:10px;padding:10px 15px;margin-bottom:13px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.srch-wrap{position:relative}
-.srch-wrap span{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:#6B7280;pointer-events:none}
-.srch-inp{font-family:'Outfit',sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:8px 9px 8px 28px;width:200px;background:#fff;color:#1A1A2E;transition:border-color .15s,box-shadow .15s}
-.srch-inp:focus{outline:none;border-color:#4A6FA5;box-shadow:0 0 0 3px rgba(74,111,165,0.13)}
-.srch-inp::placeholder{color:#C8D0DC}
-.sel{font-family:'Outfit',sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:8px 24px 8px 9px;background:#fff;color:#3D4460;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B7280' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;cursor:pointer;transition:border-color .15s}
-.sel:focus{outline:none;border-color:#4A6FA5}
-.cnt-badge{background:#E8EFF8;color:#2B4C8C;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:auto}
+/* ADD FORM */
+.add-card{background:#fff;border:1.5px solid #C8D0DC;border-radius:11px;overflow:hidden;margin-top:13px;}
+.add-head{background:#3BAF7A;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
+.add-head h3{font-size:13px;font-weight:700;color:#fff;}
+.add-body{padding:14px;}
+.frm-row{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px;}
+.flbl{font-size:11px;font-weight:600;color:#3D4460;display:block;margin-bottom:4px;}
+.req{color:#D94F4F;}
+.finp{font-family:'DM Sans',sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:8px 9px;width:100%;background:#fff;color:#1A1A2E;transition:border-color .15s;}
+.finp:focus{outline:none;border-color:#4A6FA5;box-shadow:0 0 0 3px rgba(74,111,165,.13);}
+.finp::placeholder{color:#C8D0DC;}
+.finp.err{border-color:#D94F4F;background:#fff8f8;}
+.ferr{font-size:10px;color:#D94F4F;margin-top:3px;display:none;}
+.radio-row{display:flex;gap:12px;margin-top:6px;}
+.radio-item{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:13px;}
+.rdot{width:16px;height:16px;border-radius:50%;border:2px solid #4A6FA5;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rdot.on::after{content:'';width:6px;height:6px;border-radius:50%;background:#4A6FA5;}
+.frm-actions{display:flex;gap:8px;justify-content:flex-end;padding-top:11px;border-top:1px solid #C8D0DC;}
 
-/* ═══ GRID VIEW (NEW) ═══ */
-.book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;padding:16px}
-.book-card{background:#fff;border:1.5px solid #C8D0DC;border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s}
-.book-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(74,111,165,.18)}
-.book-card.selected{border-color:#4A6FA5;box-shadow:0 0 0 2px rgba(74,111,165,.3)}
-.book-card-cover{height:100px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#fff;position:relative}
-.book-card-cover::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0),rgba(0,0,0,.15))}
-.book-card-body{padding:10px 10px 12px}
-.book-card-title{font-size:12px;font-weight:700;color:#1A1A2E;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.book-card-author{font-size:10.5px;color:#6B7280;margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.book-card-foot{display:flex;justify-content:space-between;align-items:center}
+/* HOME STATS */
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-c{background:#fff;border:1.5px solid #C8D0DC;border-radius:10px;padding:16px;text-align:center;transition:transform .2s,box-shadow .2s;}
+.stat-c:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(74,111,165,.12);}
+.stat-n{font-size:28px;font-weight:700;margin-bottom:3px;}
+.stat-l{font-size:11px;color:#6B7280;}
 
-/* ═══ MAIN GRID ═══ */
-.main-grid{display:grid;grid-template-columns:1fr 300px;gap:14px;align-items:start}
+/* SETTINGS */
+.settings-section{margin-bottom:22px;}
+.settings-title{font-size:12px;font-weight:700;color:#2B4C8C;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid #C8D0DC;padding-bottom:8px;margin-bottom:14px;}
+.settings-card{background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:20px;}
+.avatar-row{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
+.big-avatar{width:64px;height:64px;border-radius:50%;background:#4A6FA5;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;flex-shrink:0;}
+.avatar-info{flex:1;}
+.avatar-name{font-size:16px;font-weight:700;color:#1A1A2E;}
+.avatar-email{font-size:12px;color:#6B7280;margin-top:2px;}
+.set-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.sw-wrap{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #F4F6FA;}
+.sw-wrap:last-child{border-bottom:none;}
+.sw-label{font-size:13px;color:#3D4460;}
+.sw-track{width:42px;height:23px;border-radius:12px;background:#C8D0DC;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.sw-track.on{background:#3BAF7A;}
+.sw-thumb{width:17px;height:17px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.15);}
+.sw-track.on .sw-thumb{left:22px;}
 
-/* ═══ DETAIL PANEL ═══ */
-.det-head{background:linear-gradient(135deg,#2B4C8C,#1e3a6e);padding:11px 14px}
-.det-head h3{font-size:13px;font-weight:700;color:#fff}
-.det-head p{font-size:10.5px;color:rgba(255,255,255,.6);margin-top:1px}
-.det-body{padding:14px;display:flex;flex-direction:column;gap:10px}
-.det-title{font-size:14px;font-weight:800;color:#2B4C8C;line-height:1.3}
-.det-author{font-size:12px;color:#6B7280;margin-top:2px;font-weight:500}
-.divider{height:1px;background:#EEF1F6}
-.det-row{display:flex;justify-content:space-between;align-items:center}
-.det-key{font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.4px}
-.det-notes{font-size:12px;color:#3D4460;background:#F4F6FA;padding:9px 10px;border-radius:7px;line-height:1.55}
-.det-actions{display:flex;flex-direction:column;gap:7px}
-.no-sel{text-align:center;padding:36px 14px;color:#6B7280;font-size:12px;line-height:1.7}
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:500;align-items:center;justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:#fff;border-radius:12px;padding:26px;max-width:360px;width:92%;box-shadow:0 12px 48px rgba(0,0,0,.22);}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:8px;}
+.modal p{font-size:12.5px;color:#6B7280;line-height:1.6;margin-bottom:20px;}
+.modal-btns{display:flex;gap:9px;justify-content:flex-end;}
 
-/* ═══ ADD FORM ═══ */
-.add-card{background:#fff;border:1.5px solid #C8D0DC;border-radius:11px;overflow:hidden;margin-top:13px;animation:fadeInUp .3s ease}
-.add-head{background:linear-gradient(135deg,#3BAF7A,#2d9668);padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
-.add-head h3{font-size:13px;font-weight:700;color:#fff}
-.add-body{padding:14px}
-.frm-row{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px}
-.lbl{font-size:11px;font-weight:700;color:#3D4460;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
-.req{color:#D94F4F}
-.inp{font-family:'Outfit',sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:8px 9px;width:100%;background:#fff;color:#1A1A2E;transition:border-color .15s,box-shadow .15s}
-.inp:focus{outline:none;border-color:#4A6FA5;box-shadow:0 0 0 3px rgba(74,111,165,0.13)}
-.inp::placeholder{color:#C8D0DC}
-.inp.err{border-color:#D94F4F;background:#fff8f8}
-.err-msg{font-size:10px;color:#D94F4F;margin-top:3px;display:none}
-.radio-row{display:flex;gap:12px;margin-top:6px}
-.radio-item{display:flex;align-items:center;gap:5px;cursor:pointer;font-weight:500}
-.rdot{width:16px;height:16px;border-radius:50%;border:2px solid #4A6FA5;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
-.rdot.on::after{content:'';width:6px;height:6px;border-radius:50%;background:#4A6FA5}
-.frm-actions{display:flex;gap:8px;justify-content:flex-end;padding-top:11px;border-top:1px solid #C8D0DC}
+/* TOAST */
+.toast-wrap{position:fixed;bottom:18px;right:18px;z-index:999;display:flex;flex-direction:column;gap:6px;pointer-events:none;}
+.toast{background:#1A1A2E;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(8px);transition:all .2s;max-width:300px;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{background:#1d6b47;}
+.toast.error{background:#D94F4F;}
+.toast.info{background:#4A6FA5;}
 
-/* ═══ HISTORY BAR ═══ */
-.hist-bar{background:#fff;border:1.5px solid #C8D0DC;border-radius:10px;padding:8px 14px;margin-bottom:13px;display:flex;align-items:center;gap:8px}
-.hist-lbl{font-size:11px;font-weight:700;color:#6B7280;white-space:nowrap}
-.hist-list{display:flex;gap:5px;flex:1;overflow:hidden}
-.hist-chip{font-size:10.5px;background:#F4F6FA;border:1px solid #C8D0DC;color:#6B7280;padding:2px 9px;border-radius:20px;white-space:nowrap}
-.hist-chip.latest{background:#E8EFF8;border-color:#4A6FA5;color:#2B4C8C;font-weight:700}
-
-/* ═══ HOME PAGE ═══ */
-.hero{background:linear-gradient(135deg,#1e3a6e 0%,#2B4C8C 40%,#3d6bb5 100%);border-radius:16px;padding:52px 32px;text-align:center;margin-bottom:20px;animation:fadeInUp .5s ease;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
-.hero h2{font-size:28px;font-weight:800;color:#fff;margin-bottom:10px;position:relative;letter-spacing:-.5px}
-.hero p{font-size:14px;color:rgba(255,255,255,.75);margin-bottom:26px;position:relative}
-.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.stat-c{background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px 16px;text-align:center;animation:fadeInUp .4s ease;transition:transform .2s,box-shadow .2s}
-.stat-c:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(74,111,165,.18)}
-.stat-n{font-size:32px;font-weight:800;margin-bottom:3px;letter-spacing:-1px}
-.stat-l{font-size:11px;color:#6B7280;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
-.step-strip{display:flex;gap:0;border:1.5px solid #C8D0DC;border-radius:12px;overflow:hidden;background:#fff}
-.step{flex:1;padding:18px 12px;text-align:center;border-right:1px solid #C8D0DC;position:relative;transition:background .2s}
-.step:hover{background:#E8EFF8}
-.step:last-child{border-right:none}
-.step::after{content:'→';position:absolute;right:-12px;top:50%;transform:translateY(-50%);color:#4A6FA5;font-weight:700;font-size:16px;z-index:2}
-.step:last-child::after{display:none}
-.step-num{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#4A6FA5,#2B4C8C);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 7px}
-.step-icon{font-size:20px;margin-bottom:5px}
-.step-title{font-size:12px;font-weight:700;color:#2B4C8C;margin-bottom:3px}
-.step-desc{font-size:10.5px;color:#6B7280;line-height:1.4}
-
-/* ═══ STATS PAGE ═══ */
-.sec{background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;margin-bottom:20px;overflow:hidden}
-.sec-hd{background:linear-gradient(135deg,#2B4C8C,#1e3a6e);padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
-.sec-hd h2{font-size:13.5px;font-weight:700;color:#fff}
-.sec-tag{background:rgba(255,255,255,.18);color:#fff;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.3px}
-.sec-bd{padding:20px}
-.sec-desc{font-size:11.5px;color:#6B7280;background:#E8EFF8;border-left:3px solid #4A6FA5;padding:8px 13px;border-radius:0 6px 6px 0;margin-bottom:16px;line-height:1.6}
-svg{overflow:visible}
-.chart-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:10px}
-.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#3D4460;font-weight:500}
-.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.leg-rect{width:14px;height:10px;border-radius:2px;flex-shrink:0}
-
-/* ═══ FORMS PAGE ═══ */
-.fsec{background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;margin-bottom:22px;overflow:hidden;animation:fadeInUp .4s ease}
-.fsec-hd{background:linear-gradient(135deg,#2B4C8C,#1e3a6e);padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
-.fsec-hd h2{font-size:13.5px;font-weight:700;color:#fff}
-.fsec-tag{background:rgba(255,255,255,.18);color:#fff;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:20px}
-.fsec-bd{padding:22px}
-.fdesc{font-size:11.5px;color:#6B7280;background:#E8EFF8;border-left:3px solid #4A6FA5;padding:8px 13px;border-radius:0 6px 6px 0;margin-bottom:18px;line-height:1.6}
-.fcard{background:#F4F6FA;border:1.5px solid #C8D0DC;border-radius:10px;overflow:hidden}
-.fcard-hd{padding:13px 18px}
-.fcard-hd h3{font-size:13.5px;font-weight:700;color:#fff}
-.fcard-hd p{font-size:11px;color:rgba(255,255,255,.75);margin-top:2px}
-.fbody{padding:20px}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.fgrp{display:flex;flex-direction:column}
-.ffull{margin-bottom:14px}
-.flbl{font-size:11.5px;font-weight:700;color:#3D4460;margin-bottom:5px;display:flex;align-items:center;gap:4px;text-transform:uppercase;letter-spacing:.3px}
-.freq{color:#D94F4F}
-.fhint{font-size:10.5px;color:#6B7280;margin-top:4px}
-.finp{font-family:'Outfit',sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:9px 12px;background:#fff;color:#1A1A2E;width:100%;transition:border-color .15s,box-shadow .15s}
-.finp:focus{outline:none;border-color:#4A6FA5;box-shadow:0 0 0 3px rgba(74,111,165,.14)}
-.finp::placeholder{color:#C8D0DC}
-.fsel{font-family:'Outfit',sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:9px 28px 9px 12px;background:#fff;color:#3D4460;width:100%;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B7280' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center}
-.fsel:focus{outline:none;border-color:#4A6FA5;box-shadow:0 0 0 3px rgba(74,111,165,.14)}
-.fta{font-family:'Outfit',sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:9px 12px;background:#fff;color:#1A1A2E;width:100%;resize:vertical;min-height:80px}
-.fta:focus{outline:none;border-color:#4A6FA5;box-shadow:0 0 0 3px rgba(74,111,165,.14)}
-.pw-w{position:relative}
-.pw-w .finp{padding-right:38px}
-.pw-tog{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:15px;color:#6B7280}
-.fmsg{font-size:10.5px;margin-top:4px;display:none;align-items:center;gap:4px}
-.fmsg.err{color:#D94F4F}.fmsg.ok{color:#3BAF7A}
-.chk{width:18px;height:18px;border-radius:4px;border:2px solid #C8D0DC;background:#fff;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;font-size:11px;color:transparent;transition:all .15s}
-.chk.on{background:#4A6FA5;border-color:#4A6FA5;color:#fff}
-.rdot2{width:17px;height:17px;border-radius:50%;border:2px solid #4A6FA5;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
-.rdot2.on::after{content:'';width:7px;height:7px;border-radius:50%;background:#4A6FA5}
-.sw-track{width:44px;height:24px;border-radius:12px;background:#C8D0DC;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;display:inline-block}
-.sw-track.on{background:#3BAF7A}
-.sthumb{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:2px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.15)}
-.sw-track.on .sthumb{left:22px}
-.str-track{height:5px;background:#C8D0DC;border-radius:3px;overflow:hidden;margin:5px 0 3px}
-.str-fill{height:100%;border-radius:3px;transition:width .3s,background .3s;width:0%}
-.steps{display:flex;align-items:center;margin-bottom:22px}
-.sc{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#fff;transition:background .3s}
-.sline{flex:1;height:2px;background:#C8D0DC;margin:0 8px;transition:background .3s}
-.sl{font-size:11px;font-weight:700;transition:color .3s}
-.fbtn{display:inline-flex;align-items:center;gap:5px;font-family:'Outfit',sans-serif;font-weight:700;cursor:pointer;border:none;border-radius:7px;font-size:13px;padding:9px 18px;transition:all .15s;white-space:nowrap}
-.fbtn:active{transform:scale(.97)}
-.fbtn-p{background:linear-gradient(135deg,#4A6FA5,#2B4C8C);color:#fff}.fbtn-p:hover{background:linear-gradient(135deg,#2B4C8C,#1e3a6e)}
-.fbtn-s{background:linear-gradient(135deg,#3BAF7A,#2d9668);color:#fff}.fbtn-s:hover{background:linear-gradient(135deg,#2d9668,#22774f)}
-.fbtn-g{background:#fff;color:#6B7280;border:1.5px solid #C8D0DC}.fbtn-g:hover{background:#F4F6FA}
-.fbtn-d{background:#FDEAEA;color:#D94F4F;border:1.5px solid #D94F4F}.fbtn-d:hover{background:#D94F4F;color:#fff}
-.fbtn-sm{font-size:12px;padding:7px 14px}
-.faction{display:flex;gap:9px;justify-content:flex-end;padding-top:14px;border-top:1px solid #C8D0DC;margin-top:6px}
-.fdivider{display:flex;align-items:center;gap:12px;margin:16px 0}
-.fdivider::before,.fdivider::after{content:'';flex:1;height:1px;background:#C8D0DC}
-.fdivider span{font-size:11px;color:#6B7280;white-space:nowrap}
-.suc-ban{background:#D4F0E4;border:1.5px solid #3BAF7A;border-radius:9px;padding:13px 16px;display:flex;align-items:center;gap:11px;margin-top:14px;animation:popIn .3s ease}
-
-/* ═══ ANIMATIONS PAGE ═══ */
-.anim-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.anim-card{background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;overflow:hidden}
-.anim-card-hd{background:linear-gradient(135deg,#2B4C8C,#1e3a6e);padding:11px 15px}
-.anim-card-hd h3{font-size:12.5px;font-weight:700;color:#fff}
-.anim-card-hd .atag{font-size:10px;color:rgba(255,255,255,.7);margin-top:2px}
-.anim-demo{padding:22px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:140px;background:#F4F6FA}
-.anim-desc{padding:12px 15px;font-size:11px;color:#6B7280;line-height:1.5;border-top:1px solid #C8D0DC}
-.anim-label{font-size:10px;font-weight:700;color:#4A6FA5;text-align:center}
-.spin-icon{font-size:32px;animation:spin 2s linear infinite}
-.bounce-icon{font-size:32px;animation:bounce 1.5s ease-in-out infinite}
-.pulse-icon{font-size:32px;animation:pulse 1.5s ease-in-out infinite}
-.float-icon{font-size:32px;animation:floatUp 2.5s ease-in-out infinite}
-.skeleton-line{height:12px;background:linear-gradient(90deg,#E8EFF8 25%,#C8D0DC 50%,#E8EFF8 75%);background-size:800px 100%;animation:shimmer 1.5s infinite;border-radius:6px;width:100%;margin-bottom:8px}
-.skeleton-line.short{width:60%}.skeleton-line.med{width:80%}
-.progress-anim{width:100%;height:12px;background:#C8D0DC;border-radius:6px;overflow:hidden}
-.progress-anim-fill{height:100%;background:linear-gradient(90deg,#3BAF7A,#7FA3D1);border-radius:6px;animation:progressFill 2s ease-out forwards;--target-width:70%;width:0%}
-.fade-box{width:60px;height:60px;background:linear-gradient(135deg,#4A6FA5,#2B4C8C);border-radius:10px;animation:fadeIn 1.5s ease-in-out infinite alternate;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff}
-.slide-box{width:100%;background:#E8EFF8;border-radius:8px;padding:10px 14px;font-size:12px;font-weight:600;color:#2B4C8C;animation:slideInLeft .8s ease infinite alternate}
-.toast-preview{background:#1d6b47;color:#fff;padding:9px 14px;border-radius:8px;font-size:12px;display:flex;align-items:center;gap:8px;animation:toastSlide .6s ease;width:100%}
-.badge-anim{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;animation:popIn .5s ease}
-.nav-highlight{background:linear-gradient(135deg,#2B4C8C,#1e3a6e);border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;animation:pulse 2s ease-in-out infinite}
-.loading-dots{display:flex;gap:6px}
-.loading-dots span{width:10px;height:10px;border-radius:50%;background:#4A6FA5;animation:bounce 1.2s ease-in-out infinite}
-.loading-dots span:nth-child(2){animation-delay:.2s}
-.loading-dots span:nth-child(3){animation-delay:.4s}
-.spinner{width:36px;height:36px;border:4px solid #E8EFF8;border-top:4px solid #4A6FA5;border-radius:50%;animation:spin2 .8s linear infinite}
-.hover-card{width:100%;background:#fff;border:1.5px solid #C8D0DC;border-radius:9px;padding:12px 14px;font-size:12px;font-weight:600;color:#2B4C8C;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s;text-align:center}
-.hover-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(74,111,165,.2);background:#E8EFF8}
-.row-demo{width:100%;background:#F4F6FA;border-radius:7px;padding:9px 12px;font-size:12px;color:#3D4460;cursor:pointer;transition:background .15s;border-left:3px solid transparent}
-.row-demo:hover{background:#E8EFF8;border-left-color:#4A6FA5}
-.btn-ripple-demo{background:linear-gradient(135deg,#4A6FA5,#2B4C8C);color:#fff;border:none;border-radius:7px;padding:10px 22px;font-size:13px;font-weight:700;cursor:pointer;position:relative;overflow:hidden;transition:background .15s;font-family:'Outfit',sans-serif}
-.btn-ripple-demo:hover{background:linear-gradient(135deg,#2B4C8C,#1e3a6e)}
-.bg-anim{width:100%;height:60px;border-radius:9px;background:linear-gradient(270deg,#2B4C8C,#4A6FA5,#3BAF7A,#7b4cc0);background-size:800% 800%;animation:bgShift 4s ease infinite;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700}
-.typing-text::after{content:'|';animation:typeCursor .7s step-end infinite;color:#4A6FA5}
-.svg-draw-line{stroke-dasharray:1000;stroke-dashoffset:0;animation:drawLine 2s ease-out infinite}
-footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size:11px;padding:14px;font-family:'Outfit',sans-serif}
+footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size:11px;padding:13px;}
 </style>
 </head>
 <body>
 
-<!-- ══════ HEADER ══════ -->
-<header class="header">
-  <div class="logo" onclick="showPage('home')">
-    <div class="logo-icon">📚</div>
-    BookList
-  </div>
-  <div class="menu-items">
-    <div class="menu-item" id="mFile">
-      <button onclick="toggleMenu('mFile')">File ▾</button>
-      <div class="drop-menu">
-        <div class="drop-item" onclick="toast('New list created','success')">📄 New List <span class="ks">Ctrl+N</span></div>
-        <div class="drop-item" onclick="toast('Saved!','success')">💾 Save <span class="ks">Ctrl+S</span></div>
-        <div class="drop-item" onclick="toast('Exported as CSV','info')">⬇️ Export CSV</div>
-        <div class="drop-sep"></div>
-        <div class="drop-item danger" onclick="toast('Signed out','warning')">🚪 Sign Out</div>
-      </div>
+<!-- ══════════ LOGIN SCREEN ══════════ -->
+<div class="screen auth-screen active" id="screenLogin">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="icon">📚</div>
+      <h1>BookList</h1>
+      <p>Student Reading Tracker</p>
     </div>
-    <div class="menu-item" id="mEdit">
-      <button onclick="toggleMenu('mEdit')">Edit ▾</button>
-      <div class="drop-menu">
-        <div class="drop-item" onclick="doUndo()">↩ Undo <span class="ks">Ctrl+Z</span></div>
-        <div class="drop-item" onclick="doRedo()">↪ Redo <span class="ks">Ctrl+Y</span></div>
-        <div class="drop-sep"></div>
-        <div class="drop-item" onclick="clearF()">🔄 Reset Filters</div>
-        <div class="drop-item" onclick="sortBooks('title')">🔤 Sort A–Z</div>
-      </div>
+    <div class="auth-title">Sign In</div>
+    <p class="auth-sub">Welcome back! Please enter your details.</p>
+    <div class="form-group">
+      <label class="lbl">Email Address</label>
+      <input class="inp" id="loginEmail" type="email" placeholder="student@email.com">
+      <div class="err-msg" id="loginEmailErr">⚠ Please enter a valid email address.</div>
     </div>
-    <div class="menu-item" id="mView">
-      <button onclick="toggleMenu('mView')">View ▾</button>
-      <div class="drop-menu">
-        <div class="drop-item" onclick="showPage('home')">🏠 Home</div>
-        <div class="drop-item" onclick="showPage('books')">📋 My Books</div>
-        <div class="drop-item" onclick="showPage('stats')">📊 Statistics</div>
-        <div class="drop-item" onclick="showPage('forms')">📝 Forms</div>
-        <div class="drop-item" onclick="showPage('anims')">🎬 Animations</div>
+    <div class="form-group">
+      <label class="lbl">Password</label>
+      <div class="pw-wrap">
+        <input class="inp" id="loginPw" type="password" placeholder="Enter your password…">
+        <button class="pw-eye" onclick="togglePw('loginPw',this)" type="button">👁</button>
       </div>
+      <div class="err-msg" id="loginPwErr">⚠ Password is required.</div>
     </div>
-    <div class="menu-item" id="mHelp">
-      <button onclick="toggleMenu('mHelp')">Help ▾</button>
-      <div class="drop-menu">
-        <div class="drop-item" onclick="toast('Ctrl+Z Undo · Ctrl+N Add · Del Remove · T Toggle','info')">⌨️ Shortcuts</div>
-        <div class="drop-item" onclick="toast('BookList v2.0 · Design Interface · 2026','info')">ℹ️ About</div>
-      </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12.5px;color:#3D4460;">
+        <input type="checkbox" id="rememberMe" style="accent-color:#4A6FA5;"> Remember me
+      </label>
+      <a href="#" style="font-size:12px;color:#4A6FA5;text-decoration:none;" onclick="toast('Password reset link sent!','info')">Forgot password?</a>
     </div>
-  </div>
-  <nav class="nav-tabs">
-    <button class="nav-tab active" id="nt-home"  onclick="showPage('home')">🏠 Home</button>
-    <button class="nav-tab"        id="nt-books" onclick="showPage('books')">📋 My Books</button>
-    <button class="nav-tab"        id="nt-stats" onclick="showPage('stats')">📊 Stats</button>
-    <button class="nav-tab"        id="nt-forms" onclick="showPage('forms')">📝 Forms</button>
-    <button class="nav-tab"        id="nt-anims" onclick="showPage('anims')" style="background:rgba(59,175,122,.25);color:#fff;font-weight:700;">🎬 Animations</button>
-  </nav>
-</header>
-
-<!-- Toolbar -->
-<div class="toolbar" id="toolbar" style="display:none;">
-  <button class="tb-btn" onclick="doUndo()" title="Undo Ctrl+Z">↩ Undo</button>
-  <button class="tb-btn" onclick="doRedo()" title="Redo Ctrl+Y">↪ Redo</button>
-  <div class="tb-sep"></div>
-  <button class="tb-btn" onclick="sortBooks('title')">🔤 A–Z</button>
-  <button class="tb-btn" onclick="sortBooks('status')">📊 Status</button>
-  <div class="tb-sep"></div>
-  <button class="tb-btn" onclick="toggleForm()" id="addBtn">➕ Add Book</button>
-  <button class="tb-btn" onclick="clearF()">✕ Clear Filters</button>
-  <div class="tb-sep"></div>
-  <button class="tb-btn" id="viewToggleBtn" onclick="toggleView()">⊞ Grid View</button>
-  <div class="prog-wrap">
-    <span class="prog-label" id="progLabel">0% read</span>
-    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <button class="btn btn-primary" onclick="doLogin()">🔐 Sign In</button>
+    <p class="auth-link" style="margin-top:16px;">Don't have an account? <a onclick="showRegister()">Create account</a></p>
   </div>
 </div>
 
-<div class="toast-wrap" id="toasts"></div>
-
-<!-- Context menu -->
-<div class="ctx" id="ctx">
-  <div class="ctx-item" onclick="ctxToggle()">🔄 Toggle Status</div>
-  <div class="ctx-item" onclick="ctxView()">👁 View Details</div>
-  <div class="ctx-sep"></div>
-  <div class="ctx-item danger" onclick="ctxRemove()">✕ Remove Book</div>
+<!-- ══════════ REGISTER SCREEN ══════════ -->
+<div class="screen auth-screen" id="screenRegister">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="icon">📚</div>
+      <h1>BookList</h1>
+      <p>Student Reading Tracker</p>
+    </div>
+    <div class="auth-title">Create Account</div>
+    <p class="auth-sub">Join BookList and start tracking your reading.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group">
+        <label class="lbl">First Name</label>
+        <input class="inp" id="regFirst" type="text" placeholder="Anna">
+        <div class="err-msg" id="regFirstErr">⚠ Required.</div>
+      </div>
+      <div class="form-group">
+        <label class="lbl">Last Name</label>
+        <input class="inp" id="regLast" type="text" placeholder="Smith">
+        <div class="err-msg" id="regLastErr">⚠ Required.</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="lbl">Email Address</label>
+      <input class="inp" id="regEmail" type="email" placeholder="anna@student.edu">
+      <div class="err-msg" id="regEmailErr">⚠ Please enter a valid email.</div>
+    </div>
+    <div class="form-group">
+      <label class="lbl">Password</label>
+      <div class="pw-wrap">
+        <input class="inp" id="regPw" type="password" placeholder="Min. 8 characters…" oninput="checkStrength()">
+        <button class="pw-eye" onclick="togglePw('regPw',this)" type="button">👁</button>
+      </div>
+      <!-- Strength meter -->
+      <div style="margin-top:6px;">
+        <div style="height:5px;background:#C8D0DC;border-radius:3px;overflow:hidden;"><div id="strFill" style="height:100%;border-radius:3px;width:0%;transition:width .3s,background .3s;"></div></div>
+        <span id="strLbl" style="font-size:10.5px;font-weight:600;color:#6B7280;">Enter a password</span>
+      </div>
+      <div class="err-msg" id="regPwErr">⚠ Password must be at least 8 characters.</div>
+    </div>
+    <div class="form-group">
+      <label class="lbl">Confirm Password</label>
+      <div class="pw-wrap">
+        <input class="inp" id="regPw2" type="password" placeholder="Repeat password…">
+        <button class="pw-eye" onclick="togglePw('regPw2',this)" type="button">👁</button>
+      </div>
+      <div class="err-msg" id="regPw2Err">⚠ Passwords do not match.</div>
+    </div>
+    <button class="btn btn-primary" onclick="doRegister()" style="margin-bottom:12px;">✓ Create Account</button>
+    <button class="btn btn-ghost" onclick="showLogin()">← Back to Sign In</button>
+  </div>
 </div>
 
-<!-- Confirm modal -->
-<div class="overlay" id="modal">
-  <div class="modal">
-    <div style="font-size:28px;margin-bottom:10px;">🗑️</div>
-    <h3>Remove Book?</h3>
-    <p>Are you sure you want to remove <strong id="modalTitle"></strong>? This cannot be undone.</p>
-    <div class="modal-btns">
-      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-sm" style="background:#D94F4F;color:#fff;" onclick="doRemove()">Yes, Remove</button>
+<!-- ══════════ APP SCREEN ══════════ -->
+<div class="screen app-screen" id="screenApp">
+
+  <header class="header">
+    <div class="logo"><div class="logo-icon">📚</div>BookList</div>
+    <nav class="nav-tabs">
+      <button class="nav-tab active" id="nt-home"  onclick="showPage('home')">🏠 Home</button>
+      <button class="nav-tab"        id="nt-books" onclick="showPage('books')">📋 My Books</button>
+      <button class="nav-tab"        id="nt-stats" onclick="showPage('stats')">📊 Statistics</button>
+      <button class="nav-tab"        id="nt-settings" onclick="showPage('settings')">⚙️ Settings</button>
+    </nav>
+    <button class="user-btn" onclick="showPage('settings')" id="userBtn">
+      <div class="user-avatar" id="headerAvatar">A</div>
+      <span id="headerName">User</span>
+    </button>
+  </header>
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="page-home">
+    <h1 class="page-title" id="homeGreeting">👋 Welcome back!</h1>
+    <p class="page-sub">Here's your reading overview.</p>
+    <div class="stat-strip">
+      <div class="stat-c"><div class="stat-n" style="color:#4A6FA5;" id="hTotal">0</div><div class="stat-l">Total Books</div></div>
+      <div class="stat-c"><div class="stat-n" style="color:#3BAF7A;" id="hRead">0</div><div class="stat-l">Books Read</div></div>
+      <div class="stat-c"><div class="stat-n" style="color:#F0A500;" id="hToRead">0</div><div class="stat-l">To Read</div></div>
+      <div class="stat-c"><div class="stat-n" style="color:#7b4cc0;" id="hPct">0%</div><div class="stat-l">Completion</div></div>
+    </div>
+    <!-- Progress bar -->
+    <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px;margin-bottom:18px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:13px;font-weight:700;color:#2B4C8C;">Reading Progress</span>
+        <span style="font-size:13px;font-weight:700;color:#3BAF7A;" id="homePctLbl">0%</span>
+      </div>
+      <div style="width:100%;height:14px;background:#C8D0DC;border-radius:7px;overflow:hidden;">
+        <div style="height:100%;background:linear-gradient(90deg,#3BAF7A,#7FA3D1);border-radius:7px;transition:width .5s;" id="homePctBar" style="width:0%"></div>
+      </div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px;">
+      <div style="font-size:13px;font-weight:700;color:#2B4C8C;margin-bottom:12px;">📚 Recently Added</div>
+      <div id="recentBooks" style="display:flex;flex-direction:column;gap:8px;"></div>
     </div>
   </div>
-</div>
 
-<!-- ══════ HOME PAGE ══════ -->
-<div class="page active" id="page-home">
-  <div class="hero">
-    <div style="font-size:56px;margin-bottom:14px;animation:floatUp 3s ease-in-out infinite;position:relative;">📚</div>
-    <h2>Welcome to BookList</h2>
-    <p>Your personal student reading tracker — add books, track your progress, explore statistics.</p>
-    <button class="btn btn-success" style="font-size:14px;padding:11px 28px;position:relative;" onclick="showPage('books')">📋 Go to My Books →</button>
-  </div>
-  <div class="stat-strip">
-    <div class="stat-c"><div class="stat-n" style="color:#4A6FA5;" id="hTotal">10</div><div class="stat-l">Total Books</div></div>
-    <div class="stat-c"><div class="stat-n" style="color:#3BAF7A;" id="hRead">6</div><div class="stat-l">Books Read</div></div>
-    <div class="stat-c"><div class="stat-n" style="color:#F0A500;" id="hToRead">4</div><div class="stat-l">To Read</div></div>
-    <div class="stat-c"><div class="stat-n" style="color:#7b4cc0;" id="hPct">60%</div><div class="stat-l">Completion</div></div>
-  </div>
-  <div class="step-strip">
-    <div class="step" style="background:#f0f4fb;"><div class="step-icon">📖</div><div class="step-num">1</div><div class="step-title">Open BookList</div><div class="step-desc">Log in to your account.</div></div>
-    <div class="step" style="background:#f0faf5;"><div class="step-icon">➕</div><div class="step-num">2</div><div class="step-title">Add a Book</div><div class="step-desc">Fill in title, author, genre, status.</div></div>
-    <div class="step" style="background:#fff8e8;"><div class="step-icon">🔍</div><div class="step-num">3</div><div class="step-title">Search & Filter</div><div class="step-desc">Find books quickly.</div></div>
-    <div class="step" style="background:#fdeaea;"><div class="step-icon">🔄</div><div class="step-num">4</div><div class="step-title">Toggle Status</div><div class="step-desc">Click badge to switch Read / To Read.</div></div>
-    <div class="step" style="background:#f0e8ff;"><div class="step-icon">📊</div><div class="step-num">5</div><div class="step-title">View Stats</div><div class="step-desc">Charts on the Statistics page.</div></div>
-  </div>
-</div>
-
-<!-- ══════ MY BOOKS PAGE ══════ -->
-<div class="page" id="page-books">
-  <div class="hist-bar">
-    <span class="hist-lbl">⏱ History:</span>
-    <div class="hist-list" id="histList"><span class="hist-chip" style="color:#C8D0DC;">No actions yet</span></div>
-    <button class="btn btn-ghost btn-xs" onclick="doUndo()">↩ Undo</button>
-    <button class="btn btn-ghost btn-xs" onclick="doRedo()">↪ Redo</button>
-  </div>
-  <div class="filter-bar">
-    <div class="srch-wrap"><span>🔍</span><input class="srch-inp" id="searchQ" type="text" placeholder="Search title or author…" oninput="renderTable()"></div>
-    <select class="sel" id="selSt" onchange="renderTable()"><option value="">All Statuses</option><option value="Read">✓ Read</option><option value="To Read">⏳ To Read</option></select>
-    <select class="sel" id="selGn" onchange="renderTable()"><option value="">All Genres</option><option>Fiction</option><option>Non-Fiction</option><option>Sci-Fi</option><option>Dystopian</option><option>Mystery</option><option>Fantasy</option></select>
-    <button class="btn btn-ghost btn-sm" onclick="clearF()">✕ Clear</button>
-    <span class="cnt-badge" id="cnt">10 books</span>
-  </div>
-  <div class="main-grid">
-    <div>
-      <div class="card">
-        <div class="card-head">
-          <h2>📋 Book List</h2>
-          <div style="display:flex;gap:6px;">
-            <button class="btn btn-xs btn-ghost" onclick="toast('All books selected','info')">☑ All</button>
-            <button class="btn btn-xs" style="background:rgba(255,255,255,.18);color:#fff;border:none;" onclick="toggleForm()" id="addBtnTop">➕ Add Book</button>
+  <!-- MY BOOKS PAGE -->
+  <div class="page" id="page-books">
+    <h1 class="page-title">📋 My Books</h1>
+    <p class="page-sub">Manage your reading list. Click a row to see details, click a badge to toggle status.</p>
+    <div class="filter-bar">
+      <div class="srch-wrap"><span>🔍</span><input class="srch-inp" id="searchQ" type="text" placeholder="Search…" oninput="renderTable()"></div>
+      <select class="sel" id="selSt" onchange="renderTable()"><option value="">All Statuses</option><option value="Read">✓ Read</option><option value="To Read">⏳ To Read</option></select>
+      <select class="sel" id="selGn" onchange="renderTable()"><option value="">All Genres</option><option>Fiction</option><option>Non-Fiction</option><option>Sci-Fi</option><option>Dystopian</option><option>Mystery</option><option>Fantasy</option></select>
+      <button class="ibtn ibtn-ghost" onclick="clearF()">✕ Clear</button>
+      <span class="cnt-badge" id="cnt">0 books</span>
+    </div>
+    <div class="main-grid">
+      <div>
+        <div class="card">
+          <div class="card-head">
+            <h2>📋 Book List</h2>
+            <button class="ibtn ibtn-success" onclick="toggleForm()" id="addBtnTop" style="font-size:11px;padding:5px 11px;">➕ Add Book</button>
           </div>
-        </div>
-        <!-- TABLE VIEW -->
-        <div id="tableView">
           <table class="tbl">
             <thead><tr>
               <th onclick="sortBooks('title')">Title ↕</th>
               <th onclick="sortBooks('author')">Author ↕</th>
               <th>Genre</th>
               <th onclick="sortBooks('status')">Status ↕</th>
-              <th>Actions</th>
+              <th>Action</th>
             </tr></thead>
             <tbody id="tbody"></tbody>
             <tfoot><tr><td colspan="5" id="tfoot"></td></tr></tfoot>
           </table>
         </div>
-        <!-- GRID VIEW (NEW) -->
-        <div id="gridView" style="display:none;">
-          <div class="book-grid" id="bookGrid"></div>
-          <div style="background:#F4F6FA;font-size:11px;color:#6B7280;padding:8px 16px;border-top:1px solid #C8D0DC;" id="gridFoot"></div>
-        </div>
-      </div>
-      <div class="add-card" id="addCard" style="display:none;">
-        <div class="add-head">
-          <h3>➕ Add New Book</h3>
-          <button class="btn btn-xs" style="background:rgba(255,255,255,.2);color:#fff;border:none;" onclick="toggleForm()">✕ Cancel</button>
-        </div>
-        <div class="add-body">
-          <div class="frm-row">
-            <div><label class="lbl">Title <span class="req">*</span></label><input class="inp" id="fTitle" placeholder="Book title…"><div class="err-msg" id="eTitle">Required.</div></div>
-            <div><label class="lbl">Author <span class="req">*</span></label><input class="inp" id="fAuthor" placeholder="Author name…"><div class="err-msg" id="eAuthor">Required.</div></div>
-          </div>
-          <div class="frm-row">
-            <div><label class="lbl">Genre</label><select class="inp" id="fGenre"><option value="">Select…</option><option>Fiction</option><option>Non-Fiction</option><option>Sci-Fi</option><option>Dystopian</option><option>Mystery</option><option>Fantasy</option></select></div>
-            <div><label class="lbl">Status <span class="req">*</span></label><div class="radio-row"><label class="radio-item" onclick="setSt('Read')"><div class="rdot" id="rdR"></div><span>Read</span></label><label class="radio-item" onclick="setSt('To Read')"><div class="rdot on" id="rdT"></div><span>To Read</span></label></div></div>
-          </div>
-          <div class="frm-actions">
-            <button class="btn btn-ghost btn-sm" onclick="resetForm()">✕ Clear</button>
-            <button class="btn btn-success btn-sm" onclick="addBook()">✓ Add Book</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="det-head"><h3>📖 Book Details</h3><p>Click a row to see details</p></div>
-      <div class="det-body" id="detBody"><div class="no-sel">👆 Click any row<br>to see details here.</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════ STATISTICS PAGE ══════ -->
-<div class="page" id="page-stats">
-  <div style="display:inline-block;background:#2B4C8C;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:8px;letter-spacing:.4px;">Task 8 · Dendrograms, Charts &amp; Infographics</div>
-  <h1 style="font-size:22px;font-weight:800;color:#2B4C8C;margin-bottom:3px;letter-spacing:-.5px;">📊 Statistics &amp; Infographics</h1>
-  <p style="font-size:12px;color:#6B7280;margin-bottom:20px;">Live data visualisations — updates automatically when you add or remove books.</p>
-
-  <!-- Summary stats -->
-  <div class="sec">
-    <div class="sec-hd"><h2>📈 Reading Overview</h2><span class="sec-tag">Infographic · Live Data</span></div>
-    <div class="sec-bd">
-      <div class="sec-desc"><strong>Tidwell: Data Picture.</strong> Key numbers at a glance — updates live as you add/remove books.</div>
-      <div class="stat-strip">
-        <div class="stat-c"><div class="stat-n" style="color:#4A6FA5;" id="sTotal">10</div><div class="stat-l">Total Books</div></div>
-        <div class="stat-c"><div class="stat-n" style="color:#3BAF7A;" id="sRead">6</div><div class="stat-l">Read</div></div>
-        <div class="stat-c"><div class="stat-n" style="color:#F0A500;" id="sToRead">4</div><div class="stat-l">To Read</div></div>
-        <div class="stat-c"><div class="stat-n" style="color:#7b4cc0;" id="sPct">60%</div><div class="stat-l">Completion</div></div>
-      </div>
-      <div style="background:#F4F6FA;border:1.5px solid #C8D0DC;border-radius:10px;padding:14px 18px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-size:12px;font-weight:700;color:#2B4C8C;">Overall Reading Progress</span><span style="font-size:12px;font-weight:700;color:#3BAF7A;" id="sPctBar">60%</span></div>
-        <div style="width:100%;height:18px;background:#C8D0DC;border-radius:9px;overflow:hidden;position:relative;"><div style="height:100%;background:linear-gradient(90deg,#3BAF7A,#5dd49a);border-radius:9px;transition:width .5s;" id="sPctFill"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;font-weight:700;color:#fff;" id="sPctText">6 of 10 Read</div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="chart-2col">
-    <!-- DYNAMIC BAR CHART -->
-    <div class="sec">
-      <div class="sec-hd"><h2>📊 Books by Genre</h2><span class="sec-tag">Bar Chart · Live</span></div>
-      <div class="sec-bd">
-        <div class="sec-desc"><strong>Tidwell: Bar chart.</strong> Genre distribution — updates in real time when you add books.</div>
-        <div style="overflow:hidden;">
-          <svg id="barChartSvg" width="100%" height="230" viewBox="0 0 360 230">
-            <line x1="40" y1="15" x2="40" y2="190" stroke="#C8D0DC" stroke-width="1.5"/>
-            <line x1="40" y1="190" x2="350" y2="190" stroke="#C8D0DC" stroke-width="1.5"/>
-            <line x1="40" y1="140" x2="350" y2="140" stroke="#C8D0DC" stroke-width="1" stroke-dasharray="3,3"/>
-            <line x1="40" y1="90"  x2="350" y2="90"  stroke="#C8D0DC" stroke-width="1" stroke-dasharray="3,3"/>
-            <line x1="40" y1="40"  x2="350" y2="40"  stroke="#C8D0DC" stroke-width="1" stroke-dasharray="3,3"/>
-            <text x="32" y="194" font-size="9" fill="#6B7280" text-anchor="end" font-family="Outfit,sans-serif">0</text>
-            <text x="32" y="144" font-size="9" fill="#6B7280" text-anchor="end" font-family="Outfit,sans-serif" id="yLbl1">1</text>
-            <text x="32" y="94"  font-size="9" fill="#6B7280" text-anchor="end" font-family="Outfit,sans-serif" id="yLbl2">2</text>
-            <text x="32" y="44"  font-size="9" fill="#6B7280" text-anchor="end" font-family="Outfit,sans-serif" id="yLbl3">3</text>
-            <text x="195" y="12" font-size="11" font-weight="700" fill="#2B4C8C" text-anchor="middle" font-family="Outfit,sans-serif">Books by Genre</text>
-            <g id="barChartBars"></g>
-          </svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- DYNAMIC PIE CHART -->
-    <div class="sec">
-      <div class="sec-hd"><h2>🥧 Read vs To Read</h2><span class="sec-tag">Donut Chart · Live</span></div>
-      <div class="sec-bd">
-        <div class="sec-desc"><strong>Tidwell: Pie chart.</strong> Proportion of Read vs To Read — updates live.</div>
-        <div style="display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap;">
-          <svg id="donutSvg" width="160" height="160" viewBox="0 0 220 220">
-            <path id="arcRead" fill="none" stroke="#3BAF7A" stroke-width="34" stroke-linecap="round"/>
-            <path id="arcToRead" fill="none" stroke="#F0A500" stroke-width="34" stroke-linecap="round"/>
-            <text id="donutPct" x="110" y="103" font-size="26" font-weight="700" fill="#2B4C8C" text-anchor="middle" font-family="Outfit,sans-serif">60%</text>
-            <text x="110" y="122" font-size="11" fill="#6B7280" text-anchor="middle" font-family="Outfit,sans-serif">Read</text>
-          </svg>
-          <div class="legend" style="flex-direction:column;align-items:flex-start;">
-            <div class="leg-item"><div class="leg-dot" style="background:#3BAF7A"></div><span id="donutReadLbl">Read — 6 (60%)</span></div>
-            <div class="leg-item"><div class="leg-dot" style="background:#F0A500"></div><span id="donutToReadLbl">To Read — 4 (40%)</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- LINE CHART -->
-  <div class="sec">
-    <div class="sec-hd"><h2>📈 Books Added Over Time</h2><span class="sec-tag">Line Chart</span></div>
-    <div class="sec-bd">
-      <div class="sec-desc"><strong>Tidwell: Line chart.</strong> Monthly books added vs read — shows reading momentum over 2026.</div>
-      <div style="display:flex;justify-content:center;">
-        <svg width="100%" height="200" viewBox="0 0 580 200">
-          <line x1="50" y1="15" x2="50" y2="170" stroke="#C8D0DC" stroke-width="1.5"/>
-          <line x1="50" y1="170" x2="560" y2="170" stroke="#C8D0DC" stroke-width="1.5"/>
-          <line x1="50" y1="120" x2="560" y2="120" stroke="#C8D0DC" stroke-width="1" stroke-dasharray="3,3"/>
-          <line x1="50" y1="70"  x2="560" y2="70"  stroke="#C8D0DC" stroke-width="1" stroke-dasharray="3,3"/>
-          <line x1="50" y1="20"  x2="560" y2="20"  stroke="#C8D0DC" stroke-width="1" stroke-dasharray="3,3"/>
-          <text x="42" y="174" font-size="9" fill="#6B7280" text-anchor="end" font-family="Outfit,sans-serif">0</text>
-          <text x="42" y="124" font-size="9" fill="#6B7280" text-anchor="end" font-family="Outfit,sans-serif">1</text>
-          <text x="42" y="74"  font-size="9" fill="#6B7280" text-anchor="end" font-family="Outfit,sans-serif">2</text>
-          <text x="42" y="24"  font-size="9" fill="#6B7280" text-anchor="end" font-family="Outfit,sans-serif">3</text>
-          <text x="120" y="188" font-size="9" fill="#6B7280" text-anchor="middle" font-family="Outfit,sans-serif">Jan</text>
-          <text x="230" y="188" font-size="9" fill="#6B7280" text-anchor="middle" font-family="Outfit,sans-serif">Feb</text>
-          <text x="340" y="188" font-size="9" fill="#6B7280" text-anchor="middle" font-family="Outfit,sans-serif">Mar</text>
-          <text x="450" y="188" font-size="9" fill="#6B7280" text-anchor="middle" font-family="Outfit,sans-serif">Apr</text>
-          <text x="530" y="188" font-size="9" fill="#6B7280" text-anchor="middle" font-family="Outfit,sans-serif">May</text>
-          <polyline points="120,120 230,70 340,70 450,20 530,70" fill="none" stroke="#4A6FA5" stroke-width="2.5" stroke-linejoin="round"/>
-          <circle cx="120" cy="120" r="5" fill="#4A6FA5"/><circle cx="230" cy="70" r="5" fill="#4A6FA5"/>
-          <circle cx="340" cy="70" r="5" fill="#4A6FA5"/><circle cx="450" cy="20" r="5" fill="#4A6FA5"/>
-          <circle cx="530" cy="70" r="5" fill="#4A6FA5"/>
-          <polyline points="120,120 230,120 340,70 450,120 530,120" fill="none" stroke="#3BAF7A" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="6,3"/>
-          <circle cx="120" cy="120" r="5" fill="#3BAF7A"/><circle cx="230" cy="120" r="5" fill="#3BAF7A"/>
-          <circle cx="340" cy="70" r="5" fill="#3BAF7A"/><circle cx="450" cy="120" r="5" fill="#3BAF7A"/>
-          <circle cx="530" cy="120" r="5" fill="#3BAF7A"/>
-          <text x="290" y="10" font-size="11" font-weight="700" fill="#2B4C8C" text-anchor="middle" font-family="Outfit,sans-serif">Books Added &amp; Read per Month (2026)</text>
-        </svg>
-      </div>
-      <div class="legend"><div class="leg-item"><div class="leg-dot" style="background:#4A6FA5"></div>Books Added</div><div class="leg-item"><div class="leg-dot" style="background:#3BAF7A"></div>Books Read (dashed)</div></div>
-    </div>
-  </div>
-
-  <!-- DENDROGRAM -->
-  <div class="sec">
-    <div class="sec-hd"><h2>🌳 Book Category Dendrogram</h2><span class="sec-tag">Dendrogram · Tree Diagram</span></div>
-    <div class="sec-bd">
-      <div class="sec-desc"><strong>Tidwell: Dendrogram.</strong> Hierarchical grouping of books by reading status and genre.</div>
-      <div style="overflow-x:auto;">
-        <svg width="820" height="280" viewBox="0 0 820 280">
-          <rect x="340" y="8" width="140" height="32" rx="7" fill="#2B4C8C"/>
-          <text x="410" y="29" font-size="11" font-weight="700" fill="#fff" text-anchor="middle" font-family="Outfit,sans-serif">📚 My Books (10)</text>
-          <line x1="410" y1="40" x2="410" y2="56" stroke="#C8D0DC" stroke-width="1.5"/>
-          <line x1="160" y1="56" x2="660" y2="56" stroke="#C8D0DC" stroke-width="1.5"/>
-          <line x1="160" y1="56" x2="160" y2="72" stroke="#C8D0DC" stroke-width="1.5"/>
-          <line x1="410" y1="56" x2="410" y2="72" stroke="#C8D0DC" stroke-width="1.5"/>
-          <line x1="660" y1="56" x2="660" y2="72" stroke="#C8D0DC" stroke-width="1.5"/>
-          <rect x="90" y="72" width="140" height="28" rx="6" fill="#3BAF7A"/>
-          <text x="160" y="90" font-size="11" font-weight="700" fill="#fff" text-anchor="middle" font-family="Outfit,sans-serif">✓ Read (6)</text>
-          <rect x="340" y="72" width="140" height="28" rx="6" fill="#F0A500"/>
-          <text x="410" y="90" font-size="11" font-weight="700" fill="#fff" text-anchor="middle" font-family="Outfit,sans-serif">⏳ To Read (4)</text>
-          <rect x="590" y="72" width="140" height="28" rx="6" fill="#4A6FA5"/>
-          <text x="660" y="90" font-size="11" font-weight="700" fill="#fff" text-anchor="middle" font-family="Outfit,sans-serif">📂 By Genre (5)</text>
-          <line x1="160" y1="100" x2="160" y2="116" stroke="#C8D0DC" stroke-width="1.3"/>
-          <line x1="60" y1="116" x2="260" y2="116" stroke="#C8D0DC" stroke-width="1.3"/>
-          <line x1="60" y1="116" x2="60" y2="130" stroke="#C8D0DC" stroke-width="1.3"/>
-          <line x1="160" y1="116" x2="160" y2="130" stroke="#C8D0DC" stroke-width="1.3"/>
-          <line x1="260" y1="116" x2="260" y2="130" stroke="#C8D0DC" stroke-width="1.3"/>
-          <rect x="14" y="130" width="92" height="24" rx="5" fill="#e8eeff" stroke="#3d4cc0" stroke-width="1.2"/>
-          <text x="60" y="146" font-size="9" font-weight="700" fill="#3d4cc0" text-anchor="middle" font-family="Outfit,sans-serif">Fiction (3)</text>
-          <rect x="114" y="130" width="92" height="24" rx="5" fill="#f0e8ff" stroke="#6b35c0" stroke-width="1.2"/>
-          <text x="160" y="146" font-size="9" font-weight="700" fill="#6b35c0" text-anchor="middle" font-family="Outfit,sans-serif">Non-Fic (1)</text>
-          <rect x="214" y="130" width="92" height="24" rx="5" fill="#e8fff2" stroke="#1d6b47" stroke-width="1.2"/>
-          <text x="260" y="146" font-size="9" font-weight="700" fill="#1d6b47" text-anchor="middle" font-family="Outfit,sans-serif">Mystery (1)</text>
-          <line x1="60" y1="154" x2="60" y2="168" stroke="#C8D0DC" stroke-width="1.2"/>
-          <line x1="28" y1="168" x2="92" y2="168" stroke="#C8D0DC" stroke-width="1.2"/>
-          <line x1="28" y1="168" x2="28" y2="178" stroke="#C8D0DC" stroke-width="1.2"/>
-          <line x1="60" y1="168" x2="60" y2="178" stroke="#C8D0DC" stroke-width="1.2"/>
-          <line x1="92" y1="168" x2="92" y2="178" stroke="#C8D0DC" stroke-width="1.2"/>
-          <rect x="8" y="178" width="40" height="20" rx="3" fill="#2B4C8C"/>
-          <text x="28" y="192" fill="#fff" font-size="8" text-anchor="middle" font-family="Outfit,sans-serif">Gatsby</text>
-          <rect x="40" y="178" width="42" height="20" rx="3" fill="#2B4C8C"/>
-          <text x="61" y="192" fill="#fff" font-size="8" text-anchor="middle" font-family="Outfit,sans-serif">Mocking.</text>
-          <rect x="72" y="178" width="42" height="20" rx="3" fill="#2B4C8C"/>
-          <text x="93" y="192" fill="#fff" font-size="8" text-anchor="middle" font-family="Outfit,sans-serif">NameWind</text>
-          <line x1="410" y1="100" x2="410" y2="116" stroke="#C8D0DC" stroke-width="1.3"/>
-          <line x1="360" y1="116" x2="460" y2="116" stroke="#C8D0DC" stroke-width="1.3"/>
-          <line x1="360" y1="116" x2="360" y2="130" stroke="#C8D0DC" stroke-width="1.3"/>
-          <line x1="460" y1="116" x2="460" y2="130" stroke="#C8D0DC" stroke-width="1.3"/>
-          <rect x="314" y="130" width="92" height="24" rx="5" fill="#eef4ff" stroke="#2563b0" stroke-width="1.2"/>
-          <text x="360" y="146" font-size="9" font-weight="700" fill="#2563b0" text-anchor="middle" font-family="Outfit,sans-serif">Sci-Fi (1)</text>
-          <rect x="414" y="130" width="92" height="24" rx="5" fill="#fff0e8" stroke="#c05a20" stroke-width="1.2"/>
-          <text x="460" y="146" font-size="9" font-weight="700" fill="#c05a20" text-anchor="middle" font-family="Outfit,sans-serif">Dystopian (2)</text>
-          <line x1="360" y1="154" x2="360" y2="170" stroke="#C8D0DC" stroke-width="1.2"/>
-          <rect x="338" y="170" width="44" height="20" rx="3" fill="#4A6FA5"/>
-          <text x="360" y="184" fill="#fff" font-size="8" text-anchor="middle" font-family="Outfit,sans-serif">Dune</text>
-          <line x1="460" y1="154" x2="460" y2="168" stroke="#C8D0DC" stroke-width="1.2"/>
-          <line x1="440" y1="168" x2="480" y2="168" stroke="#C8D0DC" stroke-width="1.2"/>
-          <line x1="440" y1="168" x2="440" y2="178" stroke="#C8D0DC" stroke-width="1.2"/>
-          <line x1="480" y1="168" x2="480" y2="178" stroke="#C8D0DC" stroke-width="1.2"/>
-          <rect x="420" y="178" width="42" height="20" rx="3" fill="#c05a20"/>
-          <text x="441" y="192" fill="#fff" font-size="8" text-anchor="middle" font-family="Outfit,sans-serif">1984</text>
-          <rect x="460" y="178" width="44" height="20" rx="3" fill="#c05a20"/>
-          <text x="482" y="192" fill="#fff" font-size="8" text-anchor="middle" font-family="Outfit,sans-serif">BraveNew</text>
-          <line x1="660" y1="100" x2="660" y2="116" stroke="#C8D0DC" stroke-width="1.3"/>
-          <line x1="580" y1="116" x2="740" y2="116" stroke="#C8D0DC" stroke-width="1.3"/>
-          <line x1="580" y1="116" x2="580" y2="130" stroke="#C8D0DC" stroke-width="1.3"/>
-          <line x1="660" y1="116" x2="660" y2="130" stroke="#C8D0DC" stroke-width="1.3"/>
-          <line x1="740" y1="116" x2="740" y2="130" stroke="#C8D0DC" stroke-width="1.3"/>
-          <rect x="534" y="130" width="92" height="24" rx="5" fill="#fdeaea" stroke="#D94F4F" stroke-width="1.2"/>
-          <text x="580" y="146" font-size="9" font-weight="700" fill="#D94F4F" text-anchor="middle" font-family="Outfit,sans-serif">Sapiens</text>
-          <rect x="614" y="130" width="92" height="24" rx="5" fill="#e8fff2" stroke="#1d6b47" stroke-width="1.2"/>
-          <text x="660" y="146" font-size="9" font-weight="700" fill="#1d6b47" text-anchor="middle" font-family="Outfit,sans-serif">Gone Girl</text>
-          <rect x="694" y="130" width="92" height="24" rx="5" fill="#E8EFF8" stroke="#4A6FA5" stroke-width="1.2"/>
-          <text x="740" y="146" font-size="9" font-weight="700" fill="#2B4C8C" text-anchor="middle" font-family="Outfit,sans-serif">Atomic Habits</text>
-          <text x="410" y="265" font-size="11" font-weight="700" fill="#2B4C8C" text-anchor="middle" font-family="Outfit,sans-serif">BookList — Hierarchical Category Dendrogram (10 books)</text>
-        </svg>
-      </div>
-    </div>
-  </div>
-
-  <div class="chart-2col">
-    <div class="sec">
-      <div class="sec-hd"><h2>📊 Status by Genre</h2><span class="sec-tag">Stacked Bar</span></div>
-      <div class="sec-bd">
-        <svg width="100%" height="200" viewBox="0 0 340 200">
-          <line x1="40" y1="15" x2="40" y2="170" stroke="#C8D0DC" stroke-width="1.5"/>
-          <line x1="40" y1="170" x2="330" y2="170" stroke="#C8D0DC" stroke-width="1.5"/>
-          <line x1="40" y1="120" x2="330" y2="120" stroke="#C8D0DC" stroke-width="1" stroke-dasharray="3,3"/>
-          <line x1="40" y1="70"  x2="330" y2="70"  stroke="#C8D0DC" stroke-width="1" stroke-dasharray="3,3"/>
-          <rect x="50" y="70" width="36" height="100" fill="#3BAF7A" opacity=".85"/>
-          <rect x="50" y="46" width="36" height="24" rx="4 4 0 0" fill="#F0A500" opacity=".85"/>
-          <text x="68" y="190" font-size="8.5" fill="#6B7280" text-anchor="middle" font-family="Outfit,sans-serif">Fiction</text>
-          <rect x="100" y="120" width="36" height="50" fill="#3BAF7A" opacity=".85"/>
-          <rect x="100" y="96" width="36" height="24" rx="4 4 0 0" fill="#F0A500" opacity=".85"/>
-          <text x="118" y="190" font-size="8.5" fill="#6B7280" text-anchor="middle" font-family="Outfit,sans-serif">Sci-Fi</text>
-          <rect x="150" y="70" width="36" height="100" rx="4" fill="#3BAF7A" opacity=".85"/>
-          <text x="168" y="190" font-size="8.5" fill="#6B7280" text-anchor="middle" font-family="Outfit,sans-serif">N-Fic</text>
-          <rect x="200" y="70" width="36" height="100" rx="4" fill="#F0A500" opacity=".85"/>
-          <text x="218" y="190" font-size="8.5" fill="#6B7280" text-anchor="middle" font-family="Outfit,sans-serif">Dyst.</text>
-          <rect x="250" y="120" width="36" height="50" rx="4" fill="#3BAF7A" opacity=".85"/>
-          <text x="268" y="190" font-size="8.5" fill="#6B7280" text-anchor="middle" font-family="Outfit,sans-serif">Mystery</text>
-          <text x="185" y="10" font-size="11" font-weight="700" fill="#2B4C8C" text-anchor="middle" font-family="Outfit,sans-serif">Status by Genre</text>
-        </svg>
-        <div class="legend"><div class="leg-item"><div class="leg-rect" style="background:#3BAF7A"></div>Read</div><div class="leg-item"><div class="leg-rect" style="background:#F0A500"></div>To Read</div></div>
-      </div>
-    </div>
-    <div class="sec">
-      <div class="sec-hd"><h2>✨ Sparklines</h2><span class="sec-tag">Inline Trend Charts · Live</span></div>
-      <div class="sec-bd">
-        <div style="display:flex;flex-direction:column;gap:12px;">
-          <div style="background:#F4F6FA;border:1.5px solid #C8D0DC;border-radius:9px;padding:12px;">
-            <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px;">Total Books</div>
-            <div style="font-size:22px;font-weight:800;color:#4A6FA5;" id="spTotal">10 <span style="font-size:11px;color:#3BAF7A;">↑</span></div>
-            <svg width="100%" height="30" viewBox="0 0 140 30"><polyline points="5,26 33,18 61,18 89,5 117,18 135,18" fill="none" stroke="#4A6FA5" stroke-width="2" stroke-linejoin="round"/><circle cx="89" cy="5" r="3" fill="#4A6FA5"/></svg>
-          </div>
-          <div style="background:#F4F6FA;border:1.5px solid #C8D0DC;border-radius:9px;padding:12px;">
-            <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px;">Books Read</div>
-            <div style="font-size:22px;font-weight:800;color:#3BAF7A;" id="spRead">6 <span style="font-size:11px;color:#3BAF7A;">↑</span></div>
-            <svg width="100%" height="30" viewBox="0 0 140 30"><polyline points="5,26 33,26 61,12 89,26 117,26 135,20" fill="none" stroke="#3BAF7A" stroke-width="2" stroke-linejoin="round"/><circle cx="61" cy="12" r="3" fill="#3BAF7A"/></svg>
-          </div>
-          <div style="background:#F4F6FA;border:1.5px solid #C8D0DC;border-radius:9px;padding:12px;">
-            <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px;">Completion Rate</div>
-            <div style="font-size:22px;font-weight:800;color:#7b4cc0;" id="spPct">60% <span style="font-size:11px;color:#3BAF7A;">↑</span></div>
-            <svg width="100%" height="30" viewBox="0 0 140 30"><polyline points="5,28 33,22 61,16 89,10 117,6 135,3" fill="none" stroke="#7b4cc0" stroke-width="2" stroke-linejoin="round"/><circle cx="135" cy="3" r="3" fill="#7b4cc0"/></svg>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════ FORMS PAGE ══════ -->
-<div class="page" id="page-forms">
-  <div style="display:inline-block;background:#2B4C8C;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:8px;letter-spacing:.4px;">Task 9 · Data Input Forms &amp; Controls — Ch.8 Tidwell</div>
-  <h1 style="font-size:22px;font-weight:800;color:#2B4C8C;margin-bottom:3px;letter-spacing:-.5px;">📝 Data Input Forms &amp; Controls</h1>
-  <p style="font-size:12px;color:#6B7280;margin-bottom:22px;">All forms match the BookList UI theme. Every field is validated on submit. Based on Tidwell Ch.8.</p>
-
-  <!-- Form 1: Login -->
-  <div class="fsec">
-    <div class="fsec-hd"><h2>🔐 Form 1 — Login / Sign In</h2><span class="fsec-tag">Authentication Form</span></div>
-    <div class="fsec-bd">
-      <div class="fdesc"><strong>Tidwell Ch.8: Login form.</strong> Email + password with show/hide toggle, "Remember me" checkbox, forgot password link. Inline validation on submit.</div>
-      <div style="max-width:420px;margin:0 auto;">
-        <div class="fcard">
-          <div class="fcard-hd" style="background:linear-gradient(135deg,#2B4C8C,#1e3a6e);"><h3>Welcome back 👋</h3><p>Sign in to your BookList account</p></div>
-          <div class="fbody">
-            <div class="ffull"><label class="flbl">Email Address <span class="freq">*</span></label><input class="finp" id="lEmail" type="email" placeholder="student@email.com" oninput="fvEmail('lEmail','lEmailMsg')"><div class="fmsg err" id="lEmailMsg">⚠ Please enter a valid email address.</div></div>
-            <div class="ffull"><label class="flbl">Password <span class="freq">*</span></label><div class="pw-w"><input class="finp" id="lPw" type="password" placeholder="Enter your password…" oninput="fvReq('lPw','lPwMsg','Password is required.')"><button class="pw-tog" onclick="ftgPw('lPw',this)" type="button">👁</button></div><div class="fmsg err" id="lPwMsg"></div></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-              <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;"><span class="chk" id="chRem" onclick="ftgChk('chRem')"></span> Remember me</label>
-              <a href="#" style="font-size:12px;color:#4A6FA5;text-decoration:none;font-weight:600;" onclick="event.preventDefault();toast('Password reset email sent','info')">Forgot password?</a>
+        <div class="add-card" id="addCard" style="display:none;">
+          <div class="add-head"><h3>➕ Add New Book</h3><button class="ibtn" style="background:rgba(255,255,255,.2);color:#fff;border:none;font-size:11px;padding:4px 9px;" onclick="toggleForm()">✕ Cancel</button></div>
+          <div class="add-body">
+            <div class="frm-row">
+              <div><label class="flbl">Title <span class="req">*</span></label><input class="finp" id="fTitle" placeholder="Book title…"><div class="ferr" id="eTitle">Required.</div></div>
+              <div><label class="flbl">Author <span class="req">*</span></label><input class="finp" id="fAuthor" placeholder="Author name…"><div class="ferr" id="eAuthor">Required.</div></div>
             </div>
-            <div style="display:flex;gap:9px;"><button class="fbtn fbtn-g fbtn-sm" style="flex:1;justify-content:center;" onclick="['lEmail','lPw'].forEach(id=>{document.getElementById(id).value='';document.getElementById(id).style.borderColor='#C8D0DC';})">Clear</button><button class="fbtn fbtn-p" style="flex:2;justify-content:center;" onclick="fSubmitLogin()">🔐 Sign In</button></div>
-            <div class="fdivider"><span>or continue with</span></div>
-            <button class="fbtn fbtn-g fbtn-sm" style="width:100%;justify-content:center;" onclick="toast('Google sign-in (demo)','info')">🌐 Continue with Google</button>
+            <div class="frm-row">
+              <div><label class="flbl">Genre</label><select class="finp" id="fGenre"><option value="">Select…</option><option>Fiction</option><option>Non-Fiction</option><option>Sci-Fi</option><option>Dystopian</option><option>Mystery</option><option>Fantasy</option></select></div>
+              <div><label class="flbl">Status <span class="req">*</span></label><div class="radio-row"><label class="radio-item" onclick="setSt('Read')"><div class="rdot" id="rdR"></div><span>Read</span></label><label class="radio-item" onclick="setSt('To Read')"><div class="rdot on" id="rdT"></div><span>To Read</span></label></div></div>
+            </div>
+            <div class="frm-actions">
+              <button class="ibtn ibtn-ghost" onclick="resetForm()">✕ Clear</button>
+              <button class="ibtn ibtn-success" onclick="addBook()">✓ Add Book</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="det-head"><h3>📖 Book Details</h3><p>Click a row to see details</p></div>
+        <div class="det-body" id="detBody"><div class="no-sel">👆 Click any row<br>to see details here.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATISTICS PAGE -->
+  <div class="page" id="page-stats">
+    <h1 class="page-title">📊 Statistics</h1>
+    <p class="page-sub">Your reading data at a glance.</p>
+    <div class="stat-strip">
+      <div class="stat-c"><div class="stat-n" style="color:#4A6FA5;" id="sTotal">0</div><div class="stat-l">Total</div></div>
+      <div class="stat-c"><div class="stat-n" style="color:#3BAF7A;" id="sRead">0</div><div class="stat-l">Read</div></div>
+      <div class="stat-c"><div class="stat-n" style="color:#F0A500;" id="sToRead">0</div><div class="stat-l">To Read</div></div>
+      <div class="stat-c"><div class="stat-n" style="color:#7b4cc0;" id="sPct">0%</div><div class="stat-l">Completion</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <!-- Bar chart -->
+      <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px;">
+        <div style="font-size:13px;font-weight:700;color:#2B4C8C;margin-bottom:14px;">Books by Genre</div>
+        <div id="genreChart" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+      <!-- Donut chart -->
+      <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px;">
+        <div style="font-size:13px;font-weight:700;color:#2B4C8C;margin-bottom:14px;">Read vs To Read</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;">
+          <svg width="130" height="130" viewBox="0 0 220 220">
+            <text x="110" y="103" font-size="26" font-weight="700" fill="#2B4C8C" text-anchor="middle" font-family="sans-serif" id="donutPct">0%</text>
+            <text x="110" y="122" font-size="11" fill="#6B7280" text-anchor="middle" font-family="sans-serif">Read</text>
+            <path id="donutRead" d="M110,20 A90,90 0 0,1 110,20" fill="none" stroke="#3BAF7A" stroke-width="34" stroke-linecap="round"/>
+            <path id="donutToRead" d="M110,20 A90,90 0 1,0 110,20" fill="none" stroke="#F0A500" stroke-width="34" stroke-linecap="round"/>
+          </svg>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:7px;font-size:12px;"><div style="width:10px;height:10px;border-radius:50%;background:#3BAF7A;flex-shrink:0;"></div><span id="lgRead">Read — 0</span></div>
+            <div style="display:flex;align-items:center;gap:7px;font-size:12px;"><div style="width:10px;height:10px;border-radius:50%;background:#F0A500;flex-shrink:0;"></div><span id="lgToRead">To Read — 0</span></div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Form 2: Registration -->
-  <div class="fsec">
-    <div class="fsec-hd"><h2>📋 Form 2 — Registration</h2><span class="fsec-tag">Multi-field · Password Strength · Validation</span></div>
-    <div class="fsec-bd">
-      <div class="fdesc"><strong>Tidwell Ch.8: Registration form.</strong> Password strength meter, confirm password matching, genre checkboxes, notification toggle switches, terms agreement.</div>
-      <div class="fcard">
-        <div class="fcard-hd" style="background:linear-gradient(135deg,#4A6FA5,#2B4C8C);"><h3>Create Account ✨</h3><p>Join BookList and start tracking your reading</p></div>
-        <div class="fbody">
-          <div class="frow">
-            <div class="fgrp"><label class="flbl">First Name <span class="freq">*</span></label><input class="finp" id="rFirst" type="text" placeholder="Anna" oninput="fvReq('rFirst','rFirstMsg','First name required.')"><div class="fmsg err" id="rFirstMsg"></div></div>
-            <div class="fgrp"><label class="flbl">Last Name <span class="freq">*</span></label><input class="finp" id="rLast" type="text" placeholder="Smith" oninput="fvReq('rLast','rLastMsg','Last name required.')"><div class="fmsg err" id="rLastMsg"></div></div>
+  <!-- SETTINGS PAGE -->
+  <div class="page" id="page-settings">
+    <h1 class="page-title">⚙️ Settings</h1>
+    <p class="page-sub">Manage your profile and preferences.</p>
+
+    <div class="settings-section">
+      <div class="settings-card">
+        <div class="avatar-row">
+          <div class="big-avatar" id="settingsAvatar">A</div>
+          <div class="avatar-info">
+            <div class="avatar-name" id="settingsName">User</div>
+            <div class="avatar-email" id="settingsEmail">user@email.com</div>
           </div>
-          <div class="ffull"><label class="flbl">Email <span class="freq">*</span></label><input class="finp" id="rEmail" type="email" placeholder="anna@student.edu" oninput="fvEmail('rEmail','rEmailMsg')"><div class="fmsg err" id="rEmailMsg">⚠ Invalid email.</div></div>
-          <div class="frow">
-            <div class="fgrp"><label class="flbl">Password <span class="freq">*</span></label><div class="pw-w"><input class="finp" id="rPw" type="password" placeholder="Min. 8 characters…" oninput="fchStr();fchMatch()"><button class="pw-tog" onclick="ftgPw('rPw',this)" type="button">👁</button></div><div class="str-track"><div class="str-fill" id="strFill"></div></div><span id="strLbl" style="font-size:10.5px;font-weight:600;color:#6B7280;">Enter a password</span></div>
-            <div class="fgrp"><label class="flbl">Confirm Password <span class="freq">*</span></label><div class="pw-w"><input class="finp" id="rPw2" type="password" placeholder="Repeat password…" oninput="fchMatch()"><button class="pw-tog" onclick="ftgPw('rPw2',this)" type="button">👁</button></div><div class="fmsg" id="matchMsg"></div></div>
-          </div>
-          <div class="frow">
-            <div class="fgrp"><label class="flbl">Reading Goal (books/year)</label><input class="finp" id="rGoal" type="number" min="1" max="365" placeholder="e.g. 20" oninput="fvNum('rGoal','rGoalMsg',1,365)"><div class="fmsg err" id="rGoalMsg"></div><div class="fhint">Between 1 and 365.</div></div>
-            <div class="fgrp"><label class="flbl">Language</label><select class="fsel" id="rLang"><option value="">Select…</option><option>English</option><option>Polish</option><option>German</option><option>French</option></select></div>
-          </div>
-          <div class="ffull"><label class="flbl">Favourite Genres</label><div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:4px;"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;"><span class="chk" id="gF" onclick="ftgChk('gF')"></span>Fiction</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;"><span class="chk" id="gN" onclick="ftgChk('gN')"></span>Non-Fiction</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;"><span class="chk on" id="gM" style="background:#4A6FA5;border-color:#4A6FA5;color:#fff;" onclick="ftgChk('gM')">✓</span>Mystery</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;"><span class="chk" id="gS" onclick="ftgChk('gS')"></span>Sci-Fi</label></div></div>
-          <div class="ffull"><label class="flbl">Notifications</label><div style="display:flex;flex-direction:column;gap:10px;"><div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;"><div class="sw-track on" id="sw1" onclick="ftgSw('sw1','swL1')"><div class="sthumb"></div></div><span id="swL1">Email notifications: <strong>On</strong></span></div><div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;"><div class="sw-track" id="sw2" onclick="ftgSw('sw2','swL2')"><div class="sthumb"></div></div><span id="swL2">Weekly summary: <strong>Off</strong></span></div></div></div>
-          <div class="ffull"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:500;"><span class="chk" id="chTerms" onclick="ftgChk('chTerms');document.getElementById('termsMsg').style.display='none'"></span>I agree to the <a href="#" style="color:#4A6FA5;font-weight:600;" onclick="event.preventDefault()">Terms of Service</a> <span class="freq">*</span></label><div class="fmsg err" id="termsMsg">⚠ You must accept the terms.</div></div>
-          <div class="faction"><button class="fbtn fbtn-g fbtn-sm" onclick="['rFirst','rLast','rEmail','rPw','rPw2','rGoal'].forEach(id=>{document.getElementById(id).value='';document.getElementById(id).style.borderColor='#C8D0DC';})">✕ Clear</button><button class="fbtn fbtn-s" onclick="fSubmitReg()">✓ Create Account</button></div>
         </div>
+        <div class="settings-title">👤 Profile Information</div>
+        <div class="set-row">
+          <div><label class="flbl">First Name</label><input class="finp" id="setFirst" type="text" placeholder="First name…"></div>
+          <div><label class="flbl">Last Name</label><input class="finp" id="setLast" type="text" placeholder="Last name…"></div>
+        </div>
+        <div class="set-row">
+          <div><label class="flbl">Email Address</label><input class="finp" id="setEmail" type="email" placeholder="your@email.com"></div>
+          <div><label class="flbl">Reading Goal (books/year)</label><input class="finp" id="setGoal" type="number" min="1" max="365" placeholder="e.g. 20"></div>
+        </div>
+        <div style="display:flex;gap:9px;margin-top:4px;">
+          <button class="ibtn ibtn-primary" onclick="saveSettings()">💾 Save Changes</button>
+          <button class="ibtn ibtn-ghost" onclick="cancelSettings()">✕ Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-card">
+        <div class="settings-title">🔔 Notifications</div>
+        <div class="sw-wrap"><span class="sw-label">Email reminders</span><div class="sw-track on" id="sw1" onclick="toggleSw('sw1')"><div class="sw-thumb"></div></div></div>
+        <div class="sw-wrap"><span class="sw-label">Weekly reading summary</span><div class="sw-track on" id="sw2" onclick="toggleSw('sw2')"><div class="sw-thumb"></div></div></div>
+        <div class="sw-wrap"><span class="sw-label">New feature announcements</span><div class="sw-track" id="sw3" onclick="toggleSw('sw3')"><div class="sw-thumb"></div></div></div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-card">
+        <div class="settings-title" style="color:#D94F4F;border-color:#D94F4F;">⚠️ Account</div>
+        <button class="ibtn ibtn-danger" style="margin-right:10px;" onclick="doLogout()">🚪 Log Out</button>
+        <button class="ibtn ibtn-ghost" style="color:#D94F4F;border-color:#D94F4F;" onclick="toast('Delete account — demo only','error')">🗑️ Delete Account</button>
       </div>
     </div>
   </div>
 
-  <!-- Form 3: Add Book -->
-  <div class="fsec">
-    <div class="fsec-hd"><h2>➕ Form 3 — Add Book (Main App Form)</h2><span class="fsec-tag">Data Entry · Char Counter · Validation</span></div>
-    <div class="fsec-bd">
-      <div class="fdesc"><strong>Tidwell Ch.8: Data entry form.</strong> Add a book with title, author, genre dropdown, status radio buttons, personal notes textarea with character counter.</div>
-      <div class="fcard">
-        <div class="fcard-hd" style="background:linear-gradient(135deg,#3BAF7A,#2d9668);"><h3>➕ Add New Book</h3><p>Fill in the details and click Add Book.</p></div>
-        <div class="fbody">
-          <div class="frow">
-            <div class="fgrp"><label class="flbl">Book Title <span class="freq">*</span></label><input class="finp" id="bkTitle" type="text" placeholder="e.g. The Great Gatsby" oninput="fvReq('bkTitle','bkTitleMsg','Title is required.')"><div class="fmsg err" id="bkTitleMsg"></div></div>
-            <div class="fgrp"><label class="flbl">Author <span class="freq">*</span></label><input class="finp" id="bkAuthor" type="text" placeholder="e.g. F. Scott Fitzgerald" oninput="fvReq('bkAuthor','bkAuthorMsg','Author is required.')"><div class="fmsg err" id="bkAuthorMsg"></div></div>
-          </div>
-          <div class="frow">
-            <div class="fgrp"><label class="flbl">Genre</label><select class="fsel" id="bkGenre"><option value="">Select genre…</option><option>Fiction</option><option>Non-Fiction</option><option>Sci-Fi</option><option>Dystopian</option><option>Mystery</option><option>Fantasy</option></select><div class="fhint">Optional.</div></div>
-            <div class="fgrp"><label class="flbl">Reading Status <span class="freq">*</span></label><div style="display:flex;gap:14px;margin-top:8px;"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:500;" onclick="fbkSt('Read')"><div class="rdot2" id="bkRd"></div><span>✓ Read</span></label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:500;" onclick="fbkSt('To Read')"><div class="rdot2 on" id="bkTr"></div><span>⏳ To Read</span></label></div></div>
-          </div>
-          <div class="ffull"><label class="flbl">Personal Notes</label><textarea class="fta" id="bkNotes" placeholder="Your thoughts, rating…" maxlength="300" oninput="fchCount()"></textarea><div style="display:flex;justify-content:space-between;margin-top:3px;"><span class="fhint">Optional. Max 300 chars.</span><span id="notesCount" style="font-size:10px;color:#6B7280;font-weight:600;">0 / 300</span></div></div>
-          <div class="faction"><button class="fbtn fbtn-g fbtn-sm" onclick="fbkReset()">✕ Clear</button><button class="fbtn fbtn-s" onclick="fSubmitBook()">✓ Add Book</button></div>
-          <div id="bookAdded" style="display:none;" class="suc-ban"><span style="font-size:22px;">🎉</span><div><div style="font-size:13px;font-weight:700;color:#1d6b47;" id="bookAddedMsg">Book added!</div><div style="font-size:11px;color:#2d8f5a;">Added to your reading list.</div></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <footer>BookList App · Student Reading Tracker · 2026</footer>
+</div>
 
-  <!-- Form 4: Search & Filter -->
-  <div class="fsec">
-    <div class="fsec-hd"><h2>🔍 Form 4 — Search &amp; Filter Controls</h2><span class="fsec-tag">Live Search · Filter Dropdowns</span></div>
-    <div class="fsec-bd">
-      <div class="fdesc"><strong>Tidwell Ch.8: Search/filter form.</strong> Live search input + dropdowns. Results update instantly as you type or change any control.</div>
-      <div class="fcard" style="background:#fff;">
-        <div style="padding:12px 16px;background:#F4F6FA;border-bottom:1.5px solid #C8D0DC;display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
-          <div style="position:relative;flex:1;min-width:160px;"><span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:#6B7280;pointer-events:none;">🔍</span><input class="finp" id="sfQ" type="text" placeholder="Search by title or author…" style="padding-left:28px;" oninput="fFilter()"></div>
-          <select class="fsel" id="sfSt" style="width:140px;" onchange="fFilter()"><option value="">All Statuses</option><option value="Read">✓ Read</option><option value="To Read">⏳ To Read</option></select>
-          <select class="fsel" id="sfGn" style="width:130px;" onchange="fFilter()"><option value="">All Genres</option><option>Fiction</option><option>Non-Fiction</option><option>Sci-Fi</option><option>Dystopian</option><option>Mystery</option></select>
-          <button class="fbtn fbtn-g fbtn-sm" onclick="['sfQ','sfSt','sfGn'].forEach(id=>document.getElementById(id).value='');fFilter()">✕ Clear</button>
-          <span style="background:#E8EFF8;color:#2B4C8C;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;" id="sfCnt">8 books</span>
-        </div>
-        <table style="width:100%;border-collapse:collapse;"><thead style="background:#2B4C8C;"><tr><th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:#fff;letter-spacing:.3px;">Title</th><th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:#fff;letter-spacing:.3px;">Author</th><th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:#fff;letter-spacing:.3px;">Genre</th><th style="padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:#fff;letter-spacing:.3px;">Status</th></tr></thead><tbody id="sfBody"></tbody></table>
-      </div>
-    </div>
-  </div>
-
-  <!-- Form 5: Settings -->
-  <div class="fsec">
-    <div class="fsec-hd"><h2>⚙️ Form 5 — Profile &amp; Settings</h2><span class="fsec-tag">Settings · Toggle Switches · Danger Zone</span></div>
-    <div class="fsec-bd">
-      <div class="fdesc"><strong>Tidwell Ch.8: Settings form.</strong> Edit name, email, reading goal, language, notification toggles, privacy checkboxes, and danger zone delete button.</div>
-      <div class="fcard">
-        <div class="fcard-hd" style="background:linear-gradient(135deg,#4A6FA5,#2B4C8C);"><h3>⚙️ Account Settings</h3><p>Manage your profile and preferences</p></div>
-        <div class="fbody">
-          <div style="font-size:12px;font-weight:700;color:#2B4C8C;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid #C8D0DC;padding-bottom:8px;margin-bottom:14px;">👤 Profile</div>
-          <div class="frow">
-            <div class="fgrp"><label class="flbl">Display Name</label><input class="finp" id="setName" type="text" value="Anna Smith"></div>
-            <div class="fgrp"><label class="flbl">Email <span class="freq">*</span></label><input class="finp" id="setEmail" type="email" value="anna@student.edu" oninput="fvEmail('setEmail','setEmailMsg')"><div class="fmsg err" id="setEmailMsg">⚠ Invalid email.</div></div>
-          </div>
-          <div class="frow">
-            <div class="fgrp"><label class="flbl">Reading Goal (books/year)</label><input class="finp" id="setGoal" type="number" min="1" max="365" value="20" oninput="fvNum('setGoal','setGoalMsg',1,365)"><div class="fmsg err" id="setGoalMsg"></div></div>
-            <div class="fgrp"><label class="flbl">Language</label><select class="fsel"><option selected>English</option><option>Polish</option><option>German</option></select></div>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:#2B4C8C;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid #C8D0DC;padding-bottom:8px;margin-bottom:14px;margin-top:6px;">🔔 Notifications</div>
-          <div style="display:flex;flex-direction:column;gap:11px;margin-bottom:16px;">
-            <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;"><div class="sw-track on" id="nsw1" onclick="ftgSw('nsw1','nswL1')"><div class="sthumb"></div></div><span id="nswL1">Email reminders: <strong>On</strong></span></div>
-            <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;"><div class="sw-track on" id="nsw2" onclick="ftgSw('nsw2','nswL2')"><div class="sthumb"></div></div><span id="nswL2">Weekly summary: <strong>On</strong></span></div>
-            <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;"><div class="sw-track" id="nsw3" onclick="ftgSw('nsw3','nswL3')"><div class="sthumb"></div></div><span id="nswL3">New features: <strong>Off</strong></span></div>
-          </div>
-          <div class="faction"><button class="fbtn fbtn-g fbtn-sm" onclick="toast('Changes discarded','info')">Discard</button><button class="fbtn fbtn-p" onclick="fSubmitSettings()">💾 Save Settings</button></div>
-          <div style="margin-top:18px;padding:14px;background:#FDEAEA;border:1.5px solid #D94F4F;border-radius:9px;"><div style="font-size:12.5px;font-weight:700;color:#D94F4F;margin-bottom:6px;">⚠️ Danger Zone</div><div style="font-size:12px;color:#D94F4F;margin-bottom:10px;">Deleting your account is permanent. All data will be lost.</div><button class="fbtn fbtn-d fbtn-sm" onclick="toast('Confirmation required — demo only','error')">🗑️ Delete Account</button></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Form 6: Wizard -->
-  <div class="fsec">
-    <div class="fsec-hd"><h2>🪄 Form 6 — Multi-Step Wizard</h2><span class="fsec-tag">Wizard · Progress Indicator · Step-by-Step</span></div>
-    <div class="fsec-bd">
-      <div class="fdesc"><strong>Tidwell Ch.8: Wizard / multi-step form.</strong> 3 focused steps with animated progress indicator. Each step validates before proceeding.</div>
-      <div class="fcard">
-        <div class="fcard-hd" style="background:linear-gradient(135deg,#7b4cc0,#5a2ea0);"><h3>🪄 Add Book Wizard</h3><p>3-step guided book entry with validation</p></div>
-        <div class="fbody">
-          <div class="steps">
-            <div style="display:flex;align-items:center;gap:7px;flex:1;"><div class="sc" id="wc1" style="background:#4A6FA5;">1</div><span class="sl" id="wl1" style="color:#2B4C8C;">Book Info</span><div class="sline" id="wline1"></div></div>
-            <div style="display:flex;align-items:center;gap:7px;flex:1;"><div class="sc" id="wc2" style="background:#C8D0DC;">2</div><span class="sl" id="wl2" style="color:#6B7280;">Details</span><div class="sline" id="wline2"></div></div>
-            <div style="display:flex;align-items:center;gap:7px;"><div class="sc" id="wc3" style="background:#C8D0DC;">3</div><span class="sl" id="wl3" style="color:#6B7280;">Confirm</span></div>
-          </div>
-          <div id="wStep1"><div class="frow"><div class="fgrp"><label class="flbl">Book Title <span class="freq">*</span></label><input class="finp" id="w1T" type="text" placeholder="Enter title…" oninput="fvReq('w1T','w1TMsg','Title required.')"><div class="fmsg err" id="w1TMsg"></div></div><div class="fgrp"><label class="flbl">Author <span class="freq">*</span></label><input class="finp" id="w1A" type="text" placeholder="Enter author…" oninput="fvReq('w1A','w1AMsg','Author required.')"><div class="fmsg err" id="w1AMsg"></div></div></div><div class="frow"><div class="fgrp"><label class="flbl">Year Published</label><input class="finp" id="w1Y" type="number" min="1000" max="2026" placeholder="e.g. 1984" oninput="fvNum('w1Y','w1YMsg',1000,2026)"><div class="fmsg err" id="w1YMsg"></div></div><div class="fgrp"><label class="flbl">ISBN (optional)</label><input class="finp" id="w1I" type="text" placeholder="978-…"><div class="fhint">10 or 13 digits.</div></div></div><div class="faction"><button class="fbtn fbtn-p" onclick="wizGo(2)">Next → Details</button></div></div>
-          <div id="wStep2" style="display:none;"><div class="frow"><div class="fgrp"><label class="flbl">Genre</label><select class="fsel" id="w2G"><option value="">Select…</option><option>Fiction</option><option>Non-Fiction</option><option>Sci-Fi</option><option>Dystopian</option><option>Mystery</option><option>Fantasy</option></select></div><div class="fgrp"><label class="flbl">Status</label><div style="display:flex;gap:14px;margin-top:8px;"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:500;" onclick="fwizSt('Read')"><div class="rdot2" id="wRd"></div><span>✓ Read</span></label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:500;" onclick="fwizSt('To Read')"><div class="rdot2 on" id="wTr"></div><span>⏳ To Read</span></label></div></div></div><div class="ffull"><label class="flbl">My Rating</label><div style="display:flex;gap:8px;margin-top:4px;"><span style="font-size:26px;cursor:pointer;color:#C8D0DC;" id="r1" onclick="fsetR(1)">☆</span><span style="font-size:26px;cursor:pointer;color:#C8D0DC;" id="r2" onclick="fsetR(2)">☆</span><span style="font-size:26px;cursor:pointer;color:#C8D0DC;" id="r3" onclick="fsetR(3)">☆</span><span style="font-size:26px;cursor:pointer;color:#C8D0DC;" id="r4" onclick="fsetR(4)">☆</span><span style="font-size:26px;cursor:pointer;color:#C8D0DC;" id="r5" onclick="fsetR(5)">☆</span></div></div><div class="faction"><button class="fbtn fbtn-g fbtn-sm" onclick="wizGo(1)">← Back</button><button class="fbtn fbtn-p" onclick="wizGo(3)">Next → Confirm</button></div></div>
-          <div id="wStep3" style="display:none;"><div style="background:#F4F6FA;border:1.5px solid #C8D0DC;border-radius:9px;padding:14px;margin-bottom:14px;"><div style="font-size:12px;font-weight:700;color:#2B4C8C;margin-bottom:10px;">📋 Confirm your book details:</div><div id="wizSum"></div></div><div class="faction"><button class="fbtn fbtn-g fbtn-sm" onclick="wizGo(2)">← Edit</button><button class="fbtn fbtn-s" onclick="fwizDone()">✓ Add to My Books</button></div><div id="wizSuccess" style="display:none;" class="suc-ban"><span style="font-size:22px;">🎉</span><div><div style="font-size:13px;font-weight:700;color:#1d6b47;">Book added successfully!</div><div style="font-size:11px;color:#2d8f5a;">Added to your reading list.</div></div></div></div>
-        </div>
-      </div>
+<!-- CONFIRM MODAL -->
+<div class="overlay" id="modal">
+  <div class="modal">
+    <div style="font-size:28px;margin-bottom:10px;">🗑️</div>
+    <h3>Remove Book?</h3>
+    <p>Are you sure you want to remove <strong id="modalTitle"></strong>? This cannot be undone.</p>
+    <div class="modal-btns">
+      <button class="ibtn ibtn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="ibtn" style="background:#D94F4F;color:#fff;" onclick="doRemove()">Yes, Remove</button>
     </div>
   </div>
 </div>
 
-<!-- ══════ ANIMATIONS PAGE ══════ -->
-<div class="page" id="page-anims">
-  <div style="display:inline-block;background:#2B4C8C;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:8px;letter-spacing:.4px;">Task 10 · Animations</div>
-  <h1 style="font-size:22px;font-weight:800;color:#2B4C8C;margin-bottom:3px;letter-spacing:-.5px;">🎬 Animations in BookList UI</h1>
-  <p style="font-size:12px;color:#6B7280;margin-bottom:22px;">All animations used in the BookList interface — showing where each animation appears and how it works.</p>
-  <div class="anim-grid">
-    <div class="anim-card"><div class="anim-card-hd"><h3>1 · Page Load Fade In</h3><div class="atag">fadeInDown · fadeInUp · CSS animation</div></div><div class="anim-demo"><div style="width:100%;background:#E8EFF8;border-radius:9px;padding:12px;animation:fadeInDown .8s ease infinite alternate;"><div style="height:10px;background:#4A6FA5;border-radius:5px;margin-bottom:6px;width:60%;"></div><div style="height:8px;background:#C8D0DC;border-radius:4px;width:80%;"></div></div><div class="anim-label">Header slides in from top on page load</div></div><div class="anim-desc"><strong>Where:</strong> Every page transition. <strong>Type:</strong> CSS fadeInDown/Up, 0.3–0.5s ease.</div></div>
-    <div class="anim-card"><div class="anim-card-hd"><h3>2 · Logo Float Animation</h3><div class="atag">floatUp · infinite · CSS keyframe</div></div><div class="anim-demo"><div class="float-icon">📚</div><div class="anim-label">Logo gently floats up and down in header</div></div><div class="anim-desc"><strong>Where:</strong> BookList logo icon in header and home hero. <strong>Type:</strong> CSS translateY loop, 3s ease-in-out infinite.</div></div>
-    <div class="anim-card"><div class="anim-card-hd"><h3>3 · Skeleton Loading Screen</h3><div class="atag">shimmer · loading placeholder</div></div><div class="anim-demo"><div style="width:100%;padding:4px 0;"><div class="skeleton-line"></div><div class="skeleton-line med"></div><div class="skeleton-line short"></div><div class="skeleton-line"></div><div class="skeleton-line med"></div></div><div class="anim-label">Shown while book list data loads</div></div><div class="anim-desc"><strong>Where:</strong> My Books page — shown briefly while the book table renders. <strong>Type:</strong> CSS shimmer gradient animation.</div></div>
-    <div class="anim-card"><div class="anim-card-hd"><h3>4 · Progress Bar Animation</h3><div class="atag">progressFill · animated width</div></div><div class="anim-demo"><div style="width:100%;"><div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11.5px;font-weight:700;color:#2B4C8C;"><span>Reading Progress</span><span>70%</span></div><div class="progress-anim"><div class="progress-anim-fill"></div></div></div><button class="btn btn-sm btn-ghost" onclick="this.previousElementSibling.querySelector('.progress-anim-fill').style.animation='none';setTimeout(()=>this.previousElementSibling.querySelector('.progress-anim-fill').style.animation='progressFill 2s ease-out forwards',10)">↺ Replay</button><div class="anim-label">Stats page reading progress bar</div></div><div class="anim-desc"><strong>Where:</strong> Home stats, Stats page, toolbar. <strong>Type:</strong> CSS width animation from 0% to target, 2s ease-out.</div></div>
-    <div class="anim-card"><div class="anim-card-hd"><h3>5 · Loading Spinner</h3><div class="atag">spin · rotation · loading state</div></div><div class="anim-demo"><div class="spinner"></div><div class="loading-dots"><span></span><span></span><span></span></div><div class="anim-label">Shown during data fetch / save actions</div></div><div class="anim-desc"><strong>Where:</strong> When adding a book, saving settings, or loading data. <strong>Type:</strong> CSS rotate + bounce keyframe.</div></div>
-    <div class="anim-card"><div class="anim-card-hd"><h3>6 · Toast Notifications</h3><div class="atag">toastSlide · opacity + translateY</div></div><div class="anim-demo"><div class="toast-preview">✅ "Dune" added to your list!</div><button class="btn btn-sm btn-ghost" onclick="toast('Book added to your list! 📚','success')">Show Toast</button><button class="btn btn-sm btn-ghost" onclick="toast('Book removed','error')">Error Toast</button><div class="anim-label">Appears after every user action</div></div><div class="anim-desc"><strong>Where:</strong> After every action — add, remove, toggle, save. <strong>Type:</strong> CSS opacity + translateY slide-up, 0.2s ease. Auto-dismisses.</div></div>
-    <div class="anim-card"><div class="anim-card-hd"><h3>7 · Button Hover &amp; Ripple</h3><div class="atag">ripple · hover · transform</div></div><div class="anim-demo"><button class="btn-ripple-demo" onclick="createRipple(event,this)">➕ Add Book</button><button class="btn btn-success" onclick="createRipple(event,this)">✓ Save</button><button class="btn btn-danger" onclick="toast('Remove clicked','error')">✕ Remove</button><div class="anim-label">Click to see ripple effect</div></div><div class="anim-desc"><strong>Where:</strong> All buttons. <strong>Type:</strong> CSS hover transition + JS ripple (scale + opacity) on click.</div></div>
-    <div class="anim-card"><div class="anim-card-hd"><h3>8 · Table Row Hover &amp; Select</h3><div class="atag">background transition · border-left</div></div><div class="anim-demo"><div style="width:100%;display:flex;flex-direction:column;gap:3px;"><div class="row-demo" onclick="this.style.background='#d9e8f6';this.style.borderLeftColor='#4A6FA5'">The Great Gatsby — Fiction ✓ Read</div><div class="row-demo">Dune — Sci-Fi ⏳ To Read</div><div class="row-demo">Sapiens — Non-Fiction ✓ Read</div></div><div class="anim-label">Hover to highlight · Click to select</div></div><div class="anim-desc"><strong>Where:</strong> My Books table rows. <strong>Type:</strong> CSS background-color transition + blue left border on selection.</div></div>
-    <div class="anim-card"><div class="anim-card-hd"><h3>9 · Status Badge Toggle</h3><div class="atag">scale · popIn · color transition</div></div><div class="anim-demo"><div style="display:flex;gap:10px;align-items:center;"><span class="badge-anim" id="bDemo" style="background:#D4F0E4;color:#1d6b47;cursor:pointer;" onclick="toggleBadgeDemo()">✓ Read</span><span style="font-size:11px;color:#6B7280;">← Click to toggle</span></div><div class="anim-label">Click status badge to switch Read/To Read</div></div><div class="anim-desc"><strong>Where:</strong> Every book row badge. <strong>Type:</strong> popIn keyframe (scale 0.7→1.05→1) + color/background transition.</div></div>
-    <div class="anim-card"><div class="anim-card-hd"><h3>10 · Navigation Tab Highlight</h3><div class="atag">navPop · background transition</div></div><div class="anim-demo"><div style="background:#2B4C8C;border-radius:8px;padding:8px 12px;display:flex;gap:4px;"><span class="nav-highlight" id="navDemo1" onclick="setNavDemo(1)">🏠 Home</span><span style="color:rgba(255,255,255,.6);padding:7px 12px;cursor:pointer;border-radius:6px;font-size:12px;transition:all .15s;" onclick="setNavDemo(2)" id="navDemo2">📋 My Books</span><span style="color:rgba(255,255,255,.6);padding:7px 12px;cursor:pointer;border-radius:6px;font-size:12px;transition:all .15s;" onclick="setNavDemo(3)" id="navDemo3">📊 Stats</span></div><div class="anim-label">Click tabs to see transition</div></div><div class="anim-desc"><strong>Where:</strong> Header navigation tabs. <strong>Type:</strong> CSS background transition + navPop keyframe on activation.</div></div>
-    <div class="anim-card"><div class="anim-card-hd"><h3>11 · Card Hover Lift</h3><div class="atag">translateY · box-shadow · hover</div></div><div class="anim-demo"><div class="hover-card">📚 Hover over me!</div><div class="anim-label">Stat cards and book grid cards</div></div><div class="anim-desc"><strong>Where:</strong> Home stat cards, book grid cards. <strong>Type:</strong> CSS translateY(-4px) + box-shadow increase on hover.</div></div>
-    <div class="anim-card"><div class="anim-card-hd"><h3>12 · Animated Background Gradient</h3><div class="atag">bgShift · gradient animation</div></div><div class="anim-demo"><div class="bg-anim">BookList — Your Reading Tracker</div><div class="anim-label">Used as accent on hero areas</div></div><div class="anim-desc"><strong>Where:</strong> App splash and hero section. <strong>Type:</strong> CSS background-position animation, 4s ease infinite.</div></div>
-    <div class="anim-card"><div class="anim-card-hd"><h3>13 · Typing / Cursor Animation</h3><div class="atag">typeCursor · blink · input affordance</div></div><div class="anim-demo"><div style="font-size:14px;font-weight:600;color:#2B4C8C;">Search by title or author<span style="animation:typeCursor .7s step-end infinite;color:#4A6FA5;">|</span></div><div class="anim-label">Blinking cursor in search/input fields</div></div><div class="anim-desc"><strong>Where:</strong> Search bar and focused input fields. <strong>Type:</strong> CSS opacity blink, 0.7s step-end infinite.</div></div>
-    <div class="anim-card"><div class="anim-card-hd"><h3>14 · Wizard Step Progress</h3><div class="atag">background transition · pulse</div></div><div class="anim-demo"><div style="display:flex;align-items:center;gap:8px;width:100%;"><div style="width:28px;height:28px;border-radius:50%;background:#3BAF7A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;">✓</div><div style="flex:1;height:3px;background:#3BAF7A;"></div><div style="width:28px;height:28px;border-radius:50%;background:#4A6FA5;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;animation:pulse 1.5s ease-in-out infinite;">2</div><div style="flex:1;height:3px;background:#C8D0DC;"></div><div style="width:28px;height:28px;border-radius:50%;background:#C8D0DC;display:flex;align-items:center;justify-content:center;color:#6B7280;font-size:12px;font-weight:700;">3</div></div><div class="anim-label">Multi-step form wizard in Forms page</div></div><div class="anim-desc"><strong>Where:</strong> Add Book Wizard. Completed steps turn green, active pulses blue, future grey.</div></div>
-    <div class="anim-card"><div class="anim-card-hd"><h3>15 · Modal Pop-In</h3><div class="atag">popIn · scale + opacity</div></div><div class="anim-demo"><button class="btn btn-primary btn-sm" onclick="document.getElementById('modal').classList.add('open')">Open Confirm Modal</button><div class="badge-anim" style="background:#D4F0E4;color:#1d6b47;">✓ popIn animation</div><div class="anim-label">Remove book confirmation modal</div></div><div class="anim-desc"><strong>Where:</strong> Remove book modal, success banners. <strong>Type:</strong> popIn — scale(0.7)→scale(1.05)→scale(1), 0.2s ease.</div></div>
-  </div>
-
-  <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:22px;margin-top:22px;">
-    <div style="font-size:13px;font-weight:700;color:#2B4C8C;margin-bottom:14px;border-left:3px solid #4A6FA5;padding-left:10px;text-transform:uppercase;letter-spacing:.5px;">Animation Summary — All 15 Animations</div>
-    <table style="width:100%;border-collapse:collapse;font-size:12px;">
-      <thead><tr style="background:#2B4C8C;"><th style="padding:9px 12px;text-align:left;color:#fff;font-size:11px;letter-spacing:.3px;">#</th><th style="padding:9px 12px;text-align:left;color:#fff;font-size:11px;letter-spacing:.3px;">Animation</th><th style="padding:9px 12px;text-align:left;color:#fff;font-size:11px;letter-spacing:.3px;">Type</th><th style="padding:9px 12px;text-align:left;color:#fff;font-size:11px;letter-spacing:.3px;">Where in UI</th><th style="padding:9px 12px;text-align:left;color:#fff;font-size:11px;letter-spacing:.3px;">Purpose</th></tr></thead>
-      <tbody>
-        <tr style="background:#fff;border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">1</td><td style="padding:8px 12px;font-weight:600;">Page Load Fade</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">fadeInDown/Up</td><td style="padding:8px 12px;color:#6B7280;">All pages on switch</td><td style="padding:8px 12px;color:#6B7280;">Smooth navigation</td></tr>
-        <tr style="background:#F4F6FA;border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">2</td><td style="padding:8px 12px;font-weight:600;">Logo Float</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">floatUp infinite</td><td style="padding:8px 12px;color:#6B7280;">Header logo, Hero icon</td><td style="padding:8px 12px;color:#6B7280;">Brand personality</td></tr>
-        <tr style="background:#fff;border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">3</td><td style="padding:8px 12px;font-weight:600;">Skeleton Loading</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">shimmer gradient</td><td style="padding:8px 12px;color:#6B7280;">My Books page load</td><td style="padding:8px 12px;color:#6B7280;">Loading state feedback</td></tr>
-        <tr style="background:#F4F6FA;border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">4</td><td style="padding:8px 12px;font-weight:600;">Progress Bar Fill</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">progressFill width</td><td style="padding:8px 12px;color:#6B7280;">Stats page, toolbar</td><td style="padding:8px 12px;color:#6B7280;">Progress indicator</td></tr>
-        <tr style="background:#fff;border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">5</td><td style="padding:8px 12px;font-weight:600;">Loading Spinner</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">spin / bounce dots</td><td style="padding:8px 12px;color:#6B7280;">Add/save actions</td><td style="padding:8px 12px;color:#6B7280;">Async feedback</td></tr>
-        <tr style="background:#F4F6FA;border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">6</td><td style="padding:8px 12px;font-weight:600;">Toast Notification</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">toastSlide opacity</td><td style="padding:8px 12px;color:#6B7280;">After every action</td><td style="padding:8px 12px;color:#6B7280;">Immediate feedback</td></tr>
-        <tr style="background:#fff;border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">7</td><td style="padding:8px 12px;font-weight:600;">Button Ripple</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">ripple + hover</td><td style="padding:8px 12px;color:#6B7280;">All buttons</td><td style="padding:8px 12px;color:#6B7280;">Tactile click feedback</td></tr>
-        <tr style="background:#F4F6FA;border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">8</td><td style="padding:8px 12px;font-weight:600;">Row Hover/Select</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">background transition</td><td style="padding:8px 12px;color:#6B7280;">My Books table rows</td><td style="padding:8px 12px;color:#6B7280;">Selection feedback</td></tr>
-        <tr style="background:#fff;border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">9</td><td style="padding:8px 12px;font-weight:600;">Badge Toggle</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">popIn + color</td><td style="padding:8px 12px;color:#6B7280;">Status badges</td><td style="padding:8px 12px;color:#6B7280;">Status change feedback</td></tr>
-        <tr style="background:#F4F6FA;border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">10</td><td style="padding:8px 12px;font-weight:600;">Nav Tab Highlight</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">navPop + bg transition</td><td style="padding:8px 12px;color:#6B7280;">Header nav tabs</td><td style="padding:8px 12px;color:#6B7280;">Active page indicator</td></tr>
-        <tr style="background:#fff;border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">11</td><td style="padding:8px 12px;font-weight:600;">Card Hover Lift</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">translateY + shadow</td><td style="padding:8px 12px;color:#6B7280;">Stat cards, grid cards</td><td style="padding:8px 12px;color:#6B7280;">Interactive affordance</td></tr>
-        <tr style="background:#F4F6FA;border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">12</td><td style="padding:8px 12px;font-weight:600;">Gradient Background</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">bgShift infinite</td><td style="padding:8px 12px;color:#6B7280;">Hero/splash area</td><td style="padding:8px 12px;color:#6B7280;">Visual depth</td></tr>
-        <tr style="background:#fff;border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">13</td><td style="padding:8px 12px;font-weight:600;">Typing Cursor</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">typeCursor blink</td><td style="padding:8px 12px;color:#6B7280;">Search/input fields</td><td style="padding:8px 12px;color:#6B7280;">Input affordance</td></tr>
-        <tr style="background:#F4F6FA;border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">14</td><td style="padding:8px 12px;font-weight:600;">Wizard Step Progress</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">pulse + transition</td><td style="padding:8px 12px;color:#6B7280;">Forms page wizard</td><td style="padding:8px 12px;color:#6B7280;">Progress indicator</td></tr>
-        <tr style="background:#fff;"><td style="padding:8px 12px;color:#4A6FA5;font-weight:700;">15</td><td style="padding:8px 12px;font-weight:600;">Modal Pop-In</td><td style="padding:8px 12px;color:#6B7280;font-family:monospace;font-size:11px;">popIn scale+opacity</td><td style="padding:8px 12px;color:#6B7280;">Confirm modal</td><td style="padding:8px 12px;color:#6B7280;">Focused attention</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<footer>BookList App · Tasks 7–10 · Design Interface · 2026 · All pages fully interactive · Outfit font · Dynamic charts · Grid view</footer>
+<div class="toast-wrap" id="toasts"></div>
 
 <script>
-/* ═══ COVER PALETTE ═══ */
-const coverGradients = [
-  'linear-gradient(135deg,#2B4C8C,#4A6FA5)',
-  'linear-gradient(135deg,#1d6b47,#3BAF7A)',
-  'linear-gradient(135deg,#D94F4F,#f08080)',
-  'linear-gradient(135deg,#7a5c00,#F0A500)',
-  'linear-gradient(135deg,#7b4cc0,#b07ae0)',
-  'linear-gradient(135deg,#1d6b8c,#3da0bf)',
-  'linear-gradient(135deg,#8c4a1d,#c07050)',
-  'linear-gradient(135deg,#2d9668,#6ddaaa)',
-  'linear-gradient(135deg,#6b2e8c,#a050d0)',
-  'linear-gradient(135deg,#8c2d2d,#d06060)'
-];
+/* ═══ USER STATE ═══ */
+let currentUser = null; // { firstName, lastName, email, goal }
+let users = []; // registered users
 
-function getCoverBg(id) { return coverGradients[(id-1) % coverGradients.length]; }
-function getCoverLetter(title) { return (title||'?')[0].toUpperCase(); }
-
+/* ═══ BOOK DATA ═══ */
 const gC = { Fiction:'badge-fiction','Sci-Fi':'badge-scifi','Non-Fiction':'badge-nonfic',Dystopian:'badge-dystopia',Mystery:'badge-mystery',Fantasy:'badge-fantasy' };
+const covers = ['#2B4C8C','#3BAF7A','#D94F4F','#F0A500','#7b4cc0','#3d9cb5'];
 
-/* ═══ DATA ═══ */
 let books = [
   {id:1,title:'The Great Gatsby',author:'F. Scott Fitzgerald',genre:'Fiction',status:'Read',notes:'Classic American literature. ⭐⭐⭐⭐⭐'},
   {id:2,title:'Dune',author:'Frank Herbert',genre:'Sci-Fi',status:'To Read',notes:'Epic sci-fi on my must-read list.'},
@@ -1006,154 +504,153 @@ let books = [
   {id:4,title:'1984',author:'George Orwell',genre:'Dystopian',status:'To Read',notes:'Classic dystopia — required reading.'},
   {id:5,title:'To Kill a Mockingbird',author:'Harper Lee',genre:'Fiction',status:'Read',notes:'Timeless story about justice. ⭐⭐⭐⭐⭐'},
   {id:6,title:'Gone Girl',author:'Gillian Flynn',genre:'Mystery',status:'Read',notes:'Gripping thriller. ⭐⭐⭐⭐'},
-  {id:7,title:'Atomic Habits',author:'James Clear',genre:'Non-Fiction',status:'To Read',notes:'Highly recommended.'},
-  {id:8,title:'The Name of the Wind',author:'Patrick Rothfuss',genre:'Fantasy',status:'To Read',notes:'Fantasy epic.'},
-  {id:9,title:'Brave New World',author:'Aldous Huxley',genre:'Dystopian',status:'Read',notes:'Essential dystopian classic.'},
-  {id:10,title:"The Hitchhiker's Guide",author:'Douglas Adams',genre:'Sci-Fi',status:'Read',notes:'Hilarious and philosophical. ⭐⭐⭐⭐'},
 ];
-let nid=11, sel=null, pending=null, ctxId=null, newSt='To Read';
-let hist=[], redoStack=[];
+let nid=7, sel=null, pending=null, newSt='To Read';
 let sortF=null, sortD=1;
-let viewMode = 'table'; // 'table' or 'grid'
 
-/* ═══ PAGE NAVIGATION ═══ */
-function showPage(p){
+/* ═══ SCREEN SWITCHING ═══ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showLogin() { showScreen('screenLogin'); }
+function showRegister() { showScreen('screenRegister'); }
+
+/* ═══ LOGIN ═══ */
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pw    = document.getElementById('loginPw').value;
+  let ok = true;
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('loginEmail').classList.add('err'); document.getElementById('loginEmailErr').style.display='block'; ok=false; } else { document.getElementById('loginEmail').classList.remove('err'); document.getElementById('loginEmailErr').style.display='none'; }
+  if(!pw) { document.getElementById('loginPw').classList.add('err'); document.getElementById('loginPwErr').style.display='block'; ok=false; } else { document.getElementById('loginPw').classList.remove('err'); document.getElementById('loginPwErr').style.display='none'; }
+  if(!ok) return;
+  // Check registered users or use demo account
+  const found = users.find(u=>u.email===email && u.pw===pw);
+  if(found) { currentUser = found; }
+  else if(email==='demo@booklist.com' && pw==='demo123') { currentUser = { firstName:'Demo', lastName:'User', email:'demo@booklist.com', pw:'demo123', goal:20 }; }
+  else { toast('Incorrect email or password. Try demo@booklist.com / demo123','error'); return; }
+  enterApp();
+}
+
+function enterApp() {
+  updateHeaderUser();
+  renderTable();
+  updateStats();
+  updateHomeStats();
+  loadSettings();
+  showScreen('screenApp');
+  showPage('home');
+  toast(`Welcome back, ${currentUser.firstName}! 👋`,'success');
+}
+
+/* ═══ REGISTER ═══ */
+function doRegister() {
+  const first = document.getElementById('regFirst').value.trim();
+  const last  = document.getElementById('regLast').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pw    = document.getElementById('regPw').value;
+  const pw2   = document.getElementById('regPw2').value;
+  let ok = true;
+  if(!first) { document.getElementById('regFirst').classList.add('err'); document.getElementById('regFirstErr').style.display='block'; ok=false; } else { document.getElementById('regFirst').classList.remove('err'); document.getElementById('regFirstErr').style.display='none'; }
+  if(!last)  { document.getElementById('regLast').classList.add('err');  document.getElementById('regLastErr').style.display='block';  ok=false; } else { document.getElementById('regLast').classList.remove('err');  document.getElementById('regLastErr').style.display='none'; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('regEmail').classList.add('err'); document.getElementById('regEmailErr').style.display='block'; ok=false; } else { document.getElementById('regEmail').classList.remove('err'); document.getElementById('regEmailErr').style.display='none'; }
+  if(pw.length<8) { document.getElementById('regPw').classList.add('err'); document.getElementById('regPwErr').style.display='block'; ok=false; } else { document.getElementById('regPw').classList.remove('err'); document.getElementById('regPwErr').style.display='none'; }
+  if(pw!==pw2) { document.getElementById('regPw2').classList.add('err'); document.getElementById('regPw2Err').style.display='block'; ok=false; } else { document.getElementById('regPw2').classList.remove('err'); document.getElementById('regPw2Err').style.display='none'; }
+  if(!ok) return;
+  if(users.find(u=>u.email===email)) { toast('An account with this email already exists.','error'); return; }
+  const newUser = { firstName:first, lastName:last, email, pw, goal:20 };
+  users.push(newUser);
+  currentUser = newUser;
+  enterApp();
+}
+
+/* ═══ LOGOUT ═══ */
+function doLogout() {
+  currentUser = null; sel = null;
+  // clear login fields
+  ['loginEmail','loginPw'].forEach(id=>{ document.getElementById(id).value=''; document.getElementById(id).classList.remove('err'); });
+  showScreen('screenLogin');
+  toast('You have been signed out.','info');
+}
+
+/* ═══ HEADER USER ═══ */
+function updateHeaderUser() {
+  if(!currentUser) return;
+  const initials = (currentUser.firstName[0]+(currentUser.lastName?currentUser.lastName[0]:'')).toUpperCase();
+  document.getElementById('headerAvatar').textContent = initials;
+  document.getElementById('headerName').textContent = currentUser.firstName;
+}
+
+/* ═══ PAGES ═══ */
+function showPage(p) {
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
   const nt=document.getElementById('nt-'+p); if(nt) nt.classList.add('active');
-  document.getElementById('toolbar').style.display = p==='books'?'flex':'none';
-  if(p==='stats'){updateStats();renderBarChart();renderPieChart();}
+  if(p==='stats') updateStats();
   if(p==='home') updateHomeStats();
-  if(p==='forms') fFilter();
-  closeMenus();
+}
+
+/* ═══ HOME STATS ═══ */
+function updateHomeStats() {
+  const r=books.filter(b=>b.status==='Read').length, t=books.length, pct=t?Math.round(r/t*100):0;
+  document.getElementById('hTotal').textContent=t;
+  document.getElementById('hRead').textContent=r;
+  document.getElementById('hToRead').textContent=t-r;
+  document.getElementById('hPct').textContent=pct+'%';
+  document.getElementById('homePctLbl').textContent=pct+'%';
+  document.getElementById('homePctBar').style.width=pct+'%';
+  if(currentUser) document.getElementById('homeGreeting').textContent=`👋 Welcome back, ${currentUser.firstName}!`;
+  // Recent books
+  const rb=document.getElementById('recentBooks');
+  rb.innerHTML=books.slice(-4).reverse().map(b=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#F4F6FA;border-radius:8px;">
+      <div><div style="font-size:12.5px;font-weight:600;color:#1A1A2E;">${b.title}</div><div style="font-size:11px;color:#6B7280;">${b.author}</div></div>
+      <span class="badge ${b.status==='Read'?'badge-read':'badge-toread'}">${b.status==='Read'?'✓ Read':'⏳ To Read'}</span>
+    </div>`).join('');
 }
 
 /* ═══ STATS ═══ */
-function updateStats(){
-  const r=books.filter(b=>b.status==='Read').length, t=books.length;
-  const pct=t?Math.round(r/t*100):0;
-  ['sTotal','sRead','sToRead','sPct'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=[t,r,t-r,pct+'%'][i];});
-  const pf=document.getElementById('sPctFill');if(pf)pf.style.width=pct+'%';
-  const pb=document.getElementById('sPctBar');if(pb)pb.textContent=pct+'%';
-  const pt=document.getElementById('sPctText');if(pt)pt.textContent=r+' of '+t+' Read';
-  const sp=document.getElementById('spTotal');if(sp)sp.innerHTML=t+' <span style="font-size:11px;color:#3BAF7A;">↑</span>';
-  const sr=document.getElementById('spRead');if(sr)sr.innerHTML=r+' <span style="font-size:11px;color:#3BAF7A;">↑</span>';
-  const sc=document.getElementById('spPct');if(sc)sc.innerHTML=pct+'% <span style="font-size:11px;color:#3BAF7A;">↑</span>';
-}
-function updateHomeStats(){
-  const r=books.filter(b=>b.status==='Read').length,t=books.length,pct=t?Math.round(r/t*100):0;
-  ['hTotal','hRead','hToRead','hPct'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=[t,r,t-r,pct+'%'][i];});
-}
-
-/* ═══ DYNAMIC BAR CHART ═══ */
-function renderBarChart(){
-  const genreCounts={};
-  books.forEach(b=>{ if(b.genre) genreCounts[b.genre]=(genreCounts[b.genre]||0)+1; });
-  const genres=Object.keys(genreCounts);
-  if(!genres.length) return;
-  const maxCount=Math.max(...Object.values(genreCounts),1);
-  const chartH=150, startY=190, startX=50, barW=36, gap=52;
-  const genreColors={'Fiction':'#3d4cc0','Sci-Fi':'#2563b0','Non-Fiction':'#6b35c0','Dystopian':'#c05a20','Mystery':'#1d6b47','Fantasy':'#8b00c0','Other':'#4A6FA5'};
-  const barsG=document.getElementById('barChartBars');
-  if(!barsG) return;
-  // Update y-axis labels
-  const mid=Math.round(maxCount/2), top=maxCount;
-  const y1=document.getElementById('yLbl1');if(y1)y1.textContent=Math.round(top/3);
-  const y2=document.getElementById('yLbl2');if(y2)y2.textContent=Math.round(top*2/3);
-  const y3=document.getElementById('yLbl3');if(y3)y3.textContent=top;
-  let svg='';
-  genres.slice(0,6).forEach((genre,i)=>{
-    const count=genreCounts[genre];
-    const barH=(count/maxCount)*chartH;
-    const x=startX+i*gap, y=startY-barH;
-    const color=genreColors[genre]||'#4A6FA5';
-    const label=genre.length>8?genre.substring(0,7)+'.':genre;
-    svg+=`<rect x="${x}" y="${y}" width="${barW}" height="${barH}" rx="4" fill="${color}" opacity=".85"/><text x="${x+barW/2}" y="${y-5}" font-size="9" font-weight="700" fill="${color}" text-anchor="middle" font-family="Outfit,sans-serif">${count}</text><text x="${x+barW/2}" y="207" font-size="9" fill="#6B7280" text-anchor="middle" font-family="Outfit,sans-serif">${label}</text>`;
-  });
-  barsG.innerHTML=svg;
-}
-
-/* ═══ DYNAMIC PIE/DONUT CHART ═══ */
-function polarToCartesian(cx,cy,r,angleDeg){
-  const rad=(angleDeg-90)*Math.PI/180;
-  return {x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)};
-}
-function renderPieChart(){
-  const total=books.length, read=books.filter(b=>b.status==='Read').length;
-  if(!total) return;
-  const pct=Math.round(read/total*100);
-  const readAngle=(read/total)*360;
-  const cx=110,cy=110,r=90;
-  const arcRead=document.getElementById('arcRead');
-  const arcToRead=document.getElementById('arcToRead');
-  const donutPct=document.getElementById('donutPct');
-  const donutReadLbl=document.getElementById('donutReadLbl');
-  const donutToReadLbl=document.getElementById('donutToReadLbl');
-  if(donutPct) donutPct.textContent=pct+'%';
-  if(donutReadLbl) donutReadLbl.textContent=`Read — ${read} (${pct}%)`;
-  if(donutToReadLbl) donutToReadLbl.textContent=`To Read — ${total-read} (${100-pct}%)`;
-  if(read===0){if(arcRead)arcRead.setAttribute('d','');if(arcToRead){const s=polarToCartesian(cx,cy,r,0),e=polarToCartesian(cx,cy,r,359.9);arcToRead.setAttribute('d',`M ${s.x} ${s.y} A ${r} ${r} 0 1 1 ${e.x} ${e.y}`);}return;}
-  if(read===total){if(arcToRead)arcToRead.setAttribute('d','');if(arcRead){const s=polarToCartesian(cx,cy,r,0),e=polarToCartesian(cx,cy,r,359.9);arcRead.setAttribute('d',`M ${s.x} ${s.y} A ${r} ${r} 0 1 1 ${e.x} ${e.y}`);}return;}
-  const s1=polarToCartesian(cx,cy,r,0),e1=polarToCartesian(cx,cy,r,readAngle);
-  const s2=polarToCartesian(cx,cy,r,readAngle),e2=polarToCartesian(cx,cy,r,359.9);
-  const laf1=readAngle>180?1:0, laf2=(360-readAngle)>180?1:0;
-  if(arcRead) arcRead.setAttribute('d',`M ${s1.x} ${s1.y} A ${r} ${r} 0 ${laf1} 1 ${e1.x} ${e1.y}`);
-  if(arcToRead) arcToRead.setAttribute('d',`M ${s2.x} ${s2.y} A ${r} ${r} 0 ${laf2} 1 ${e2.x} ${e2.y}`);
-}
-
-/* ═══ VIEW TOGGLE (TABLE / GRID) ═══ */
-function toggleView(){
-  viewMode = viewMode==='table' ? 'grid' : 'table';
-  document.getElementById('tableView').style.display = viewMode==='table' ? 'block' : 'none';
-  document.getElementById('gridView').style.display  = viewMode==='grid'  ? 'block' : 'none';
-  const btn=document.getElementById('viewToggleBtn');
-  if(btn) btn.textContent = viewMode==='table' ? '⊞ Grid View' : '☰ Table View';
-  renderTable();
-  toast(viewMode==='grid'?'Switched to Grid View':'Switched to Table View','info');
+function updateStats() {
+  const r=books.filter(b=>b.status==='Read').length, t=books.length, pct=t?Math.round(r/t*100):0;
+  document.getElementById('sTotal').textContent=t;
+  document.getElementById('sRead').textContent=r;
+  document.getElementById('sToRead').textContent=t-r;
+  document.getElementById('sPct').textContent=pct+'%';
+  document.getElementById('lgRead').textContent=`Read — ${r} (${pct}%)`;
+  document.getElementById('lgToRead').textContent=`To Read — ${t-r} (${100-pct}%)`;
+  document.getElementById('donutPct').textContent=pct+'%';
+  // Simple genre bar chart
+  const genres={};
+  books.forEach(b=>{genres[b.genre]=(genres[b.genre]||0)+1;});
+  const gc=document.getElementById('genreChart');
+  const max=Math.max(...Object.values(genres),1);
+  const colors=['#3d4cc0','#2563b0','#6b35c0','#c05a20','#1d6b47','#8b00c0'];
+  gc.innerHTML=Object.entries(genres).map(([g,n],i)=>`
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px;"><span style="font-weight:600;color:#3D4460;">${g}</span><span style="color:#6B7280;">${n} book${n!==1?'s':''}</span></div>
+      <div style="height:9px;background:#E8EFF8;border-radius:5px;overflow:hidden;"><div style="height:100%;background:${colors[i%colors.length]};border-radius:5px;width:${(n/max*100).toFixed(0)}%;opacity:.85;"></div></div>
+    </div>`).join('');
 }
 
 /* ═══ RENDER TABLE ═══ */
-function renderTable(){
+function renderTable() {
   const q=document.getElementById('searchQ').value.trim().toLowerCase();
   const st=document.getElementById('selSt').value;
   const gn=document.getElementById('selGn').value;
   const list=books.filter(b=>(!q||b.title.toLowerCase().includes(q)||b.author.toLowerCase().includes(q))&&(!st||b.status===st)&&(!gn||b.genre===gn));
   document.getElementById('cnt').textContent=list.length+' book'+(list.length!==1?'s':'');
-  const r=books.filter(b=>b.status==='Read').length,t=books.length;
-  const pct=t?Math.round(r/t*100):0;
-  const pf=document.getElementById('progFill');if(pf)pf.style.width=pct+'%';
-  const pl=document.getElementById('progLabel');if(pl)pl.textContent=pct+'% read';
-
-  if(viewMode==='table'){
-    const tb=document.getElementById('tbody');
-    tb.innerHTML=!list.length?`<tr><td colspan="5" style="text-align:center;padding:32px;color:#6B7280;font-weight:500;">😕 No books found.</td></tr>`:list.map(b=>`
-      <tr id="r${b.id}" class="${sel===b.id?'selected':''}" onclick="selectBook(${b.id})" oncontextmenu="openCtx(event,${b.id})">
-        <td><div class="title-cell"><div class="book-cover-mini" style="background:${getCoverBg(b.id)}">${getCoverLetter(b.title)}</div>${b.title}</div></td>
-        <td style="color:#6B7280;">${b.author}</td>
-        <td><span class="badge ${gC[b.genre]||'badge-other'}">${b.genre||'—'}</span></td>
-        <td><span class="badge ${b.status==='Read'?'badge-read':'badge-toread'}" onclick="toggleSt(event,${b.id})">${b.status==='Read'?'✓ Read':'⏳ To Read'}</span></td>
-        <td><button class="btn btn-danger" onclick="openModal(event,${b.id})">✕ Remove</button></td>
-      </tr>`).join('');
-    document.getElementById('tfoot').textContent=`${list.length} of ${books.length} · ${r} Read · ${t-r} To Read · Right-click for context menu`;
-  } else {
-    // GRID VIEW
-    const grid=document.getElementById('bookGrid');
-    grid.innerHTML=!list.length?`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#6B7280;font-weight:500;">😕 No books found.</div>`:list.map(b=>`
-      <div class="book-card ${sel===b.id?'selected':''}" id="r${b.id}" onclick="selectBook(${b.id})" oncontextmenu="openCtx(event,${b.id})">
-        <div class="book-card-cover" style="background:${getCoverBg(b.id)}">${getCoverLetter(b.title)}</div>
-        <div class="book-card-body">
-          <div class="book-card-title">${b.title}</div>
-          <div class="book-card-author">${b.author}</div>
-          <div class="book-card-foot">
-            <span class="badge ${b.status==='Read'?'badge-read':'badge-toread'}" onclick="toggleSt(event,${b.id})" style="font-size:10px;">${b.status==='Read'?'✓ Read':'⏳'}</span>
-            <span class="badge ${gC[b.genre]||'badge-other'}" style="font-size:10px;">${b.genre||'—'}</span>
-          </div>
-        </div>
-      </div>`).join('');
-    document.getElementById('gridFoot').textContent=`${list.length} of ${books.length} books · ${r} Read · ${t-r} To Read`;
-  }
-
+  const tb=document.getElementById('tbody');
+  tb.innerHTML=!list.length?`<tr><td colspan="5" style="text-align:center;padding:28px;color:#6B7280;">😕 No books found.</td></tr>`:list.map(b=>`
+    <tr id="r${b.id}" class="${sel===b.id?'selected':''}" onclick="selectBook(${b.id})">
+      <td>${b.title}</td>
+      <td style="color:#6B7280;">${b.author}</td>
+      <td><span class="badge ${gC[b.genre]||''}">${b.genre||'—'}</span></td>
+      <td><span class="badge ${b.status==='Read'?'badge-read':'badge-toread'}" onclick="toggleSt(event,${b.id})">${b.status==='Read'?'✓ Read':'⏳ To Read'}</span></td>
+      <td><button class="ibtn ibtn-danger" onclick="openModal(event,${b.id})">✕</button></td>
+    </tr>`).join('');
+  document.getElementById('tfoot').textContent=`${list.length} of ${books.length} books shown`;
   if(sel) renderDetail();
   updateHomeStats();
 }
@@ -1161,21 +658,22 @@ function renderTable(){
 /* ═══ SELECT + DETAIL ═══ */
 function selectBook(id){sel=id;renderTable();renderDetail();}
 function renderDetail(){
-  const b=books.find(x=>x.id===sel);const db=document.getElementById('detBody');
+  const b=books.find(x=>x.id===sel); const db=document.getElementById('detBody');
   if(!b){db.innerHTML=`<div class="no-sel">👆 Click any row<br>to see details here.</div>`;return;}
+  const bg=covers[(b.id-1)%covers.length];
   db.innerHTML=`
-    <div style="display:flex;align-items:center;gap:12px;">
-      <div class="book-cover-lg" style="background:${getCoverBg(b.id)}">${getCoverLetter(b.title)}</div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:40px;height:54px;border-radius:6px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📚</div>
       <div><div class="det-title">${b.title}</div><div class="det-author">${b.author}</div></div>
     </div>
     <div class="divider"></div>
-    <div class="det-row"><span class="det-key">Status</span><span class="badge ${b.status==='Read'?'badge-read':'badge-toread'}" onclick="toggleSt(null,${b.id})">${b.status==='Read'?'✓ Read':'⏳ To Read'}</span></div>
-    <div class="det-row"><span class="det-key">Genre</span><span class="badge ${gC[b.genre]||'badge-other'}">${b.genre||'—'}</span></div>
+    <div class="det-row"><span class="det-key">Status</span><span class="badge ${b.status==='Read'?'badge-read':'badge-toread'}" onclick="toggleSt(null,${b.id})" style="cursor:pointer;">${b.status==='Read'?'✓ Read':'⏳ To Read'}</span></div>
+    <div class="det-row"><span class="det-key">Genre</span><span class="badge ${gC[b.genre]||''}">${b.genre||'—'}</span></div>
     <div class="divider"></div>
     <div class="det-notes">${b.notes}</div>
-    <div class="det-actions">
-      <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;" onclick="toggleSt(null,${b.id})">✏️ Toggle Status</button>
-      <button class="btn btn-danger btn-sm" style="width:100%;justify-content:center;" onclick="openModal(null,${b.id})">✕ Remove</button>
+    <div style="display:flex;flex-direction:column;gap:7px;margin-top:4px;">
+      <button class="ibtn ibtn-outline" style="width:100%;justify-content:center;" onclick="toggleSt(null,${b.id})">✏️ Toggle Status</button>
+      <button class="ibtn ibtn-danger" style="width:100%;justify-content:center;" onclick="openModal(null,${b.id})">✕ Remove Book</button>
     </div>`;
 }
 
@@ -1183,148 +681,79 @@ function renderDetail(){
 function sortBooks(f){
   if(sortF===f)sortD*=-1;else{sortF=f;sortD=1;}
   books.sort((a,b)=>{const av=(a[f]||'').toLowerCase(),bv=(b[f]||'').toLowerCase();return av<bv?-sortD:av>bv?sortD:0;});
-  pushHist('Sort by '+f);renderTable();toast('Sorted by '+f,'info');
+  renderTable();
 }
 
 /* ═══ TOGGLE STATUS ═══ */
 function toggleSt(e,id){
   if(e)e.stopPropagation();
   const b=books.find(x=>x.id===id);if(!b)return;
-  pushHist(`"${b.title}" was ${b.status}`);
   b.status=b.status==='Read'?'To Read':'Read';
-  renderTable();toast(`"${b.title}" → ${b.status}`,b.status==='Read'?'success':'warning');
+  renderTable();toast(`"${b.title}" → ${b.status}`,b.status==='Read'?'success':'info');
 }
 
 /* ═══ REMOVE ═══ */
-function openModal(e,id){if(e)e.stopPropagation();pending=id;document.getElementById('modalTitle').textContent='"'+books.find(x=>x.id===id).title+'"';document.getElementById('modal').classList.add('open');closeCtx();}
+function openModal(e,id){if(e)e.stopPropagation();pending=id;document.getElementById('modalTitle').textContent='"'+books.find(x=>x.id===id).title+'"';document.getElementById('modal').classList.add('open');}
 function closeModal(){document.getElementById('modal').classList.remove('open');pending=null;}
-function doRemove(){
-  const b=books.find(x=>x.id===pending);if(!b){closeModal();return;}
-  pushHist(`Removed "${b.title}"`);
-  books=books.filter(x=>x.id!==pending);
-  if(sel===pending){sel=null;document.getElementById('detBody').innerHTML=`<div class="no-sel">👆 Click any row<br>to see details here.</div>`;}
-  closeModal();renderTable();toast(`"${b.title}" removed`,'error');
-}
+function doRemove(){const b=books.find(x=>x.id===pending);if(!b){closeModal();return;}books=books.filter(x=>x.id!==pending);if(sel===pending){sel=null;document.getElementById('detBody').innerHTML=`<div class="no-sel">👆 Click any row<br>to see details here.</div>`;}closeModal();renderTable();toast(`"${b.title}" removed`,'error');}
 document.getElementById('modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
 
-/* ═══ CONTEXT MENU ═══ */
-function openCtx(e,id){e.preventDefault();ctxId=id;sel=id;renderTable();const m=document.getElementById('ctx');m.style.left=e.clientX+'px';m.style.top=e.clientY+'px';m.classList.add('open');}
-function closeCtx(){document.getElementById('ctx').classList.remove('open');}
-function ctxToggle(){toggleSt(null,ctxId);closeCtx();}
-function ctxRemove(){openModal(null,ctxId);}
-function ctxView(){selectBook(ctxId);closeCtx();}
-
-/* ═══ FILTER CLEAR ═══ */
+/* ═══ CLEAR FILTERS ═══ */
 function clearF(){document.getElementById('searchQ').value='';document.getElementById('selSt').value='';document.getElementById('selGn').value='';renderTable();toast('Filters cleared','info');}
 
 /* ═══ ADD BOOK ═══ */
-function toggleForm(){const c=document.getElementById('addCard'),b1=document.getElementById('addBtn'),b2=document.getElementById('addBtnTop');const open=c.style.display!=='none';c.style.display=open?'none':'block';const txt=open?'➕ Add Book':'✕ Cancel';if(b1)b1.textContent=txt;if(b2)b2.textContent=txt;}
+function toggleForm(){const c=document.getElementById('addCard'),b=document.getElementById('addBtnTop');const open=c.style.display!=='none';c.style.display=open?'none':'block';b.textContent=open?'➕ Add Book':'✕ Cancel';}
 function setSt(s){newSt=s;document.getElementById('rdR').className='rdot'+(s==='Read'?' on':'');document.getElementById('rdT').className='rdot'+(s==='To Read'?' on':'');}
 function resetForm(){['fTitle','fAuthor'].forEach(id=>{document.getElementById(id).value='';document.getElementById(id).classList.remove('err');});document.getElementById('fGenre').value='';setSt('To Read');['eTitle','eAuthor'].forEach(id=>document.getElementById(id).style.display='none');}
 function addBook(){
-  const t=document.getElementById('fTitle').value.trim(),a=document.getElementById('fAuthor').value.trim();
+  const t=document.getElementById('fTitle').value.trim(), a=document.getElementById('fAuthor').value.trim();
   let ok=true;
-  if(!t){document.getElementById('fTitle').classList.add('err');document.getElementById('eTitle').style.display='block';ok=false;}
-  if(!a){document.getElementById('fAuthor').classList.add('err');document.getElementById('eAuthor').style.display='block';ok=false;}
+  if(!t){document.getElementById('fTitle').classList.add('err');document.getElementById('eTitle').style.display='block';ok=false;}else{document.getElementById('fTitle').classList.remove('err');document.getElementById('eTitle').style.display='none';}
+  if(!a){document.getElementById('fAuthor').classList.add('err');document.getElementById('eAuthor').style.display='block';ok=false;}else{document.getElementById('fAuthor').classList.remove('err');document.getElementById('eAuthor').style.display='none';}
   if(!ok)return;
-  const b={id:nid++,title:t,author:a,genre:document.getElementById('fGenre').value||'Other',status:newSt,notes:'Added '+new Date().toLocaleDateString()};
-  pushHist(`Added "${t}"`);
-  books.push(b);
+  books.push({id:nid++,title:t,author:a,genre:document.getElementById('fGenre').value||'Other',status:newSt,notes:'Added '+new Date().toLocaleDateString()});
   resetForm();toggleForm();renderTable();toast(`"${t}" added! 📚`,'success');
-  const row=document.getElementById('r'+b.id);if(row)row.classList.add('row-added');
 }
 
-/* ═══ UNDO/REDO ═══ */
-function pushHist(label){hist.push({snapshot:books.map(b=>({...b})),label});if(hist.length>12)hist.shift();redoStack=[];updateHistBar();}
-function doUndo(){if(!hist.length){toast('Nothing to undo','info');return;}const h=hist.pop();redoStack.push({snapshot:books.map(b=>({...b})),label:'Redo: '+h.label});books=h.snapshot.map(b=>({...b}));renderTable();toast('Undone: '+h.label,'warning');updateHistBar();}
-function doRedo(){if(!redoStack.length){toast('Nothing to redo','info');return;}const r=redoStack.pop();hist.push({snapshot:books.map(b=>({...b})),label:r.label});books=r.snapshot.map(b=>({...b}));renderTable();toast(r.label,'info');updateHistBar();}
-function updateHistBar(){const hl=document.getElementById('histList');if(!hist.length){hl.innerHTML=`<span class="hist-chip" style="color:#C8D0DC;">No actions yet</span>`;return;}hl.innerHTML=hist.slice(-4).map((h,i,a)=>`<span class="hist-chip ${i===a.length-1?'latest':''}">${h.label}</span>`).join('');}
+/* ═══ SETTINGS ═══ */
+function loadSettings(){
+  if(!currentUser)return;
+  document.getElementById('setFirst').value=currentUser.firstName||'';
+  document.getElementById('setLast').value=currentUser.lastName||'';
+  document.getElementById('setEmail').value=currentUser.email||'';
+  document.getElementById('setGoal').value=currentUser.goal||20;
+  document.getElementById('settingsName').textContent=currentUser.firstName+' '+currentUser.lastName;
+  document.getElementById('settingsEmail').textContent=currentUser.email;
+  const initials=((currentUser.firstName||'?')[0]+(currentUser.lastName||'?')[0]).toUpperCase();
+  document.getElementById('settingsAvatar').textContent=initials;
+}
+function saveSettings(){
+  const first=document.getElementById('setFirst').value.trim();
+  const last=document.getElementById('setLast').value.trim();
+  const email=document.getElementById('setEmail').value.trim();
+  const goal=parseInt(document.getElementById('setGoal').value)||20;
+  if(!first||!last){toast('First and last name are required.','error');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Please enter a valid email.','error');return;}
+  currentUser.firstName=first;currentUser.lastName=last;currentUser.email=email;currentUser.goal=goal;
+  updateHeaderUser();loadSettings();toast('Settings saved! ✓','success');
+}
+function cancelSettings(){loadSettings();toast('Changes discarded.','info');}
+function toggleSw(id){const t=document.getElementById(id);t.classList.toggle('on');toast(t.classList.contains('on')?'Enabled':'Disabled','info');}
 
-/* ═══ MENU ═══ */
-function toggleMenu(id){const el=document.getElementById(id);const was=el.classList.contains('open');closeMenus();if(!was)el.classList.add('open');}
-function closeMenus(){document.querySelectorAll('.menu-item.open').forEach(m=>m.classList.remove('open'));}
-
-/* ═══ KEYBOARD ═══ */
-document.addEventListener('click',e=>{if(!e.target.closest('.menu-item'))closeMenus();if(!e.target.closest('#ctx'))closeCtx();});
-document.addEventListener('keydown',e=>{
-  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT'||e.target.tagName==='TEXTAREA')return;
-  if((e.ctrlKey||e.metaKey)&&e.key==='z'){doUndo();e.preventDefault();}
-  if((e.ctrlKey||e.metaKey)&&e.key==='y'){doRedo();e.preventDefault();}
-  if((e.ctrlKey||e.metaKey)&&e.key==='n'){showPage('books');toggleForm();e.preventDefault();}
-  if(e.key==='Escape'){closeModal();closeCtx();closeMenus();}
-  if(e.key==='Delete'&&sel)openModal(null,sel);
-  if((e.key==='t'||e.key==='T')&&sel)toggleSt(null,sel);
-  if((e.key==='g'||e.key==='G'))toggleView();
-});
+/* ═══ PASSWORD HELPERS ═══ */
+function togglePw(id,btn){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'👁':'🙈';}
+function checkStrength(){const v=document.getElementById('regPw').value,f=document.getElementById('strFill'),l=document.getElementById('strLbl');if(!v){f.style.width='0%';l.textContent='Enter a password';l.style.color='#6B7280';return;}let s=0;if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;const lv=[{w:'25%',c:'#D94F4F',t:'Weak'},{w:'50%',c:'#F0A500',t:'Fair'},{w:'75%',c:'#7FA3D1',t:'Good'},{w:'100%',c:'#3BAF7A',t:'Strong'}];const d=lv[Math.max(0,s-1)];f.style.width=d.w;f.style.background=d.c;l.textContent=d.t;l.style.color=d.c;}
 
 /* ═══ TOAST ═══ */
-function toast(msg,type='success'){
-  const icons={success:'✅',error:'🗑️',info:'ℹ️',warning:'🔄'};
-  const w=document.getElementById('toasts');
-  const t=document.createElement('div');
-  t.className=`toast ${type}`;
-  t.innerHTML=`${icons[type]} ${msg}`;
-  w.appendChild(t);
-  requestAnimationFrame(()=>t.classList.add('show'));
-  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),250);},2800);
-}
+function toast(msg,type='success'){const icons={success:'✅',error:'⚠️',info:'ℹ️'};const w=document.getElementById('toasts');const t=document.createElement('div');t.className=`toast ${type}`;t.innerHTML=`${icons[type]} ${msg}`;w.appendChild(t);requestAnimationFrame(()=>t.classList.add('show'));setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),250);},3000);}
 
-/* ═══ RIPPLE ═══ */
-function createRipple(e,btn){
-  const r=document.createElement('span');
-  const rect=btn.getBoundingClientRect();
-  const size=Math.max(rect.width,rect.height);
-  r.className='ripple';
-  r.style.width=r.style.height=size+'px';
-  r.style.left=(e.clientX-rect.left-size/2)+'px';
-  r.style.top=(e.clientY-rect.top-size/2)+'px';
-  btn.appendChild(r);
-  setTimeout(()=>r.remove(),600);
-}
-document.querySelectorAll('.btn').forEach(b=>b.addEventListener('click',e=>createRipple(e,b)));
-
-/* ═══ FORMS PAGE HELPERS ═══ */
-function fvReq(id,msgId,msg){const el=document.getElementById(id),m=document.getElementById(msgId);if(!el||!m)return true;if(!el.value.trim()){el.style.borderColor='#D94F4F';el.style.background='#fff8f8';if(m){m.style.display='flex';m.textContent='⚠ '+msg;}return false;}el.style.borderColor='#3BAF7A';el.style.background='#f8fffe';if(m)m.style.display='none';return true;}
-function fvEmail(id,msgId){const el=document.getElementById(id),m=document.getElementById(msgId);if(!el)return true;const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim());if(!el.value.trim()){el.style.borderColor='#C8D0DC';if(m)m.style.display='none';return true;}if(!ok){el.style.borderColor='#D94F4F';el.style.background='#fff8f8';if(m)m.style.display='flex';return false;}el.style.borderColor='#3BAF7A';el.style.background='#f8fffe';if(m)m.style.display='none';return true;}
-function fvNum(id,msgId,min,max){const el=document.getElementById(id),m=document.getElementById(msgId);if(!el)return true;const v=parseInt(el.value);if(!el.value){el.style.borderColor='#C8D0DC';if(m)m.style.display='none';return true;}if(isNaN(v)||v<min||v>max){el.style.borderColor='#D94F4F';if(m){m.style.display='flex';m.textContent='⚠ Must be '+min+'–'+max;}return false;}el.style.borderColor='#3BAF7A';if(m)m.style.display='none';return true;}
-function ftgChk(id){const el=document.getElementById(id);if(!el)return;const on=el.classList.toggle('on');el.style.background=on?'#4A6FA5':'#fff';el.style.borderColor=on?'#4A6FA5':'#C8D0DC';el.style.color=on?'#fff':'transparent';}
-function ftgSw(id,lId){const tr=document.getElementById(id);if(!tr)return;tr.classList.toggle('on');const on=tr.classList.contains('on');tr.style.background=on?'#3BAF7A':'#C8D0DC';const th=tr.querySelector('.sthumb');if(th)th.style.left=on?'22px':'2px';const parts=document.getElementById(lId).innerHTML.split(':');document.getElementById(lId).innerHTML=parts[0]+': <strong>'+(on?'On':'Off')+'</strong>';toast((on?'Enabled':'Disabled'),'info');}
-function ftgPw(id,btn){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'👁':'🙈';}
-function fchStr(){const v=document.getElementById('rPw').value,f=document.getElementById('strFill'),l=document.getElementById('strLbl');if(!v){f.style.width='0%';l.textContent='Enter a password';l.style.color='#6B7280';return;}let s=0;if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;const lv=[{w:'25%',c:'#D94F4F',t:'Weak'},{w:'50%',c:'#F0A500',t:'Fair'},{w:'75%',c:'#7FA3D1',t:'Good'},{w:'100%',c:'#3BAF7A',t:'Strong'}];const d=lv[Math.max(0,s-1)];f.style.width=d.w;f.style.background=d.c;l.textContent=d.t;l.style.color=d.c;}
-function fchMatch(){const p1=document.getElementById('rPw')?.value,p2=document.getElementById('rPw2')?.value,m=document.getElementById('matchMsg');if(!m||!p2){if(m)m.style.display='none';return;}if(p1===p2){m.style.display='flex';m.style.color='#3BAF7A';m.textContent='✓ Passwords match';}else{m.style.display='flex';m.style.color='#D94F4F';m.textContent='⚠ Passwords do not match';}}
-function fchCount(){const v=document.getElementById('bkNotes').value.length,c=document.getElementById('notesCount');if(!c)return;c.textContent=v+' / 300';c.style.color=v>270?'#D94F4F':v>240?'#F0A500':'#6B7280';}
-let fbkStatus='To Read';
-function fbkSt(s){fbkStatus=s;document.getElementById('bkRd').className='rdot2'+(s==='Read'?' on':'');document.getElementById('bkTr').className='rdot2'+(s==='To Read'?' on':'');}
-function fbkReset(){['bkTitle','bkAuthor'].forEach(id=>{document.getElementById(id).value='';document.getElementById(id).style.borderColor='#C8D0DC';document.getElementById(id).style.background='#fff';});document.getElementById('bkNotes').value='';document.getElementById('bkGenre').value='';fbkSt('To Read');document.getElementById('bookAdded').style.display='none';document.getElementById('notesCount').textContent='0 / 300';}
-function fSubmitLogin(){if(fvEmail('lEmail','lEmailMsg')&&fvReq('lPw','lPwMsg','Password is required.'))toast('Signed in! Welcome back 🎉','success');else toast('Please fix the errors above','error');}
-function fSubmitReg(){const errs=[];if(!fvReq('rFirst','rFirstMsg','First name required'))errs.push('First name');if(!fvReq('rLast','rLastMsg','Last name required'))errs.push('Last name');if(!fvEmail('rEmail','rEmailMsg'))errs.push('Valid email');if((document.getElementById('rPw')?.value||'').length<8)errs.push('Password (min 8 chars)');if(document.getElementById('rPw')?.value!==document.getElementById('rPw2')?.value)errs.push('Passwords match');if(!document.getElementById('chTerms')?.classList.contains('on')){errs.push('Accept terms');document.getElementById('termsMsg').style.display='flex';}if(errs.length)toast('Fix: '+errs.join(', '),'error');else toast('Account created! Welcome 🎉','success');}
-function fSubmitBook(){if(fvReq('bkTitle','bkTitleMsg','Title is required.')&&fvReq('bkAuthor','bkAuthorMsg','Author is required.')){const t=document.getElementById('bkTitle').value.trim();document.getElementById('bookAdded').style.display='flex';document.getElementById('bookAddedMsg').textContent='"'+t+'" added!';toast('"'+t+'" added to your list 📚','success');}else toast('Fill in required fields','error');}
-function fSubmitSettings(){if(!fvEmail('setEmail','setEmailMsg'))return toast('Fix email address','error');toast('Settings saved ✓','success');}
-
-/* ═══ FORMS SEARCH FILTER ═══ */
-const fBooks=[{title:'The Great Gatsby',author:'F. Scott Fitzgerald',genre:'Fiction',status:'Read'},{title:'Dune',author:'Frank Herbert',genre:'Sci-Fi',status:'To Read'},{title:'Sapiens',author:'Yuval Noah Harari',genre:'Non-Fiction',status:'Read'},{title:'1984',author:'George Orwell',genre:'Dystopian',status:'To Read'},{title:'To Kill a Mockingbird',author:'Harper Lee',genre:'Fiction',status:'Read'},{title:'Gone Girl',author:'Gillian Flynn',genre:'Mystery',status:'Read'},{title:'Atomic Habits',author:'James Clear',genre:'Non-Fiction',status:'To Read'},{title:'Brave New World',author:'Aldous Huxley',genre:'Dystopian',status:'Read'}];
-function fFilter(){const q=(document.getElementById('sfQ')?.value||'').toLowerCase(),st=document.getElementById('sfSt')?.value||'',gn=document.getElementById('sfGn')?.value||'';const list=fBooks.filter(b=>(!q||b.title.toLowerCase().includes(q)||b.author.toLowerCase().includes(q))&&(!st||b.status===st)&&(!gn||b.genre===gn));const cnt=document.getElementById('sfCnt');if(cnt)cnt.textContent=list.length+' books';const sb=document.getElementById('sfBody');if(!sb)return;sb.innerHTML=list.length?list.map((b,i)=>`<tr style="background:${i%2?'#F4F6FA':'#fff'};border-bottom:1px solid #EEF1F6;"><td style="padding:8px 12px;font-weight:600;font-size:12.5px;">${b.title}</td><td style="padding:8px 12px;color:#6B7280;font-size:12px;">${b.author}</td><td style="padding:8px 12px;"><span style="background:#e8eeff;color:#3d4cc0;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:20px;">${b.genre}</span></td><td style="padding:8px 12px;"><span style="background:${b.status==='Read'?'#D4F0E4':'#FFF3CD'};color:${b.status==='Read'?'#1d6b47':'#7a5c00'};font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:20px;">${b.status==='Read'?'✓ Read':'⏳ To Read'}</span></td></tr>`).join(''):`<tr><td colspan="4" style="text-align:center;padding:24px;color:#6B7280;">No books found.</td></tr>`;}
-
-/* ═══ WIZARD ═══ */
-let wizSt='To Read',frating=0;
-function fwizSt(s){wizSt=s;document.getElementById('wRd').className='rdot2'+(s==='Read'?' on':'');document.getElementById('wTr').className='rdot2'+(s==='To Read'?' on':'');}
-function fsetR(n){frating=n;['r1','r2','r3','r4','r5'].forEach((id,i)=>{const el=document.getElementById(id);el.textContent=i<n?'★':'☆';el.style.color=i<n?'#F0A500':'#C8D0DC';});}
-function wizGo(n){
-  if(n===2){if(!fvReq('w1T','w1TMsg','Title required')||!fvReq('w1A','w1AMsg','Author required'))return toast('Fill required fields','error');}
-  if(n===3){const sum=document.getElementById('wizSum');if(sum)sum.innerHTML=[['Title',document.getElementById('w1T').value],['Author',document.getElementById('w1A').value],['Year',document.getElementById('w1Y').value||'—'],['Genre',document.getElementById('w2G')?.value||'—'],['Status',wizSt],['Rating',frating?'★'.repeat(frating)+'☆'.repeat(5-frating):'Not rated']].map(([k,v])=>`<div style="display:flex;gap:8px;font-size:12.5px;margin-bottom:5px;"><span style="font-weight:700;color:#6B7280;min-width:60px;">${k}:</span><span>${v}</span></div>`).join('');}
-  [1,2,3].forEach(i=>{document.getElementById('wStep'+i).style.display=i===n?'block':'none';const c=document.getElementById('wc'+i),l=document.getElementById('wl'+i);c.style.background=i<n?'#3BAF7A':i===n?'#4A6FA5':'#C8D0DC';c.textContent=i<n?'✓':i;l.style.color=i<=n?'#2B4C8C':'#6B7280';if(i<3){const ln=document.getElementById('wline'+i);if(ln)ln.style.background=i<n?'#3BAF7A':'#C8D0DC';}});
-}
-function fwizDone(){document.getElementById('wizSuccess').style.display='flex';toast('Book added via wizard! 🎉','success');}
-
-/* ═══ ANIMATION DEMOS ═══ */
-function toggleBadgeDemo(){const bd=document.getElementById('bDemo');const isRead=bd.textContent.includes('Read')&&!bd.textContent.includes('To');if(isRead){bd.style.background='#FFF3CD';bd.style.color='#7a5c00';bd.textContent='⏳ To Read';}else{bd.style.background='#D4F0E4';bd.style.color='#1d6b47';bd.textContent='✓ Read';}bd.style.animation='none';setTimeout(()=>{bd.style.animation='popIn .3s ease';},10);}
-function setNavDemo(n){const items=['navDemo1','navDemo2','navDemo3'];items.forEach((id,i)=>{const el=document.getElementById(id);if(i===n-1){el.style.background='rgba(255,255,255,0.2)';el.style.color='#fff';el.style.fontWeight='700';el.style.animation='pulse 2s ease-in-out infinite';}else{el.style.background='transparent';el.style.color='rgba(255,255,255,.6)';el.style.fontWeight='500';el.style.animation='none';}});}
-
-/* ═══ INIT ═══ */
-renderTable();
-updateHomeStats();
-renderBarChart();
-renderPieChart();
+/* ═══ KEYBOARD ═══ */
+document.addEventListener('keydown',e=>{
+  if(!currentUser)return;
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT'||e.target.tagName==='TEXTAREA')return;
+  if(e.key==='Escape'){closeModal();}
+  if(e.key==='Delete'&&sel)openModal(null,sel);
+});
 </script>
 </body>
 </html>
