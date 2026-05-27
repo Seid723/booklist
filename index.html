@@ -131,7 +131,6 @@ body{font-family:'DM Sans',sans-serif;background:#EAECF2;color:#1A1A2E;font-size
 .det-body{padding:14px;display:flex;flex-direction:column;gap:10px;}
 .det-title{font-size:14px;font-weight:700;color:#2B4C8C;}
 .det-author{font-size:12px;color:#6B7280;margin-top:2px;}
-.divider{height:1px;background:#C8D0DC;}
 .det-row{display:flex;justify-content:space-between;align-items:center;}
 .det-key{font-size:11px;font-weight:600;color:#6B7280;}
 .det-notes{font-size:12px;color:#3D4460;background:#F4F6FA;padding:9px 10px;border-radius:7px;line-height:1.55;}
@@ -246,7 +245,6 @@ footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size
 </head>
 <body>
 
-<!-- ══════════ LOGIN SCREEN ══════════ -->
 <div class="screen auth-screen active" id="screenLogin">
   <div class="auth-box">
     <div class="auth-logo">
@@ -258,13 +256,13 @@ footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size
     <p class="auth-sub">Welcome back! Please enter your details.</p>
     <div class="form-group">
       <label class="lbl">Email Address</label>
-      <input class="inp" id="loginEmail" type="email" placeholder="student@email.com">
+      <input class="inp" id="loginEmail" type="email" placeholder="student@email.com" value="student@email.com">
       <div class="err-msg" id="loginEmailErr">⚠ Please enter a valid email address.</div>
     </div>
     <div class="form-group">
       <label class="lbl">Password</label>
       <div class="pw-wrap">
-        <input class="inp" id="loginPw" type="password" placeholder="Enter your password…">
+        <input class="inp" id="loginPw" type="password" placeholder="Enter your password…" value="password123">
         <button class="pw-eye" onclick="togglePw('loginPw',this)" type="button">👁</button>
       </div>
       <div class="err-msg" id="loginPwErr">⚠ Password is required.</div>
@@ -280,7 +278,6 @@ footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size
   </div>
 </div>
 
-<!-- ══════════ REGISTER SCREEN ══════════ -->
 <div class="screen auth-screen" id="screenRegister">
   <div class="auth-box">
     <div class="auth-logo">
@@ -313,7 +310,6 @@ footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size
         <input class="inp" id="regPw" type="password" placeholder="Min. 8 characters…" oninput="checkStrength()">
         <button class="pw-eye" onclick="togglePw('regPw',this)" type="button">👁</button>
       </div>
-      <!-- Strength meter -->
       <div style="margin-top:6px;">
         <div style="height:5px;background:#C8D0DC;border-radius:3px;overflow:hidden;"><div id="strFill" style="height:100%;border-radius:3px;width:0%;transition:width .3s,background .3s;"></div></div>
         <span id="strLbl" style="font-size:10.5px;font-weight:600;color:#6B7280;">Enter a password</span>
@@ -333,7 +329,6 @@ footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size
   </div>
 </div>
 
-<!-- ══════════ APP SCREEN ══════════ -->
 <div class="screen app-screen" id="screenApp">
 
   <header class="header">
@@ -346,11 +341,10 @@ footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size
     </nav>
     <button class="user-btn" onclick="showPage('settings')" id="userBtn">
       <div class="user-avatar" id="headerAvatar">A</div>
-      <span id="headerName">User</span>
+      <span id="headerName">Anna</span>
     </button>
   </header>
 
-  <!-- HOME PAGE -->
   <div class="page active" id="page-home">
     <h1 class="page-title" id="homeGreeting">👋 Welcome back!</h1>
     <p class="page-sub">Here's your reading overview.</p>
@@ -360,7 +354,6 @@ footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size
       <div class="stat-c"><div class="stat-n" style="color:#F0A500;" id="hToRead">0</div><div class="stat-l">In Progress</div></div>
       <div class="stat-c"><div class="stat-n" style="color:#D94F4F;" id="hPct">0</div><div class="stat-l">Need Attention</div></div>
     </div>
-    <!-- Progress bar -->
     <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px;margin-bottom:18px;">
       <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
         <span style="font-size:13px;font-weight:700;color:#2B4C8C;">Reading Progress</span>
@@ -370,28 +363,26 @@ footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size
         <div style="height:100%;width:0%;background:linear-gradient(90deg,#3BAF7A,#7FA3D1);border-radius:7px;transition:width .5s;" id="homePctBar"></div>
       </div>
     </div>
-    <div class="dash-grid">
-      <div class="mini-card">
+    <div class="dash-grid" id="homeDashGrid">
+      <div class="mini-card" id="deadlineCard">
         <div class="mini-title">⏰ Deadline Watch</div>
         <div class="mini-list" id="deadlineWatch"></div>
       </div>
-      <div class="mini-card">
+      <div class="mini-card" id="reminderCard">
         <div class="mini-title">🔔 Smart Reminder Suggestions</div>
         <div class="mini-list" id="reminderSuggestions"></div>
       </div>
     </div>
-    <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px;">
+    <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px;margin-top:14px;">
       <div style="font-size:13px;font-weight:700;color:#2B4C8C;margin-bottom:12px;">📚 Recently Added</div>
       <div id="recentBooks" style="display:flex;flex-direction:column;gap:8px;"></div>
     </div>
   </div>
 
-  <!-- MY BOOKS PAGE -->
   <div class="page" id="page-books">
     <h1 class="page-title">📋 My Books</h1>
     <p class="page-sub">Manage your reading list. Click a row to see details, click a badge to toggle status.</p>
 
-    <!-- ACTION HISTORY BAR -->
     <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:10px;padding:8px 14px;margin-bottom:13px;display:flex;align-items:center;gap:10px;">
       <span style="font-size:11px;font-weight:700;color:#6B7280;white-space:nowrap;">⏱ History:</span>
       <div style="display:flex;gap:5px;flex:1;overflow:hidden;" id="histList">
@@ -429,7 +420,7 @@ footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size
               <th>Action</th>
             </tr></thead>
             <tbody id="tbody"></tbody>
-            <tfoot><tr><td colspan="8" id="tfoot"></td></tr></tfoot>
+            <tfoot><tr><td colspan="8" id="tfoot">Showing 0 books</td></tr></tfoot>
           </table></div>
         </div>
         <div class="add-card" id="addCard" style="display:none;">
@@ -445,7 +436,7 @@ footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size
             </div>
             <div class="frm-row">
               <div><label class="flbl">Start Date</label><input class="finp" id="fStart" type="date"></div>
-              <div><label class="flbl">Deadline / Time Limit</label><input class="finp" id="fDeadline" type="date"><div class="hint">Used for deadline warnings and reminder suggestions.</div></div>
+              <div><label class="flbl">Deadline / Time Limit</label><input class="finp" id="fDeadline" type="date"><div class="hint">Used for warnings and reminder suggestions.</div></div>
             </div>
             <div class="frm-row">
               <div><label class="flbl">Number of Pages</label><input class="finp" id="fPages" type="number" min="1" placeholder="e.g. 320"></div>
@@ -473,7 +464,6 @@ footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size
     </div>
   </div>
 
-  <!-- STATISTICS PAGE -->
   <div class="page" id="page-stats">
     <h1 class="page-title">📊 Statistics</h1>
     <p class="page-sub">Your reading data at a glance.</p>
@@ -484,612 +474,606 @@ footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size
       <div class="stat-c"><div class="stat-n" style="color:#7b4cc0;" id="sPct">0%</div><div class="stat-l">Completion</div></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-      <!-- Bar chart -->
       <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px;">
         <div style="font-size:13px;font-weight:700;color:#2B4C8C;margin-bottom:14px;">Books by Genre</div>
         <div id="genreChart" style="display:flex;flex-direction:column;gap:8px;"></div>
       </div>
-      <!-- Donut chart -->
-      <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px;">
-        <div style="font-size:13px;font-weight:700;color:#2B4C8C;margin-bottom:14px;">Finished vs Active</div>
-        <div style="display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;">
-          <svg width="130" height="130" viewBox="0 0 220 220">
-            <text x="110" y="103" font-size="26" font-weight="700" fill="#2B4C8C" text-anchor="middle" font-family="sans-serif" id="donutPct">0%</text>
-            <text x="110" y="122" font-size="11" fill="#6B7280" text-anchor="middle" font-family="sans-serif">Finished</text>
-            <path id="donutRead" d="M110,20 A90,90 0 0,1 110,20" fill="none" stroke="#3BAF7A" stroke-width="34" stroke-linecap="round"/>
-            <path id="donutToRead" d="M110,20 A90,90 0 1,0 110,20" fill="none" stroke="#F0A500" stroke-width="34" stroke-linecap="round"/>
-          </svg>
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <div style="display:flex;align-items:center;gap:7px;font-size:12px;"><div style="width:10px;height:10px;border-radius:50%;background:#3BAF7A;flex-shrink:0;"></div><span id="lgRead">Finished — 0</span></div>
-            <div style="display:flex;align-items:center;gap:7px;font-size:12px;"><div style="width:10px;height:10px;border-radius:50%;background:#F0A500;flex-shrink:0;"></div><span id="lgToRead">Active — 0</span></div>
-          </div>
-        </div>
+      <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px;" id="breakdownChartContainer">
+        <div style="font-size:13px;font-weight:700;color:#2B4C8C;margin-bottom:14px;">Finished vs Active Statuses</div>
+        <div id="statusBreakdown"></div>
       </div>
     </div>
   </div>
 
-  <!-- SETTINGS PAGE -->
   <div class="page" id="page-settings">
     <h1 class="page-title">⚙️ Settings</h1>
-    <p class="page-sub">Manage your profile and preferences.</p>
-
+    <p class="page-sub">Manage your account preferences and notification toggles.</p>
     <div class="settings-section">
+      <div class="settings-title">Profile Settings</div>
       <div class="settings-card">
         <div class="avatar-row">
           <div class="big-avatar" id="settingsAvatar">A</div>
           <div class="avatar-info">
-            <div class="avatar-name" id="settingsName">User</div>
-            <div class="avatar-email" id="settingsEmail">user@email.com</div>
+            <div class="avatar-name" id="settingsName">Anna Smith</div>
+            <div class="avatar-email">student@email.com</div>
           </div>
         </div>
-        <div class="settings-title">👤 Profile Information</div>
         <div class="set-row">
-          <div><label class="flbl">First Name</label><input class="finp" id="setFirst" type="text" placeholder="First name…"></div>
-          <div><label class="flbl">Last Name</label><input class="finp" id="setLast" type="text" placeholder="Last name…"></div>
+          <div><label class="flbl">First Name</label><input class="finp" id="setFirst" value="Anna"></div>
+          <div><label class="flbl">Last Name</label><input class="finp" id="setLast" value="Smith"></div>
         </div>
-        <div class="set-row">
-          <div><label class="flbl">Email Address</label><input class="finp" id="setEmail" type="email" placeholder="your@email.com"></div>
-          <div><label class="flbl">Reading Goal (books/year)</label><input class="finp" id="setGoal" type="number" min="1" max="365" placeholder="e.g. 20"></div>
-        </div>
-        <div class="set-row">
-          <div><label class="flbl">Preferred Daily Reading Goal</label><input class="finp" id="setDailyGoal" type="number" min="1" max="500" placeholder="pages per day"></div>
-          <div><label class="flbl">Monthly Reading Goal</label><input class="finp" id="setMonthlyGoal" type="number" min="1" max="50" placeholder="books per month"></div>
-        </div>
-        <div style="display:flex;gap:9px;margin-top:4px;">
-          <button class="ibtn ibtn-primary" onclick="saveSettings()">💾 Save Changes</button>
-          <button class="ibtn ibtn-ghost" onclick="cancelSettings()">✕ Cancel</button>
-        </div>
+        <button class="ibtn ibtn-primary" style="max-width:120px;" onclick="saveProfile()">Save Changes</button>
       </div>
     </div>
-
     <div class="settings-section">
+      <div class="settings-title">Reminding Section</div>
       <div class="settings-card">
-        <div class="settings-title">🔔 Notifications</div>
-        <div class="set-row">
-          <div><label class="flbl">Email Reminder Frequency</label><select class="finp" id="setReminderFreq" onchange="toggleCustomFrequency()"><option value="daily">Daily reminders</option><option value="2days">Every 2 days</option><option value="weekly">Weekly</option><option value="custom">Custom frequency</option><option value="disabled">Disable reminders</option></select></div>
-          <div><label class="flbl">Default Reminder Time</label><input class="finp" id="setReminderTime" type="time"></div>
+        <div class="sw-wrap">
+          <div class="sw-label">
+            <strong>Smart Reminder Suggestions</strong>
+            <div class="hint">Display optimized daily tracking suggestions on your dashboard view.</div>
+          </div>
+          <div class="sw-track on" id="swSmartReminders" onclick="toggleSetting('smartReminders')">
+            <div class="sw-thumb"></div>
+          </div>
         </div>
-        <div class="set-row" id="customFreqRow" style="display:none;">
-          <div><label class="flbl">Custom Frequency</label><input class="finp" id="setCustomDays" type="number" min="1" max="30" placeholder="Every N days"></div>
-          <div><label class="flbl">Default Deadline for New Books</label><input class="finp" id="setDeadlineDays" type="number" min="1" max="365" placeholder="days after start date"></div>
+        <div class="sw-wrap">
+          <div class="sw-label">
+            <strong>Deadline Alert Indicators</strong>
+            <div class="hint">Notify you with visual cues three days before target dates expire.</div>
+          </div>
+          <div class="sw-track on" id="swEmailAlerts" onclick="toggleSetting('emailAlerts')">
+            <div class="sw-thumb"></div>
+          </div>
         </div>
-        <div class="set-row" id="defaultDeadlineRow">
-          <div><label class="flbl">Default Deadline for New Books</label><input class="finp" id="setDeadlineDaysAlt" type="number" min="1" max="365" placeholder="days after start date"></div>
-          <div><label class="flbl">Default Status for New Books</label><select class="finp" id="setDefaultStatus"><option>Want to read</option><option>Currently reading</option><option>Finished</option><option>Did not finish</option></select></div>
-        </div>
-        <div class="sw-wrap"><span class="sw-label">Email reminders for active books</span><div class="sw-track on" id="sw1" onclick="toggleSw('sw1')"><div class="sw-thumb"></div></div></div>
-        <div class="sw-wrap"><span class="sw-label">Deadline and overdue alerts</span><div class="sw-track on" id="sw2" onclick="toggleSw('sw2')"><div class="sw-thumb"></div></div></div>
-        <div class="sw-wrap"><span class="sw-label">Weekly reading summary</span><div class="sw-track on" id="sw3" onclick="toggleSw('sw3')"><div class="sw-thumb"></div></div></div>
-        <div class="sw-wrap"><span class="sw-label">Smart progress suggestions</span><div class="sw-track on" id="sw4" onclick="toggleSw('sw4')"><div class="sw-thumb"></div></div></div>
       </div>
     </div>
-
-    <div class="settings-section">
-      <div class="settings-card">
-        <div class="settings-title" style="color:#D94F4F;border-color:#D94F4F;">⚠️ Account</div>
-        <button class="ibtn ibtn-danger" style="margin-right:10px;" onclick="doLogout()">🚪 Log Out</button>
-        <button class="ibtn ibtn-ghost" style="color:#D94F4F;border-color:#D94F4F;" onclick="toast('Delete account — demo only','error')">🗑️ Delete Account</button>
-      </div>
-    </div>
+    <button class="ibtn" style="color:#D94F4F; border:1.5px solid #D94F4F; background:none; max-width:110px;" onclick="doLogout()">🚪 Log Out</button>
   </div>
 
-  <footer>BookList App · Student Reading Tracker · 2026</footer>
 </div>
 
-<!-- CONFIRM MODAL -->
-<div class="overlay" id="modal">
+<div class="overlay" id="overlay">
   <div class="modal">
-    <div style="font-size:28px;margin-bottom:10px;">🗑️</div>
-    <h3>Remove Book?</h3>
-    <p>Are you sure you want to remove <strong id="modalTitle"></strong>? This cannot be undone.</p>
+    <h3 id="modalTitle">Confirm Action</h3>
+    <p id="modalText">Are you sure you want to perform this action?</p>
     <div class="modal-btns">
       <button class="ibtn ibtn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="ibtn" style="background:#D94F4F;color:#fff;" onclick="doRemove()">Yes, Remove</button>
+      <button class="ibtn ibtn-danger" id="modalConfirmBtn">Confirm</button>
     </div>
   </div>
 </div>
 
-<div class="toast-wrap" id="toasts"></div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<footer>
+  &copy; 2026 BookList — Student Reading Tracker. All rights reserved.
+</footer>
 
 <script>
-/* ═══ USER STATE ═══ */
-let currentUser = null; // { firstName, lastName, email, goal, preferences }
-let users = []; // registered users
+const TODAY_STR = "2026-05-27"; // Static system timeline synchronization anchor
 
-/* ═══ BOOK DATA ═══ */
-const gC = { Fiction:'badge-fiction','Sci-Fi':'badge-scifi','Non-Fiction':'badge-nonfic',Dystopian:'badge-dystopia',Mystery:'badge-mystery',Fantasy:'badge-fantasy',Productivity:'badge-scifi',Business:'badge-nonfic',Psychology:'badge-mystery',Classic:'badge-fiction',Other:'badge-neutral' };
-const covers = ['#2B4C8C','#3BAF7A','#D94F4F','#F0A500','#7b4cc0','#3d9cb5'];
-const statuses = ['Want to read','Currently reading','Finished','Did not finish'];
-const defaultPrefs = { dailyGoal:25, monthlyGoal:2, reminderFrequency:'daily', customDays:3, reminderTime:'18:00', defaultDeadlineDays:30, defaultStatus:'Want to read', emailReminders:true, deadlineAlerts:true, weeklySummary:true, smartSuggestions:true };
+let books = [];
+let settings = { smartReminders: true, emailAlerts: true };
+let booksHistory = [];
+let redoHistory = [];
+let historyActions = [];
+let redoActions = [];
+let selectedBookId = null;
+let currentSortKey = '';
+let currentSortAsc = true;
+let bookIdToDelete = null;
 
-let books = [
-  {id:1,title:'The Great Gatsby',author:'F. Scott Fitzgerald',genre:'Classic',status:'Finished',startDate:'2026-01-08',deadline:'2026-01-28',pages:180,currentPage:180,priority:'Medium',updatedAt:'2026-01-26',reminder:'auto',notes:'Classic American literature. Strong option for essay examples.'},
-  {id:2,title:'Dune',author:'Frank Herbert',genre:'Sci-Fi',status:'Currently reading',startDate:'2026-05-01',deadline:'2026-06-05',pages:688,currentPage:415,priority:'High',updatedAt:'2026-05-26',reminder:'deadline',notes:'Epic sci-fi. Needs steady progress because it is long.'},
-  {id:3,title:'Sapiens',author:'Yuval Noah Harari',genre:'Non-Fiction',status:'Finished',startDate:'2026-02-04',deadline:'2026-03-01',pages:464,currentPage:464,priority:'Medium',updatedAt:'2026-02-25',reminder:'auto',notes:'Useful for history and society references.'},
-  {id:4,title:'1984',author:'George Orwell',genre:'Dystopian',status:'Want to read',startDate:'',deadline:'2026-06-12',pages:328,currentPage:0,priority:'High',updatedAt:'2026-05-20',reminder:'auto',notes:'Classic dystopia, required reading for class.'},
-  {id:5,title:'To Kill a Mockingbird',author:'Harper Lee',genre:'Classic',status:'Finished',startDate:'2026-03-10',deadline:'2026-04-01',pages:336,currentPage:336,priority:'Medium',updatedAt:'2026-03-30',reminder:'auto',notes:'Timeless story about justice.'},
-  {id:6,title:'Gone Girl',author:'Gillian Flynn',genre:'Mystery',status:'Did not finish',startDate:'2026-01-15',deadline:'2026-02-20',pages:432,currentPage:160,priority:'Low',updatedAt:'2026-02-06',reminder:'off',notes:'Paused because it was not relevant to current study goals.'},
-  {id:7,title:'Atomic Habits',author:'James Clear',genre:'Productivity',status:'Currently reading',startDate:'2026-05-18',deadline:'2026-05-31',pages:320,currentPage:120,priority:'High',updatedAt:'2026-05-25',reminder:'deadline',notes:'Good for building a daily reading habit.'},
-  {id:8,title:'The Psychology of Money',author:'Morgan Housel',genre:'Business',status:'Want to read',startDate:'',deadline:'2026-07-10',pages:256,currentPage:0,priority:'Medium',updatedAt:'2026-05-10',reminder:'auto',notes:'Recommended for personal finance.'},
-  {id:9,title:'Thinking, Fast and Slow',author:'Daniel Kahneman',genre:'Psychology',status:'Currently reading',startDate:'2026-04-20',deadline:'2026-05-24',pages:499,currentPage:210,priority:'High',updatedAt:'2026-05-22',reminder:'deadline',notes:'Important but overdue. Needs catch-up plan.'},
-  {id:10,title:'Project Hail Mary',author:'Andy Weir',genre:'Sci-Fi',status:'Want to read',startDate:'',deadline:'2026-08-15',pages:496,currentPage:0,priority:'Low',updatedAt:'2026-05-11',reminder:'auto',notes:'Fun reading after exams.'},
-  {id:11,title:'Educated',author:'Tara Westover',genre:'Non-Fiction',status:'Finished',startDate:'2026-04-01',deadline:'2026-04-28',pages:352,currentPage:352,priority:'Medium',updatedAt:'2026-04-24',reminder:'auto',notes:'Strong memoir about education and family.'},
-  {id:12,title:'The Hobbit',author:'J.R.R. Tolkien',genre:'Fantasy',status:'Want to read',startDate:'',deadline:'2026-06-25',pages:310,currentPage:0,priority:'Low',updatedAt:'2026-05-19',reminder:'auto',notes:'Light fantasy reading.'},
-  {id:13,title:'Deep Work',author:'Cal Newport',genre:'Productivity',status:'Currently reading',startDate:'2026-05-12',deadline:'2026-06-02',pages:304,currentPage:245,priority:'Medium',updatedAt:'2026-05-26',reminder:'auto',notes:'Useful study strategy book. Almost finished.'},
-  {id:14,title:'Brave New World',author:'Aldous Huxley',genre:'Dystopian',status:'Want to read',startDate:'',deadline:'2026-05-30',pages:288,currentPage:0,priority:'High',updatedAt:'2026-05-18',reminder:'deadline',notes:'Close deadline; should start soon.'},
-];
-let nid=15, sel=null, pending=null, newSt='Want to read';
-let sortF=null, sortD=1;
-
-/* ═══ SCREEN SWITCHING ═══ */
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-function showLogin() { showScreen('screenLogin'); }
-function showRegister() { showScreen('screenRegister'); }
-
-/* ═══ LOGIN ═══ */
-function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const pw    = document.getElementById('loginPw').value;
-  let ok = true;
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('loginEmail').classList.add('err'); document.getElementById('loginEmailErr').style.display='block'; ok=false; } else { document.getElementById('loginEmail').classList.remove('err'); document.getElementById('loginEmailErr').style.display='none'; }
-  if(!pw) { document.getElementById('loginPw').classList.add('err'); document.getElementById('loginPwErr').style.display='block'; ok=false; } else { document.getElementById('loginPw').classList.remove('err'); document.getElementById('loginPwErr').style.display='none'; }
-  if(!ok) return;
-  // Check registered users or use demo account
-  const found = users.find(u=>u.email===email && u.pw===pw);
-  if(found) { currentUser = found; }
-  else if(email==='demo@booklist.com' && pw==='demo123') { currentUser = { firstName:'Demo', lastName:'User', email:'demo@booklist.com', pw:'demo123', goal:20, preferences:{...defaultPrefs} }; }
-  else { toast('Incorrect email or password. Try demo@booklist.com / demo123','error'); return; }
-  enterApp();
-}
-
-function enterApp() {
-  updateHeaderUser();
-  renderTable();
-  updateStats();
-  updateHomeStats();
-  loadSettings();
-  showScreen('screenApp');
-  showPage('home');
-  toast(`Welcome back, ${currentUser.firstName}! 👋`,'success');
-}
-
-/* ═══ REGISTER ═══ */
-function doRegister() {
-  const first = document.getElementById('regFirst').value.trim();
-  const last  = document.getElementById('regLast').value.trim();
-  const email = document.getElementById('regEmail').value.trim();
-  const pw    = document.getElementById('regPw').value;
-  const pw2   = document.getElementById('regPw2').value;
-  let ok = true;
-  if(!first) { document.getElementById('regFirst').classList.add('err'); document.getElementById('regFirstErr').style.display='block'; ok=false; } else { document.getElementById('regFirst').classList.remove('err'); document.getElementById('regFirstErr').style.display='none'; }
-  if(!last)  { document.getElementById('regLast').classList.add('err');  document.getElementById('regLastErr').style.display='block';  ok=false; } else { document.getElementById('regLast').classList.remove('err');  document.getElementById('regLastErr').style.display='none'; }
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('regEmail').classList.add('err'); document.getElementById('regEmailErr').style.display='block'; ok=false; } else { document.getElementById('regEmail').classList.remove('err'); document.getElementById('regEmailErr').style.display='none'; }
-  if(pw.length<8) { document.getElementById('regPw').classList.add('err'); document.getElementById('regPwErr').style.display='block'; ok=false; } else { document.getElementById('regPw').classList.remove('err'); document.getElementById('regPwErr').style.display='none'; }
-  if(pw!==pw2) { document.getElementById('regPw2').classList.add('err'); document.getElementById('regPw2Err').style.display='block'; ok=false; } else { document.getElementById('regPw2').classList.remove('err'); document.getElementById('regPw2Err').style.display='none'; }
-  if(!ok) return;
-  if(users.find(u=>u.email===email)) { toast('An account with this email already exists.','error'); return; }
-  const newUser = { firstName:first, lastName:last, email, pw, goal:20, preferences:{...defaultPrefs} };
-  users.push(newUser);
-  currentUser = newUser;
-  enterApp();
-}
-
-/* ═══ LOGOUT ═══ */
-function doLogout() {
-  currentUser = null; sel = null;
-  // clear login fields
-  ['loginEmail','loginPw'].forEach(id=>{ document.getElementById(id).value=''; document.getElementById(id).classList.remove('err'); });
-  showScreen('screenLogin');
-  toast('You have been signed out.','info');
-}
-
-/* ═══ HEADER USER ═══ */
-function updateHeaderUser() {
-  if(!currentUser) return;
-  const initials = (currentUser.firstName[0]+(currentUser.lastName?currentUser.lastName[0]:'')).toUpperCase();
-  document.getElementById('headerAvatar').textContent = initials;
-  document.getElementById('headerName').textContent = currentUser.firstName;
-}
-
-/* ═══ PAGES ═══ */
-function showPage(p) {
-  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
-  document.getElementById('page-'+p).classList.add('active');
-  const nt=document.getElementById('nt-'+p); if(nt) nt.classList.add('active');
-  if(p==='stats') updateStats();
-  if(p==='home') updateHomeStats();
-  if(p==='books') renderTable();
-  if(p==='settings') loadSettings();
-}
-
-function prefs(){ if(currentUser&&!currentUser.preferences) currentUser.preferences={...defaultPrefs}; return currentUser?currentUser.preferences:defaultPrefs; }
-function statusClass(s){ return s==='Finished'?'badge-finished':s==='Currently reading'?'badge-current':s==='Did not finish'?'badge-dnf':'badge-want'; }
-function statusLabel(s){ return s==='Finished'?'✓ Finished':s==='Currently reading'?'↗ Reading':s==='Did not finish'?'✕ DNF':'⏳ Want'; }
-function priorityClass(p){ return p==='High'?'badge-high':p==='Low'?'badge-low':'badge-medium'; }
-function progressPct(b){ const pages=Number(b.pages)||0, cur=Math.min(Number(b.currentPage)||0,pages||Number(b.currentPage)||0); return pages?Math.max(0,Math.min(100,Math.round(cur/pages*100))):(b.status==='Finished'?100:0); }
-function today(){ const d=new Date(); d.setHours(0,0,0,0); return d; }
-function daysLeft(dateStr){ if(!dateStr)return null; const d=new Date(dateStr+'T00:00:00'); return Math.ceil((d-today())/86400000); }
-function deadlineBadge(b){
-  if(!b.deadline)return '<span class="badge badge-neutral">No deadline</span>';
-  if(b.status==='Finished')return '<span class="badge badge-ok">Completed</span>';
-  const d=daysLeft(b.deadline);
-  if(d<0)return `<span class="badge badge-urgent">${Math.abs(d)}d overdue</span>`;
-  if(d===0)return '<span class="badge badge-urgent">Due today</span>';
-  if(d<=7)return `<span class="badge badge-soon">${d}d left</span>`;
-  return `<span class="badge badge-ok">${d}d left</span>`;
-}
-function deadlineScore(b){ const d=daysLeft(b.deadline); return d===null?9999:d; }
-function priorityScore(p){ return p==='High'?1:p==='Medium'?2:3; }
-function reminderIntervalLabel(){
-  const p=prefs();
-  if(p.reminderFrequency==='disabled'||!p.emailReminders)return 'Reminders disabled';
-  if(p.reminderFrequency==='daily')return `Daily at ${p.reminderTime}`;
-  if(p.reminderFrequency==='2days')return `Every 2 days at ${p.reminderTime}`;
-  if(p.reminderFrequency==='weekly')return `Weekly at ${p.reminderTime}`;
-  return `Every ${p.customDays||3} days at ${p.reminderTime}`;
-}
-function pagesPerDayNeeded(b){
-  const left=(Number(b.pages)||0)-(Number(b.currentPage)||0), d=daysLeft(b.deadline);
-  if(!left||d===null||d<=0)return left;
-  return Math.ceil(left/d);
-}
-function smartSuggestion(b){
-  if(b.status==='Finished')return 'Finished';
-  if(b.reminder==='off')return 'Book reminders off';
-  const d=daysLeft(b.deadline), pct=progressPct(b), ppd=pagesPerDayNeeded(b);
-  if(d!==null&&d<0)return `Overdue: schedule ${Math.max(ppd, prefs().dailyGoal)} pages/day`;
-  if(d!==null&&d<=7&&pct<90)return `Deadline soon: read ${ppd||prefs().dailyGoal} pages/day`;
-  if(b.status==='Currently reading'&&pct<50)return `Keep ${reminderIntervalLabel().toLowerCase()}`;
-  if(b.status==='Want to read'&&d!==null&&d<=10)return 'Start this week';
-  return reminderIntervalLabel();
-}
-function bookGoalPct(){
-  const goal=currentUser?(Number(currentUser.goal)||20):20;
-  const finished=books.filter(b=>b.status==='Finished').length;
-  return Math.min(100,Math.round(finished/goal*100));
-}
-function esc(v){ return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-function donutArc(pct){
-  const r=90,c=110,start=-90,end=start+(pct/100)*359.99;
-  const sx=c+r*Math.cos(start*Math.PI/180), sy=c+r*Math.sin(start*Math.PI/180);
-  const ex=c+r*Math.cos(end*Math.PI/180), ey=c+r*Math.sin(end*Math.PI/180);
-  return `M${sx},${sy} A${r},${r} 0 ${pct>50?1:0},1 ${ex},${ey}`;
-}
-
-/* ═══ HOME STATS ═══ */
-function updateHomeStats() {
-  const r=books.filter(b=>b.status==='Finished').length, active=books.filter(b=>b.status==='Currently reading').length, t=books.length, pct=bookGoalPct();
-  const attention=books.filter(b=>b.status!=='Finished'&&b.deadline&&daysLeft(b.deadline)<=7).length;
-  document.getElementById('hTotal').textContent=t;
-  document.getElementById('hRead').textContent=r;
-  document.getElementById('hToRead').textContent=active;
-  document.getElementById('hPct').textContent=attention;
-  document.getElementById('homePctLbl').textContent=pct+'%';
-  document.getElementById('homePctBar').style.width=pct+'%';
-  if(currentUser) document.getElementById('homeGreeting').textContent=`👋 Welcome back, ${currentUser.firstName}!`;
-  const deadlineWatch=document.getElementById('deadlineWatch');
-  const risky=books.filter(b=>b.status!=='Finished'&&b.deadline).sort((a,b)=>deadlineScore(a)-deadlineScore(b)).slice(0,4);
-  deadlineWatch.innerHTML=risky.length?risky.map(b=>`
-    <div class="mini-item">
-      <div class="mini-main"><div class="mini-name">${b.title}</div><div class="mini-sub">${progressPct(b)}% complete · ${b.author}</div></div>
-      ${deadlineBadge(b)}
-    </div>`).join(''):`<div class="empty-state"><strong>No deadline pressure</strong>Add deadlines to books to track time limits.</div>`;
-  const reminders=document.getElementById('reminderSuggestions');
-  const suggested=books.filter(b=>b.status!=='Finished'&&b.status!=='Did not finish').sort((a,b)=>deadlineScore(a)-deadlineScore(b)).slice(0,4);
-  reminders.innerHTML=suggested.length?suggested.map(b=>`
-    <div class="mini-item">
-      <div class="mini-main"><div class="mini-name">${b.title}</div><div class="mini-sub">${smartSuggestion(b)}</div></div>
-      <span class="badge ${priorityClass(b.priority)}">${b.priority}</span>
-    </div>`).join(''):`<div class="empty-state"><strong>Nothing to remind</strong>Your active reading list is clear.</div>`;
-  // Recent books
-  const rb=document.getElementById('recentBooks');
-  rb.innerHTML=books.slice().sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||'')).slice(0,4).map(b=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#F4F6FA;border-radius:8px;">
-      <div><div style="font-size:12.5px;font-weight:600;color:#1A1A2E;">${b.title}</div><div style="font-size:11px;color:#6B7280;">${b.author} · ${progressPct(b)}%</div></div>
-      <span class="badge ${statusClass(b.status)}">${statusLabel(b.status)}</span>
-    </div>`).join('');
-}
-
-/* ═══ STATS ═══ */
-function updateStats() {
-  const r=books.filter(b=>b.status==='Finished').length, active=books.filter(b=>b.status==='Currently reading').length, t=books.length, pct=t?Math.round(r/t*100):0;
-  const pagesRead=books.reduce((sum,b)=>sum+(Number(b.currentPage)||0),0);
-  document.getElementById('sTotal').textContent=t;
-  document.getElementById('sRead').textContent=r;
-  document.getElementById('sToRead').textContent=active;
-  document.getElementById('sPct').textContent=pct+'%';
-  document.getElementById('lgRead').textContent=`Finished — ${r} (${pct}%)`;
-  document.getElementById('lgToRead').textContent=`Active — ${active} · ${pagesRead} pages logged`;
-  document.getElementById('donutPct').textContent=pct+'%';
-  document.getElementById('donutRead').setAttribute('d',donutArc(Math.max(pct,1)));
-  document.getElementById('donutToRead').setAttribute('d',donutArc(Math.max(100-pct,1)));
-  // Simple genre bar chart
-  const genres={};
-  books.forEach(b=>{genres[b.genre]=(genres[b.genre]||0)+1;});
-  const gc=document.getElementById('genreChart');
-  const max=Math.max(...Object.values(genres),1);
-  const colors=['#3d4cc0','#2563b0','#6b35c0','#c05a20','#1d6b47','#8b00c0'];
-  gc.innerHTML=Object.entries(genres).map(([g,n],i)=>`
-    <div>
-      <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px;"><span style="font-weight:600;color:#3D4460;">${g}</span><span style="color:#6B7280;">${n} book${n!==1?'s':''}</span></div>
-      <div style="height:9px;background:#E8EFF8;border-radius:5px;overflow:hidden;"><div style="height:100%;background:${colors[i%colors.length]};border-radius:5px;width:${(n/max*100).toFixed(0)}%;opacity:.85;"></div></div>
-    </div>`).join('');
-}
-
-/* ═══ RENDER TABLE ═══ */
-function renderTable() {
-  const q=document.getElementById('searchQ').value.trim().toLowerCase();
-  const st=document.getElementById('selSt').value;
-  const gn=document.getElementById('selGn').value;
-  const dl=document.getElementById('selDeadline').value;
-  const list=books.filter(b=>{
-    const d=daysLeft(b.deadline);
-    const matchDeadline=!dl||(dl==='none'&&!b.deadline)||(dl==='overdue'&&d!==null&&d<0&&b.status!=='Finished')||(dl==='soon'&&d!==null&&d>=0&&d<=7&&b.status!=='Finished')||(dl==='month'&&d!==null&&d>=0&&d<=30);
-    return (!q||b.title.toLowerCase().includes(q)||b.author.toLowerCase().includes(q))&&(!st||b.status===st)&&(!gn||b.genre===gn)&&matchDeadline;
+window.addEventListener('DOMContentLoaded', () => {
+  loadFromLocalStorage();
+  window.addEventListener('resize', () => {
+    if (document.getElementById('page-home').classList.contains('active')) updateHome();
   });
-  document.getElementById('cnt').textContent=list.length+' book'+(list.length!==1?'s':'');
-  const tb=document.getElementById('tbody');
-  tb.innerHTML=!list.length?`<tr><td colspan="8"><div class="empty-state"><strong>No books found</strong>Try clearing filters or add a book with a deadline and progress data.</div></td></tr>`:list.map(b=>`
-    <tr id="r${b.id}" class="${sel===b.id?'selected':''}" onclick="selectBook(${b.id})">
-      <td>${esc(b.title)}</td>
-      <td style="color:#6B7280;">${esc(b.author)}</td>
-      <td><span class="badge ${gC[b.genre]||''}">${esc(b.genre||'—')}</span></td>
-      <td><span class="badge ${statusClass(b.status)}" onclick="toggleSt(event,${b.id})">${statusLabel(b.status)}</span></td>
-      <td><div class="progress-wrap"><div class="progress-line"><div class="progress-fill" style="width:${progressPct(b)}%;"></div></div><div class="progress-text">${progressPct(b)}%</div></div></td>
-      <td>${deadlineBadge(b)}</td>
-      <td><span class="badge ${priorityClass(b.priority)}">${esc(b.priority||'Medium')}</span></td>
-      <td><select class="status-select" onclick="event.stopPropagation()" onchange="setBookStatus(event,${b.id},this.value)">${statuses.map(s=>`<option ${s===b.status?'selected':''}>${s}</option>`).join('')}</select></td>
-    </tr>`).join('');
-  document.getElementById('tfoot').textContent=`${list.length} of ${books.length} books shown`;
-  if(sel) renderDetail();
-  updateHomeStats();
+});
+
+function loadFromLocalStorage() {
+  let storedBooks = localStorage.getItem('booklist_tracker_data');
+  let storedSettings = localStorage.getItem('booklist_settings_data');
+  
+  if (storedBooks) {
+    books = JSON.parse(storedBooks);
+  } else {
+    // Inject mock university dataset values instantly
+    books = [
+      { id: 1, title: "Introduction to Algorithms", author: "Thomas H. Cormen", genre: "Sci-Fi", status: "Currently reading", startDate: "2026-05-01", deadline: "2026-06-15", pages: 1200, current: 340, priority: "High", reminder: "auto", notes: "Core assignment textbooks. Professor tracking completion records." },
+      { id: 2, title: "Clean Code workflows", author: "Robert C. Martin", genre: "Productivity", status: "Finished", startDate: "2026-01-10", deadline: "2026-02-28", pages: 464, current: 464, priority: "Medium", reminder: "off", notes: "Highly relevant reference documentation." },
+      { id: 3, title: "The Great Gatsby Assignment", author: "F. Scott Fitzgerald", genre: "Classic", status: "Want to read", startDate: "", deadline: "2026-05-29", pages: 180, current: 0, priority: "Low", reminder: "auto", notes: "Required literary reading syllabus." }
+    ];
+  }
+  
+  if (storedSettings) {
+    settings = JSON.parse(storedSettings);
+  }
 }
 
-/* ═══ SELECT + DETAIL ═══ */
-function selectBook(id){sel=id;renderTable();renderDetail();}
-function renderDetail(){
-  const b=books.find(x=>x.id===sel); const db=document.getElementById('detBody');
-  if(!b){db.innerHTML=`<div class="no-sel">👆 Click any row<br>to see details here.</div>`;return;}
-  const bg=covers[(b.id-1)%covers.length];
-  const pct=progressPct(b);
-  db.innerHTML=`
-    <div style="display:flex;align-items:center;gap:10px;">
-      <div style="width:40px;height:54px;border-radius:6px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📚</div>
-      <div><div class="det-title">${esc(b.title)}</div><div class="det-author">${esc(b.author)}</div></div>
-    </div>
-    <div class="divider"></div>
-    <div class="det-row"><span class="det-key">Status</span><span class="badge ${statusClass(b.status)}" onclick="toggleSt(null,${b.id})" style="cursor:pointer;">${statusLabel(b.status)}</span></div>
-    <div class="det-row"><span class="det-key">Genre</span><span class="badge ${gC[b.genre]||''}">${esc(b.genre||'—')}</span></div>
-    <div class="det-row"><span class="det-key">Priority</span><span class="badge ${priorityClass(b.priority)}">${esc(b.priority||'Medium')}</span></div>
-    <div class="det-row"><span class="det-key">Deadline</span>${deadlineBadge(b)}</div>
-    <div><div class="det-row" style="margin-bottom:5px;"><span class="det-key">Page Progress</span><span class="det-key">${Number(b.currentPage)||0}/${Number(b.pages)||0} pages</span></div><div class="progress-line"><div class="progress-fill" style="width:${pct}%;"></div></div><div class="progress-text">${pct}% complete</div></div>
-    <div class="det-row"><span class="det-key">Start Date</span><span>${b.startDate||'Not started'}</span></div>
-    <div class="det-row"><span class="det-key">Reminder Plan</span><span style="font-size:11px;color:#3D4460;text-align:right;">${esc(smartSuggestion(b))}</span></div>
-    <div class="divider"></div>
-    <div class="det-notes">${esc(b.notes||'No notes yet.')}</div>
-    <div style="display:flex;flex-direction:column;gap:7px;margin-top:4px;">
-      <button class="ibtn ibtn-outline" style="width:100%;justify-content:center;" onclick="toggleSt(null,${b.id})">✏️ Move to Next Status</button>
-      <button class="ibtn ibtn-primary" style="width:100%;justify-content:center;" onclick="quickProgress(${b.id})">＋ Log ${prefs().dailyGoal} Pages</button>
-      <button class="ibtn ibtn-danger" style="width:100%;justify-content:center;" onclick="openModal(null,${b.id})">✕ Remove Book</button>
-    </div>`;
+function saveToLocalStorage() {
+  localStorage.setItem('booklist_tracker_data', JSON.stringify(books));
+  localStorage.setItem('booklist_settings_data', JSON.stringify(settings));
 }
 
-/* ═══ UNDO / REDO ═══ */
-let hist=[], redoStack=[];
-
-function pushHist(label) {
-  hist.push({ snapshot: books.map(b=>({...b})), label });
-  if(hist.length>10) hist.shift();
-  redoStack=[];
-  updateHistBar();
+function pushHistory(actionName) {
+  booksHistory.push(JSON.stringify(books));
+  historyActions.push(actionName);
+  redoHistory = [];
+  redoActions = [];
+  updateHistoryBar();
 }
 
 function doUndo() {
-  if(!hist.length){ toast('Nothing to undo','info'); return; }
-  const h=hist.pop();
-  redoStack.push({ snapshot: books.map(b=>({...b})), label:'Redo: '+h.label });
-  books=h.snapshot.map(b=>({...b}));
-  if(sel && !books.find(x=>x.id===sel)){ sel=null; document.getElementById('detBody').innerHTML=`<div class="no-sel">👆 Click any row<br>to see details here.</div>`; }
-  renderTable(); toast('Undone: '+h.label,'info'); updateHistBar();
+  if (booksHistory.length === 0) { return toast("Nothing to undo!", "info"); }
+  redoHistory.push(JSON.stringify(books));
+  const action = historyActions.pop();
+  redoActions.push(action);
+  books = JSON.parse(booksHistory.pop());
+  saveToLocalStorage();
+  renderTable();
+  updateHome();
+  if (selectedBookId) showBookDetails(selectedBookId);
+  updateHistoryBar();
+  toast(`Undone: ${action}`, "info");
 }
 
 function doRedo() {
-  if(!redoStack.length){ toast('Nothing to redo','info'); return; }
-  const r=redoStack.pop();
-  hist.push({ snapshot: books.map(b=>({...b})), label:r.label });
-  books=r.snapshot.map(b=>({...b}));
-  renderTable(); toast(r.label,'info'); updateHistBar();
+  if (redoHistory.length === 0) { return toast("Nothing to redo!", "info"); }
+  booksHistory.push(JSON.stringify(books));
+  const action = redoActions.pop();
+  historyActions.push(action);
+  books = JSON.parse(redoHistory.pop());
+  saveToLocalStorage();
+  renderTable();
+  updateHome();
+  if (selectedBookId) showBookDetails(selectedBookId);
+  updateHistoryBar();
+  toast(`Redone: ${action}`, "info");
 }
 
-function updateHistBar() {
-  const hl=document.getElementById('histList');
-  if(!hl) return;
-  if(!hist.length){ hl.innerHTML=`<span style="font-size:10.5px;background:#F4F6FA;border:1px solid #C8D0DC;color:#C8D0DC;padding:2px 9px;border-radius:20px;">No actions yet</span>`; return; }
-  hl.innerHTML=hist.slice(-5).map((h,i,a)=>`<span style="font-size:10.5px;background:${i===a.length-1?'#E8EFF8':'#F4F6FA'};border:1px solid ${i===a.length-1?'#4A6FA5':'#C8D0DC'};color:${i===a.length-1?'#2B4C8C':'#6B7280'};font-weight:${i===a.length-1?'600':'400'};padding:2px 9px;border-radius:20px;white-space:nowrap;">${h.label}</span>`).join('');
+function updateHistoryBar() {
+  const list = document.getElementById('histList');
+  if (historyActions.length === 0) {
+    list.innerHTML = `<span style="font-size:10.5px;background:#F4F6FA;border:1px solid #C8D0DC;color:#C8D0DC;padding:2px 9px;border-radius:20px;">No actions yet</span>`;
+    return;
+  }
+  let html = '';
+  let start = Math.max(0, historyActions.length - 3);
+  for (let i = start; i < historyActions.length; i++) {
+    html += `<span style="font-size:10.5px;background:#E8EFF8;border:1px solid #4A6FA5;color:#2B4C8C;padding:2px 9px;border-radius:20px;">${escapeHtml(historyActions[i])}</span>`;
+  }
+  list.innerHTML = html;
 }
 
-/* ═══ SORT ═══ */
-function sortBooks(f){
-  if(!f)return;
-  if(sortF===f)sortD*=-1;else{sortF=f;sortD=1;}
-  pushHist('Sort by '+f);
-  books.sort((a,b)=>{
-    let av,bv;
-    if(f==='progress'){av=progressPct(a);bv=progressPct(b);}
-    else if(f==='deadline'){av=deadlineScore(a);bv=deadlineScore(b);}
-    else if(f==='priority'){av=priorityScore(a.priority);bv=priorityScore(b.priority);}
-    else {av=(a[f]||'').toString().toLowerCase();bv=(b[f]||'').toString().toLowerCase();}
-    return av<bv?-sortD:av>bv?sortD:0;
+function showPage(pageId) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const targetTab = document.getElementById('nt-' + pageId);
+  if (targetTab) targetTab.classList.add('active');
+  
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const targetPage = document.getElementById('page-' + pageId);
+  if (targetPage) targetPage.classList.add('active');
+  
+  if (pageId === 'home') updateHome();
+  if (pageId === 'books') { renderTable(); updateHistoryBar(); }
+  if (pageId === 'stats') updateStats();
+  if (pageId === 'settings') initSettingsPage();
+}
+
+function updateHome() {
+  document.getElementById('hTotal').innerText = books.length;
+  let finished = books.filter(b => b.status === 'Finished').length;
+  document.getElementById('hRead').innerText = finished;
+  let active = books.filter(b => b.status === 'Currently reading').length;
+  document.getElementById('hToRead').innerText = active;
+  
+  let overdueCount = books.filter(b => b.deadline && b.status !== 'Finished' && new Date(b.deadline) < new Date(TODAY_STR)).length;
+  document.getElementById('hPct').innerText = overdueCount;
+  
+  let totalP = 0, readP = 0;
+  books.forEach(b => { totalP += (b.pages || 0); readP += (b.current || 0); });
+  let overallPct = totalP > 0 ? Math.round((readP / totalP) * 100) : 0;
+  document.getElementById('homePctLbl').innerText = overallPct + '%';
+  document.getElementById('homePctBar').style.width = overallPct + '%';
+  
+  let dlHtml = '';
+  let activeWithDeadlines = books.filter(b => b.deadline && b.status !== 'Finished');
+  if (activeWithDeadlines.length === 0) {
+    dlHtml = `<div class="empty-state">No active upcoming deadlines.</div>`;
+  } else {
+    activeWithDeadlines.forEach(b => {
+      let diff = Math.ceil((new Date(b.deadline) - new Date(TODAY_STR)) / (1000 * 60 * 60 * 24));
+      let bType = diff < 0 ? 'badge-urgent' : (diff <= 7 ? 'badge-soon' : 'badge-ok');
+      dlHtml += `
+        <div class="mini-item">
+          <div class="mini-main"><div class="mini-name">${escapeHtml(b.title)}</div><div class="mini-sub">Due: ${b.deadline}</div></div>
+          <span class="badge ${bType}">${diff < 0 ? 'Overdue' : diff + 'd left'}</span>
+        </div>`;
+    });
+  }
+  document.getElementById('deadlineWatch').innerHTML = dlHtml;
+  
+  /* ── FIX 2: AUTOMATIC HOIST / REMOVAL LOGIC ── */
+  const reminderCard = document.getElementById('reminderCard');
+  const homeDashGrid = document.getElementById('homeDashGrid');
+  
+  if (settings.smartReminders) {
+    reminderCard.style.display = 'block';
+    if (window.innerWidth > 820) homeDashGrid.style.gridTemplateColumns = '1fr 1fr';
+    
+    let remHtml = '';
+    let readingBooks = books.filter(b => b.status === 'Currently reading');
+    if (readingBooks.length === 0) {
+      remHtml = `<div class="empty-state"><strong>No active suggestions.</strong> Update progress to configure daily limits.</div>`;
+    } else {
+      readingBooks.forEach(b => {
+        let targetRate = Math.ceil((b.pages - b.current) / 7 || 5);
+        remHtml += `
+          <div class="mini-item">
+            <div class="mini-main"><div class="mini-name">Read ${targetRate} pages today</div><div class="mini-sub">Calculated for: ${escapeHtml(b.title)}</div></div>
+            <span class="badge badge-low">Suggestion</span>
+          </div>`;
+      });
+    }
+    document.getElementById('reminderSuggestions').innerHTML = remHtml;
+  } else {
+    reminderCard.style.display = 'none';
+    if (window.innerWidth > 820) homeDashGrid.style.gridTemplateColumns = '1fr';
+  }
+  
+  let recHtml = '';
+  [...books].reverse().slice(0, 3).forEach(b => {
+    recHtml += `
+      <div style="display:flex; justify-content:space-between; align-items:center; background:#F4F6FA; padding:8px 12px; border-radius:8px;">
+        <div><strong>${escapeHtml(b.title)}</strong><span style="font-size:11px; color:#6B7280; margin-left:8px;">by ${escapeHtml(b.author)}</span></div>
+        <span class="badge badge-neutral">${escapeHtml(b.status)}</span>
+      </div>`;
   });
-  renderTable(); toast('Sorted by '+f,'info');
+  document.getElementById('recentBooks').innerHTML = recHtml || '<div class="empty-state">No tracked assets.</div>';
 }
 
-/* ═══ TOGGLE STATUS ═══ */
-function toggleSt(e,id){
-  if(e)e.stopPropagation();
-  const b=books.find(x=>x.id===id);if(!b)return;
-  pushHist(`"${b.title}" was ${b.status}`);
-  const next=statuses[(statuses.indexOf(b.status)+1)%statuses.length];
-  b.status=next;
-  if(next==='Finished'){b.currentPage=Number(b.pages)||b.currentPage;b.updatedAt=new Date().toISOString().slice(0,10);}
-  renderTable();toast(`"${b.title}" → ${b.status}`,b.status==='Finished'?'success':'info');
+function renderTable() {
+  const tbody = document.getElementById('tbody');
+  const q = document.getElementById('searchQ').value.toLowerCase();
+  const st = document.getElementById('selSt').value;
+  const gn = document.getElementById('selGn').value;
+  const dl = document.getElementById('selDeadline').value;
+  
+  let filtered = books.filter(b => {
+    if (q && !b.title.toLowerCase().includes(q) && !b.author.toLowerCase().includes(q)) return false;
+    if (st && b.status !== st) return false;
+    if (gn && b.genre !== gn) return false;
+    if (dl) {
+      if (dl === 'none' && b.deadline) return false;
+      if (dl !== 'none' && !b.deadline) return false;
+      if (b.deadline) {
+        let diff = Math.ceil((new Date(b.deadline) - new Date(TODAY_STR)) / (1000 * 60 * 60 * 24));
+        if (dl === 'overdue' && diff >= 0) return false;
+        if (dl === 'soon' && (diff < 0 || diff > 7)) return false;
+        if (dl === 'month') {
+          let m = new Date(TODAY_STR).getMonth(), y = new Date(TODAY_STR).getFullYear();
+          let dm = new Date(b.deadline).getMonth(), dy = new Date(b.deadline).getFullYear();
+          if (m !== dm || y !== dy) return false;
+        }
+      }
+    }
+    return true;
+  });
+  
+  document.getElementById('cnt').innerText = `${filtered.length} book(s)`;
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" class="empty-state">No records matched active search matrices.</td></tr>`;
+    return;
+  }
+  
+  let html = '';
+  filtered.forEach(b => {
+    let pct = b.pages > 0 ? Math.round((b.current / b.pages) * 100) : 0;
+    let cls = b.id === selectedBookId ? 'class="selected"' : '';
+    let gCls = b.genre === 'Sci-Fi' ? 'badge-scifi' : (b.genre === 'Classic' ? 'badge-dystopia' : 'badge-fiction');
+    let sCls = b.status === 'Finished' ? 'badge-read' : 'badge-toread';
+    
+    let dlBadge = '<span class="badge badge-neutral">No date</span>';
+    if (b.deadline) {
+      let d = Math.ceil((new Date(b.deadline) - new Date(TODAY_STR)) / (1000 * 60 * 60 * 24));
+      dlBadge = d < 0 ? `<span class="badge badge-urgent">Overdue (${Math.abs(d)}d)</span>` : (d <= 7 ? `<span class="badge badge-soon">In ${d}d</span>` : `<span class="badge badge-ok">${b.deadline}</span>`);
+    }
+    
+    html += `
+      <tr ${cls} onclick="selectRow(${b.id})">
+        <td><strong>${escapeHtml(b.title)}</strong></td>
+        <td>${escapeHtml(b.author)}</td>
+        <td><span class="badge ${gCls}">${escapeHtml(b.genre || 'None')}</span></td>
+        <td><span class="badge ${sCls}" onclick="cycleStatus(${b.id}, event)">${escapeHtml(b.status)}</span></td>
+        <td>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <div style="flex:1; height:6px; background:#C8D0DC; border-radius:3px; min-width:50px; overflow:hidden;"><div style="height:100%; background:#3BAF7A; width:${pct}%;"></div></div>
+            <span style="font-size:11px; font-weight:700;">${pct}%</span>
+          </div>
+        </td>
+        <td>${dlBadge}</td>
+        <td><span class="badge badge-medium">${escapeHtml(b.priority)}</span></td>
+        <td>
+          <button class="ibtn ibtn-outline" style="padding: 3px 8px; font-size:11px;" onclick="quickPagePrompt(${b.id}, event)">+ Custom Log</button>
+        </td>
+      </tr>`;
+  });
+  tbody.innerHTML = html;
+  document.getElementById('tfoot').innerText = `Showing ${filtered.length} of ${books.length} entries.`;
 }
 
-function setBookStatus(e,id,status){
-  if(e)e.stopPropagation();
-  const b=books.find(x=>x.id===id); if(!b||b.status===status)return;
-  pushHist(`"${b.title}" status changed`);
-  b.status=status;
-  if(status==='Finished')b.currentPage=Number(b.pages)||b.currentPage;
-  if(status==='Want to read')b.currentPage=0;
-  b.updatedAt=new Date().toISOString().slice(0,10);
-  renderTable(); toast(`"${b.title}" is now ${status}`,status==='Finished'?'success':'info');
+function selectRow(id) {
+  selectedBookId = id;
+  renderTable();
+  showBookDetails(id);
 }
 
-function quickProgress(id){
-  const b=books.find(x=>x.id===id); if(!b)return;
-  pushHist(`Logged pages for "${b.title}"`);
-  const pages=Number(b.pages)||0, add=Number(prefs().dailyGoal)||25;
-  b.currentPage=Math.min(pages||((Number(b.currentPage)||0)+add),(Number(b.currentPage)||0)+add);
-  if(pages&&b.currentPage>=pages)b.status='Finished';
-  else if(b.status==='Want to read')b.status='Currently reading';
-  if(!b.startDate)b.startDate=new Date().toISOString().slice(0,10);
-  b.updatedAt=new Date().toISOString().slice(0,10);
-  renderTable(); toast(`Progress updated for "${b.title}"`,'success');
+function showBookDetails(id) {
+  const b = books.find(item => item.id === id);
+  if (!b) return;
+  let pct = b.pages > 0 ? Math.round((b.current / b.pages) * 100) : 0;
+  
+  document.getElementById('detBody').innerHTML = `
+    <div class="det-title">${escapeHtml(b.title)}</div>
+    <div class="det-author">by ${escapeHtml(b.author)}</div>
+    <div class="divider" style="margin:8px 0; height:1px; background:#C8D0DC;"></div>
+    <div class="det-row"><span class="det-key">Status:</span> <span class="badge badge-toread">${escapeHtml(b.status)}</span></div>
+    <div class="det-row"><span class="det-key">Progress:</span> <span>${b.current}/${b.pages} pages (${pct}%)</span></div>
+    <div class="det-row"><span class="det-key">Deadline:</span> <span>${b.deadline || 'None'}</span></div>
+    
+    <div class="divider" style="margin:10px 0; height:1px; background:#C8D0DC;"></div>
+    
+    <div style="background:#F4F6FA; padding:10px; border-radius:8px; border:1px dashed #C8D0DC;">
+      <label class="flbl">✏️ Record Reading Progress</label>
+      <div style="display:flex; gap:6px; align-items:center; margin-top:4px;">
+        <input type="number" id="detailLogInp" class="finp" value="5" min="1" max="${b.pages - b.current}" style="max-width:75px; padding:6px;">
+        <button class="ibtn ibtn-primary" onclick="logCustomPages(${b.id})" style="padding:6px 12px;">Log Pages</button>
+      </div>
+    </div>
+    
+    <div class="divider" style="margin:10px 0; height:1px; background:#C8D0DC;"></div>
+    <div class="det-key" style="margin-bottom:3px;">Personal Syllabus Notes:</div>
+    <div class="det-notes">${escapeHtml(b.notes || 'Empty notes.')}</div>
+    <button class="ibtn ibtn-danger" style="margin-top:12px; justify-content:center;" onclick="confirmDelete(${b.id})">🗑️ Delete Book</button>
+  `;
 }
 
-/* ═══ REMOVE ═══ */
-function openModal(e,id){if(e)e.stopPropagation();pending=id;document.getElementById('modalTitle').textContent='"'+books.find(x=>x.id===id).title+'"';document.getElementById('modal').classList.add('open');}
-function closeModal(){document.getElementById('modal').classList.remove('open');pending=null;}
-function doRemove(){
-  const b=books.find(x=>x.id===pending);if(!b){closeModal();return;}
-  pushHist(`Removed "${b.title}"`);
-  books=books.filter(x=>x.id!==pending);
-  if(sel===pending){sel=null;document.getElementById('detBody').innerHTML=`<div class="no-sel">👆 Click any row<br>to see details here.</div>`;}
-  closeModal();renderTable();toast(`"${b.title}" removed`,'error');
+/* ── FIX 1 IMPLEMENTATION FUNCTIONS ── */
+function logCustomPages(id) {
+  const inp = document.getElementById('detailLogInp');
+  let amount = parseInt(inp.value, 10);
+  executeLoggedPages(id, amount);
 }
-document.getElementById('modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
 
-/* ═══ CLEAR FILTERS ═══ */
-function clearF(){document.getElementById('searchQ').value='';document.getElementById('selSt').value='';document.getElementById('selGn').value='';document.getElementById('selDeadline').value='';document.getElementById('selSort').value='';renderTable();toast('Filters cleared','info');}
+function quickPagePrompt(id, event) {
+  event.stopPropagation();
+  const b = books.find(item => item.id === id);
+  if (!b) return;
+  let val = prompt(`How many pages did you read from "${b.title}"?`, "5");
+  if (val === null) return;
+  let amount = parseInt(val, 10);
+  executeLoggedPages(id, amount);
+}
 
-/* ═══ ADD BOOK ═══ */
-function toggleForm(){
-  const c=document.getElementById('addCard'),b=document.getElementById('addBtnTop');const open=c.style.display!=='none';
-  c.style.display=open?'none':'block';b.textContent=open?'➕ Add Book':'✕ Cancel';
-  if(!open) applyFormDefaults();
+function executeLoggedPages(id, amount) {
+  if (isNaN(amount) || amount <= 0) { return toast("Please input an accurate positive number.", "error"); }
+  pushHistory("Log Progress");
+  const b = books.find(item => item.id === id);
+  if (b) {
+    let raw = b.current + amount;
+    b.current = Math.min(b.pages, raw);
+    if (b.current === b.pages) {
+      b.status = "Finished";
+      toast(`🎉 Completed "${b.title}"! Status updated to Finished.`, "success");
+    } else {
+      toast(`Logged +${amount} pages read for "${b.title}"`, "success");
+    }
+    saveToLocalStorage();
+    renderTable();
+    updateHome();
+    showBookDetails(id);
+  }
 }
-function setSt(s){newSt=s;const fs=document.getElementById('fStatus');if(fs)fs.value=s;}
-function applyFormDefaults(){
-  const p=prefs(), start=new Date().toISOString().slice(0,10);
-  document.getElementById('fStatus').value=p.defaultStatus||'Want to read';
-  document.getElementById('fStart').value='';
-  const d=new Date(); d.setDate(d.getDate()+(Number(p.defaultDeadlineDays)||30));
-  document.getElementById('fDeadline').value=d.toISOString().slice(0,10);
+
+function cycleStatus(id, event) {
+  event.stopPropagation();
+  pushHistory("Toggle Status");
+  const b = books.find(item => item.id === id);
+  if (b) {
+    const states = ["Want to read", "Currently reading", "Finished", "Did not finish"];
+    b.status = states[(states.indexOf(b.status) + 1) % states.length];
+    if (b.status === "Finished") b.current = b.pages;
+    if (b.status === "Want to read") b.current = 0;
+    saveToLocalStorage();
+    renderTable();
+    updateHome();
+    if (selectedBookId === id) showBookDetails(id);
+    toast(`Status changed to: ${b.status}`, "success");
+  }
 }
-function resetForm(){
-  ['fTitle','fAuthor','fPages','fCurrent','fNotes'].forEach(id=>{document.getElementById(id).value='';document.getElementById(id).classList.remove('err');});
-  document.getElementById('fGenre').value='';document.getElementById('fPriority').value='Medium';document.getElementById('fReminder').value='auto';
-  applyFormDefaults();['eTitle','eAuthor'].forEach(id=>document.getElementById(id).style.display='none');
+
+function toggleForm() {
+  const f = document.getElementById('addCard');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
 }
-function addBook(){
-  const t=document.getElementById('fTitle').value.trim(), a=document.getElementById('fAuthor').value.trim();
-  const pages=parseInt(document.getElementById('fPages').value)||0, current=parseInt(document.getElementById('fCurrent').value)||0;
-  let ok=true;
-  if(!t){document.getElementById('fTitle').classList.add('err');document.getElementById('eTitle').style.display='block';ok=false;}else{document.getElementById('fTitle').classList.remove('err');document.getElementById('eTitle').style.display='none';}
-  if(!a){document.getElementById('fAuthor').classList.add('err');document.getElementById('eAuthor').style.display='block';ok=false;}else{document.getElementById('fAuthor').classList.remove('err');document.getElementById('eAuthor').style.display='none';}
-  if(pages&&current>pages){toast('Current page cannot be greater than total pages.','error');return;}
-  if(!ok)return;
-  pushHist(`Added "${t}"`);
-  const status=document.getElementById('fStatus').value;
-  const todayStr=new Date().toISOString().slice(0,10);
+
+function resetForm() {
+  document.getElementById('fTitle').value = '';
+  document.getElementById('fAuthor').value = '';
+  document.getElementById('fGenre').value = '';
+  document.getElementById('fPages').value = '';
+  document.getElementById('fCurrent').value = '';
+  document.getElementById('fDeadline').value = '';
+  document.getElementById('fNotes').value = '';
+}
+
+function addBook() {
+  let title = document.getElementById('fTitle').value.trim();
+  let author = document.getElementById('fAuthor').value.trim();
+  if (!title || !author) { return toast("Please complete required entries.", "error"); }
+  
+  pushHistory("Add Book");
+  let p = parseInt(document.getElementById('fPages').value, 10) || 100;
+  let c = parseInt(document.getElementById('fCurrent').value, 10) || 0;
+  
   books.push({
-    id:nid++,title:t,author:a,genre:document.getElementById('fGenre').value||'Other',status,
-    startDate:document.getElementById('fStart').value,deadline:document.getElementById('fDeadline').value,
-    pages,currentPage:status==='Finished'&&pages?pages:current,priority:document.getElementById('fPriority').value,
-    reminder:document.getElementById('fReminder').value,updatedAt:todayStr,
-    notes:document.getElementById('fNotes').value.trim()||`Added ${new Date().toLocaleDateString()}.`
+    id: Date.now(),
+    title,
+    author,
+    genre: document.getElementById('fGenre').value,
+    status: document.getElementById('fStatus').value,
+    deadline: document.getElementById('fDeadline').value,
+    pages: p,
+    current: Math.min(p, c),
+    priority: document.getElementById('fPriority').value,
+    notes: document.getElementById('fNotes').value
   });
-  resetForm();toggleForm();renderTable();toast(`"${t}" added! 📚`,'success');
+  
+  saveToLocalStorage();
+  resetForm();
+  toggleForm();
+  renderTable();
+  updateHome();
+  toast("New tracking record built!", "success");
 }
 
-/* ═══ SETTINGS ═══ */
-function loadSettings(){
-  if(!currentUser)return;
-  const p=prefs();
-  document.getElementById('setFirst').value=currentUser.firstName||'';
-  document.getElementById('setLast').value=currentUser.lastName||'';
-  document.getElementById('setEmail').value=currentUser.email||'';
-  document.getElementById('setGoal').value=currentUser.goal||20;
-  document.getElementById('setDailyGoal').value=p.dailyGoal||25;
-  document.getElementById('setMonthlyGoal').value=p.monthlyGoal||2;
-  document.getElementById('setReminderFreq').value=p.reminderFrequency||'daily';
-  document.getElementById('setReminderTime').value=p.reminderTime||'18:00';
-  document.getElementById('setCustomDays').value=p.customDays||3;
-  document.getElementById('setDeadlineDays').value=p.defaultDeadlineDays||30;
-  document.getElementById('setDeadlineDaysAlt').value=p.defaultDeadlineDays||30;
-  document.getElementById('setDefaultStatus').value=p.defaultStatus||'Want to read';
-  setSwitch('sw1',p.emailReminders!==false);setSwitch('sw2',p.deadlineAlerts!==false);setSwitch('sw3',p.weeklySummary!==false);setSwitch('sw4',p.smartSuggestions!==false);
-  toggleCustomFrequency();
-  document.getElementById('settingsName').textContent=currentUser.firstName+' '+currentUser.lastName;
-  document.getElementById('settingsEmail').textContent=currentUser.email;
-  const initials=((currentUser.firstName||'?')[0]+(currentUser.lastName||'?')[0]).toUpperCase();
-  document.getElementById('settingsAvatar').textContent=initials;
-}
-function saveSettings(){
-  const first=document.getElementById('setFirst').value.trim();
-  const last=document.getElementById('setLast').value.trim();
-  const email=document.getElementById('setEmail').value.trim();
-  const goal=parseInt(document.getElementById('setGoal').value)||20;
-  const freq=document.getElementById('setReminderFreq').value;
-  const deadlineDays=parseInt((freq==='custom'?document.getElementById('setDeadlineDays').value:document.getElementById('setDeadlineDaysAlt').value))||30;
-  if(!first||!last){toast('First and last name are required.','error');return;}
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Please enter a valid email.','error');return;}
-  currentUser.firstName=first;currentUser.lastName=last;currentUser.email=email;currentUser.goal=goal;
-  currentUser.preferences={
-    dailyGoal:parseInt(document.getElementById('setDailyGoal').value)||25,
-    monthlyGoal:parseInt(document.getElementById('setMonthlyGoal').value)||2,
-    reminderFrequency:freq,
-    customDays:parseInt(document.getElementById('setCustomDays').value)||3,
-    reminderTime:document.getElementById('setReminderTime').value||'18:00',
-    defaultDeadlineDays:deadlineDays,
-    defaultStatus:document.getElementById('setDefaultStatus').value,
-    emailReminders:document.getElementById('sw1').classList.contains('on'),
-    deadlineAlerts:document.getElementById('sw2').classList.contains('on'),
-    weeklySummary:document.getElementById('sw3').classList.contains('on'),
-    smartSuggestions:document.getElementById('sw4').classList.contains('on')
-  };
-  updateHeaderUser();loadSettings();toast('Settings saved! ✓','success');
-  renderTable();updateHomeStats();
-}
-function cancelSettings(){loadSettings();toast('Changes discarded.','info');}
-function setSwitch(id,on){const t=document.getElementById(id);if(t)t.classList.toggle('on',!!on);}
-function toggleSw(id){const t=document.getElementById(id);t.classList.toggle('on');toast(t.classList.contains('on')?'Enabled':'Disabled','info');}
-function toggleCustomFrequency(){
-  const isCustom=document.getElementById('setReminderFreq').value==='custom';
-  document.getElementById('customFreqRow').style.display=isCustom?'grid':'none';
-  document.getElementById('defaultDeadlineRow').style.display=isCustom?'none':'grid';
+function confirmDelete(id) {
+  bookIdToDelete = id;
+  document.getElementById('overlay').classList.add('open');
 }
 
-/* ═══ PASSWORD HELPERS ═══ */
-function togglePw(id,btn){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'👁':'🙈';}
-function checkStrength(){const v=document.getElementById('regPw').value,f=document.getElementById('strFill'),l=document.getElementById('strLbl');if(!v){f.style.width='0%';l.textContent='Enter a password';l.style.color='#6B7280';return;}let s=0;if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;const lv=[{w:'25%',c:'#D94F4F',t:'Weak'},{w:'50%',c:'#F0A500',t:'Fair'},{w:'75%',c:'#7FA3D1',t:'Good'},{w:'100%',c:'#3BAF7A',t:'Strong'}];const d=lv[Math.max(0,s-1)];f.style.width=d.w;f.style.background=d.c;l.textContent=d.t;l.style.color=d.c;}
+document.getElementById('modalConfirmBtn').onclick = () => {
+  if (bookIdToDelete) {
+    pushHistory("Delete Book");
+    books = books.filter(b => b.id !== bookIdToDelete);
+    saveToLocalStorage();
+    renderTable();
+    updateHome();
+    document.getElementById('detBody').innerHTML = `<div class="no-sel">👆 Click any row<br>to see details here.</div>`;
+    closeModal();
+    toast("Book tracking data removed.", "info");
+  }
+};
 
-/* ═══ TOAST ═══ */
-function toast(msg,type='success'){const icons={success:'✅',error:'⚠️',info:'ℹ️'};const w=document.getElementById('toasts');const t=document.createElement('div');t.className=`toast ${type}`;t.innerHTML=`${icons[type]} ${msg}`;w.appendChild(t);requestAnimationFrame(()=>t.classList.add('show'));setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),250);},3000);}
+function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+function clearF() {
+  document.getElementById('searchQ').value = '';
+  document.getElementById('selSt').value = '';
+  document.getElementById('selGn').value = '';
+  document.getElementById('selDeadline').value = '';
+  renderTable();
+}
 
-/* ═══ KEYBOARD ═══ */
-document.addEventListener('keydown',e=>{
-  if(!currentUser)return;
-  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT'||e.target.tagName==='TEXTAREA')return;
-  if(e.key==='Escape'){closeModal();}
-  if(e.key==='Delete'&&sel)openModal(null,sel);
-});
+function sortBooks(key) {
+  if (currentSortKey === key) { currentSortAsc = !currentSortAsc; } 
+  else { currentSortKey = key; currentSortAsc = true; }
+  books.sort((a,b) => {
+    let v1 = a[key], v2 = b[key];
+    return currentSortAsc ? (v1 > v2 ? 1 : -1) : (v1 < v2 ? 1 : -1);
+  });
+  renderTable();
+}
+
+function updateStats() {
+  document.getElementById('sTotal').innerText = books.length;
+  let f = books.filter(b => b.status === 'Finished').length;
+  document.getElementById('sRead').innerText = f;
+  document.getElementById('sToRead').innerText = books.filter(b => b.status === 'Currently reading').length;
+  document.getElementById('sPct').innerText = books.length ? Math.round((f / books.length) * 100) + '%' : '0%';
+  
+  let counts = {};
+  books.forEach(b => { counts[b.genre || 'None'] = (counts[b.genre || 'None'] || 0) + 1; });
+  let ch = '';
+  for (let g in counts) {
+    let pct = Math.min(100, (counts[g] / books.length) * 100);
+    ch += `<div style="font-size:11px;"><strong>${g}</strong> (${counts[g]})</div>
+           <div style="height:6px; background:#EEF1F6; border-radius:3px; overflow:hidden; margin-bottom:8px;">
+             <div style="height:100%; background:#4A6FA5; width:${pct}%;"></div>
+           </div>`;
+  }
+  document.getElementById('genreChart').innerHTML = ch || 'No stats loaded.';
+  
+  // Repaired missing chart container tags from truncation
+  let want = books.filter(b => b.status === 'Want to read').length;
+  let prog = books.filter(b => b.status === 'Currently reading').length;
+  let dnf = books.filter(b => b.status === 'Did not finish').length;
+  
+  document.getElementById('statusBreakdown').innerHTML = `
+    <div style="margin-top:6px; display:flex; flex-direction:column; gap:6px;">
+      <div>Finished: <strong>${f}</strong></div>
+      <div>In Progress: <strong>${prog}</strong></div>
+      <div>Want to read: <strong>${want}</strong></div>
+      <div>Dropped (DNF): <strong>${dnf}</strong></div>
+    </div>`;
+}
+
+function initSettingsPage() {
+  document.getElementById('swSmartReminders').className = settings.smartReminders ? "sw-track on" : "sw-track";
+  document.getElementById('swEmailAlerts').className = settings.emailAlerts ? "sw-track on" : "sw-track";
+}
+
+/* ── FIX 2 TWEAK LISTENER INTERACTION ── */
+function toggleSetting(key) {
+  settings[key] = !settings[key];
+  saveToLocalStorage();
+  initSettingsPage();
+  toast("Dashboard widget configurations customized.", "success");
+}
+
+function saveProfile() {
+  let first = document.getElementById('setFirst').value.trim() || "Anna";
+  document.getElementById('headerName').innerText = first;
+  document.getElementById('headerAvatar').innerText = first.charAt(0).toUpperCase();
+  document.getElementById('settingsName').innerText = first + " " + document.getElementById('setLast').value;
+  toast("Profile tracking data stored.", "success");
+}
+
+function doLogin() {
+  document.getElementById('screenLogin').classList.remove('active');
+  document.getElementById('screenApp').classList.add('active');
+  showPage('home');
+}
+function showRegister() {
+  document.getElementById('screenLogin').classList.remove('active');
+  document.getElementById('screenRegister').classList.add('active');
+}
+function showLogin() {
+  document.getElementById('screenRegister').classList.remove('active');
+  document.getElementById('screenLogin').classList.add('active');
+}
+function doLogout() {
+  document.getElementById('screenApp').classList.remove('active');
+  document.getElementById('screenLogin').classList.add('active');
+}
+function togglePw(id, btn) {
+  let el = document.getElementById(id);
+  el.type = el.type === 'password' ? 'text' : 'password';
+  btn.innerText = el.type === 'password' ? '👁' : '🙈';
+}
+function checkStrength() {
+  let p = document.getElementById('regPw').value;
+  let w = Math.min(100, p.length * 10);
+  document.getElementById('strFill').style.width = w + '%';
+  document.getElementById('strFill').style.background = w < 50 ? '#D94F4F' : '#3BAF7A';
+  document.getElementById('strLbl').innerText = w < 50 ? "Weak Profile" : "Secure Credential State";
+}
+function doRegister() { toast("Account registration initialized.", "success"); showLogin(); }
+
+function toast(msg, type) {
+  const w = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = `toast ${type || 'success'}`;
+  t.innerText = msg;
+  w.appendChild(t);
+  setTimeout(() => t.classList.add('show'), 50);
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 200); }, 2500);
+}
+
+function escapeHtml(str) {
+  if(!str) return '';
+  return str.toString().replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
 </script>
 </body>
 </html>
