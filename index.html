@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BookList — Student Reading Tracker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#EAECF2;color:#1A1A2E;font-size:13px;min-height:100vh;}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;}
+
+/* ── AUTH SCREENS (login/register) ── */
+.auth-screen{align-items:center;justify-content:center;background:linear-gradient(135deg,#2B4C8C 0%,#4A6FA5 50%,#3BAF7A 100%);padding:20px;}
+.auth-box{background:#fff;border-radius:16px;padding:36px 32px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.auth-logo{text-align:center;margin-bottom:24px;}
+.auth-logo .icon{font-size:44px;margin-bottom:8px;}
+.auth-logo h1{font-size:22px;font-weight:700;color:#2B4C8C;}
+.auth-logo p{font-size:12px;color:#6B7280;margin-top:3px;}
+.auth-title{font-size:16px;font-weight:700;color:#1A1A2E;margin-bottom:4px;}
+.auth-sub{font-size:12px;color:#6B7280;margin-bottom:22px;}
+.form-group{margin-bottom:14px;}
+.lbl{font-size:11.5px;font-weight:600;color:#3D4460;display:block;margin-bottom:5px;}
+.inp{font-family:'DM Sans',sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:8px;padding:10px 13px;width:100%;background:#fff;color:#1A1A2E;transition:border-color .15s,box-shadow .15s;}
+.inp:focus{outline:none;border-color:#4A6FA5;box-shadow:0 0 0 3px rgba(74,111,165,.13);}
+.inp::placeholder{color:#C8D0DC;}
+.inp.err{border-color:#D94F4F;background:#fff8f8;}
+.pw-wrap{position:relative;}
+.pw-wrap .inp{padding-right:40px;}
+.pw-eye{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:15px;color:#6B7280;}
+.err-msg{font-size:10.5px;color:#D94F4F;margin-top:4px;display:none;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;border:none;border-radius:8px;font-size:13px;padding:11px 20px;transition:all .15s;width:100%;}
+.btn:active{transform:scale(.98);}
+.btn-primary{background:#2B4C8C;color:#fff;}
+.btn-primary:hover{background:#1e3566;}
+.btn-ghost{background:#F4F6FA;color:#3D4460;border:1.5px solid #C8D0DC;}
+.btn-ghost:hover{background:#E8EFF8;}
+.auth-link{text-align:center;margin-top:18px;font-size:12.5px;color:#6B7280;}
+.auth-link a{color:#4A6FA5;font-weight:600;text-decoration:none;cursor:pointer;}
+.auth-link a:hover{text-decoration:underline;}
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#C8D0DC;}
+.divider span{font-size:11px;color:#6B7280;}
+
+/* ── APP SCREEN ── */
+.app-screen{flex-direction:column;background:#EAECF2;}
+
+/* HEADER */
+.header{background:#2B4C8C;height:56px;display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(43,76,140,.3);}
+.logo{font-size:17px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;}
+.logo-icon{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.nav-tabs{display:flex;gap:3px;margin-left:auto;}
+.nav-tab{font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;color:rgba(255,255,255,.65);padding:6px 14px;border-radius:6px;border:none;background:none;cursor:pointer;transition:all .15s;}
+.nav-tab:hover{color:#fff;background:rgba(255,255,255,.1);}
+.nav-tab.active{background:rgba(255,255,255,.2);color:#fff;font-weight:700;}
+.user-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:none;border-radius:20px;padding:5px 12px 5px 6px;cursor:pointer;color:#fff;font-family:'DM Sans',sans-serif;font-size:12.5px;transition:background .15s;}
+.user-btn:hover{background:rgba(255,255,255,.2);}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:#4A6FA5;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+
+/* PAGES */
+.page{max-width:1100px;margin:0 auto;padding:22px 20px 60px;display:none;width:100%;}
+.page.active{display:block;}
+.page-title{font-size:22px;font-weight:700;color:#2B4C8C;margin-bottom:4px;}
+.page-sub{font-size:12px;color:#6B7280;margin-bottom:20px;}
+
+/* CARDS */
+.card{background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;overflow:hidden;}
+.card-head{background:#4A6FA5;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;}
+.card-head h2{font-size:13px;font-weight:700;color:#fff;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl thead tr{background:#2B4C8C;}
+.tbl thead th{font-size:11px;font-weight:700;color:#fff;padding:10px 12px;text-align:left;cursor:pointer;}
+.tbl thead th:hover{background:rgba(255,255,255,.08);}
+.tbl tbody tr{border-bottom:1px solid #EEF1F6;cursor:pointer;transition:background .1s;}
+.tbl tbody tr:nth-child(even){background:#F4F6FA;}
+.tbl tbody tr:nth-child(odd){background:#fff;}
+.tbl tbody tr:hover{background:#E8EFF8!important;}
+.tbl tbody tr.selected{background:#d9e8f6!important;border-left:3px solid #4A6FA5;}
+.tbl td{font-size:12.5px;padding:9px 12px;color:#3D4460;vertical-align:middle;}
+.tbl td:first-child{font-weight:600;color:#1A1A2E;}
+.tbl tfoot td{background:#F4F6FA;font-size:11px;color:#6B7280;padding:8px 14px;border-top:1px solid #C8D0DC;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:20px;}
+.badge-read{background:#D4F0E4;color:#1d6b47;cursor:pointer;}
+.badge-toread{background:#FFF3CD;color:#7a5c00;cursor:pointer;}
+.badge-fiction{background:#e8eeff;color:#3d4cc0;}
+.badge-scifi{background:#eef4ff;color:#2563b0;}
+.badge-nonfic{background:#f0e8ff;color:#6b35c0;}
+.badge-dystopia{background:#fff0e8;color:#c05a20;}
+.badge-mystery{background:#e8fff2;color:#1d6b47;}
+.badge-fantasy{background:#fde8ff;color:#8b00c0;}
+
+/* BUTTONS (inline) */
+.ibtn{display:inline-flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;border:none;border-radius:7px;font-size:12px;padding:6px 13px;transition:all .15s;white-space:nowrap;}
+.ibtn:active{transform:scale(.97);}
+.ibtn-primary{background:#4A6FA5;color:#fff;}
+.ibtn-primary:hover{background:#2B4C8C;}
+.ibtn-success{background:#3BAF7A;color:#fff;}
+.ibtn-success:hover{background:#2d9668;}
+.ibtn-ghost{background:#fff;color:#6B7280;border:1.5px solid #C8D0DC;}
+.ibtn-ghost:hover{background:#F4F6FA;}
+.ibtn-danger{background:#FDEAEA;color:#D94F4F;border:1.5px solid #D94F4F;font-size:11px;padding:4px 9px;}
+.ibtn-danger:hover{background:#D94F4F;color:#fff;}
+.ibtn-outline{background:transparent;color:#4A6FA5;border:1.5px solid #4A6FA5;}
+.ibtn-outline:hover{background:#E8EFF8;}
+
+/* FILTER BAR */
+.filter-bar{background:#fff;border:1.5px solid #C8D0DC;border-radius:10px;padding:10px 14px;margin-bottom:13px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.srch-wrap{position:relative;}
+.srch-wrap span{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:#6B7280;pointer-events:none;}
+.srch-inp{font-family:'DM Sans',sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:8px 9px 8px 28px;width:200px;background:#fff;color:#1A1A2E;transition:border-color .15s;}
+.srch-inp:focus{outline:none;border-color:#4A6FA5;box-shadow:0 0 0 3px rgba(74,111,165,.13);}
+.srch-inp::placeholder{color:#C8D0DC;}
+.sel{font-family:'DM Sans',sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:8px 24px 8px 9px;background:#fff;color:#3D4460;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B7280' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;cursor:pointer;}
+.sel:focus{outline:none;border-color:#4A6FA5;}
+.cnt-badge{background:#E8EFF8;color:#2B4C8C;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;margin-left:auto;}
+
+/* MAIN GRID */
+.main-grid{display:grid;grid-template-columns:1fr 290px;gap:14px;align-items:start;}
+
+/* DETAIL PANEL */
+.det-head{background:#2B4C8C;padding:11px 14px;}
+.det-head h3{font-size:13px;font-weight:700;color:#fff;}
+.det-head p{font-size:10.5px;color:rgba(255,255,255,.6);margin-top:1px;}
+.det-body{padding:14px;display:flex;flex-direction:column;gap:10px;}
+.det-title{font-size:14px;font-weight:700;color:#2B4C8C;}
+.det-author{font-size:12px;color:#6B7280;margin-top:2px;}
+.divider{height:1px;background:#C8D0DC;}
+.det-row{display:flex;justify-content:space-between;align-items:center;}
+.det-key{font-size:11px;font-weight:600;color:#6B7280;}
+.det-notes{font-size:12px;color:#3D4460;background:#F4F6FA;padding:9px 10px;border-radius:7px;line-height:1.55;}
+.no-sel{text-align:center;padding:36px 14px;color:#6B7280;font-size:12px;line-height:1.7;}
+
+/* ADD FORM */
+.add-card{background:#fff;border:1.5px solid #C8D0DC;border-radius:11px;overflow:hidden;margin-top:13px;}
+.add-head{background:#3BAF7A;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
+.add-head h3{font-size:13px;font-weight:700;color:#fff;}
+.add-body{padding:14px;}
+.frm-row{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px;}
+.flbl{font-size:11px;font-weight:600;color:#3D4460;display:block;margin-bottom:4px;}
+.req{color:#D94F4F;}
+.finp{font-family:'DM Sans',sans-serif;font-size:13px;border:1.5px solid #C8D0DC;border-radius:7px;padding:8px 9px;width:100%;background:#fff;color:#1A1A2E;transition:border-color .15s;}
+.finp:focus{outline:none;border-color:#4A6FA5;box-shadow:0 0 0 3px rgba(74,111,165,.13);}
+.finp::placeholder{color:#C8D0DC;}
+.finp.err{border-color:#D94F4F;background:#fff8f8;}
+.ferr{font-size:10px;color:#D94F4F;margin-top:3px;display:none;}
+.radio-row{display:flex;gap:12px;margin-top:6px;}
+.radio-item{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:13px;}
+.rdot{width:16px;height:16px;border-radius:50%;border:2px solid #4A6FA5;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rdot.on::after{content:'';width:6px;height:6px;border-radius:50%;background:#4A6FA5;}
+.frm-actions{display:flex;gap:8px;justify-content:flex-end;padding-top:11px;border-top:1px solid #C8D0DC;}
+
+/* HOME STATS */
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-c{background:#fff;border:1.5px solid #C8D0DC;border-radius:10px;padding:16px;text-align:center;transition:transform .2s,box-shadow .2s;}
+.stat-c:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(74,111,165,.12);}
+.stat-n{font-size:28px;font-weight:700;margin-bottom:3px;}
+.stat-l{font-size:11px;color:#6B7280;}
+
+/* SETTINGS */
+.settings-section{margin-bottom:22px;}
+.settings-title{font-size:12px;font-weight:700;color:#2B4C8C;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid #C8D0DC;padding-bottom:8px;margin-bottom:14px;}
+.settings-card{background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:20px;}
+.avatar-row{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
+.big-avatar{width:64px;height:64px;border-radius:50%;background:#4A6FA5;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;flex-shrink:0;}
+.avatar-info{flex:1;}
+.avatar-name{font-size:16px;font-weight:700;color:#1A1A2E;}
+.avatar-email{font-size:12px;color:#6B7280;margin-top:2px;}
+.set-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.sw-wrap{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #F4F6FA;}
+.sw-wrap:last-child{border-bottom:none;}
+.sw-label{font-size:13px;color:#3D4460;}
+.sw-track{width:42px;height:23px;border-radius:12px;background:#C8D0DC;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.sw-track.on{background:#3BAF7A;}
+.sw-thumb{width:17px;height:17px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.15);}
+.sw-track.on .sw-thumb{left:22px;}
+
+/* ADVANCED BOOK TRACKING */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.mini-card{background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:16px;}
+.mini-title{font-size:13px;font-weight:700;color:#2B4C8C;margin-bottom:10px;}
+.mini-list{display:flex;flex-direction:column;gap:8px;}
+.mini-item{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#F4F6FA;border-radius:8px;padding:8px 10px;}
+.mini-main{min-width:0;}
+.mini-name{font-size:12.5px;font-weight:600;color:#1A1A2E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mini-sub{font-size:10.5px;color:#6B7280;margin-top:1px;}
+.progress-wrap{min-width:95px;}
+.progress-line{height:8px;background:#C8D0DC;border-radius:6px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#3BAF7A,#7FA3D1);border-radius:6px;}
+.progress-text{font-size:10.5px;font-weight:700;color:#2B4C8C;margin-top:3px;text-align:right;}
+.badge-current{background:#E8EFF8;color:#2B4C8C;cursor:pointer;}
+.badge-finished{background:#D4F0E4;color:#1d6b47;cursor:pointer;}
+.badge-want{background:#FFF3CD;color:#7a5c00;cursor:pointer;}
+.badge-dnf{background:#FDEAEA;color:#D94F4F;cursor:pointer;}
+.badge-urgent{background:#FDEAEA;color:#D94F4F;}
+.badge-soon{background:#FFF3CD;color:#7a5c00;}
+.badge-ok{background:#D4F0E4;color:#1d6b47;}
+.badge-neutral{background:#EEF1F6;color:#6B7280;}
+.badge-high{background:#FDEAEA;color:#D94F4F;}
+.badge-medium{background:#FFF3CD;color:#7a5c00;}
+.badge-low{background:#E8EFF8;color:#2B4C8C;}
+.textarea{min-height:70px;resize:vertical;line-height:1.45;}
+.hint{font-size:10.5px;color:#6B7280;margin-top:4px;line-height:1.45;}
+.table-scroll{overflow-x:auto;}
+.status-select{font-family:'DM Sans',sans-serif;font-size:11.5px;border:1.5px solid #C8D0DC;border-radius:7px;padding:5px 7px;background:#fff;color:#3D4460;max-width:140px;}
+.empty-state{text-align:center;padding:30px 18px;color:#6B7280;line-height:1.55;}
+.empty-state strong{display:block;color:#2B4C8C;margin-bottom:3px;}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:500;align-items:center;justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:#fff;border-radius:12px;padding:26px;max-width:360px;width:92%;box-shadow:0 12px 48px rgba(0,0,0,.22);}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:8px;}
+.modal p{font-size:12.5px;color:#6B7280;line-height:1.6;margin-bottom:20px;}
+.modal-btns{display:flex;gap:9px;justify-content:flex-end;}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:18px;right:18px;z-index:999;display:flex;flex-direction:column;gap:6px;pointer-events:none;}
+.toast{background:#1A1A2E;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(8px);transition:all .2s;max-width:300px;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{background:#1d6b47;}
+.toast.error{background:#D94F4F;}
+.toast.info{background:#4A6FA5;}
+
+footer{background:#1A1A2E;color:rgba(255,255,255,.4);text-align:center;font-size:11px;padding:13px;}
+
+@media(max-width:820px){
+  .header{height:auto;min-height:56px;flex-wrap:wrap;padding:10px 14px;}
+  .nav-tabs{order:3;width:100%;overflow-x:auto;margin-left:0;padding-top:4px;}
+  .page{padding:18px 12px 44px;}
+  .stat-strip,.dash-grid,.main-grid{grid-template-columns:1fr;}
+  .set-row,.frm-row{grid-template-columns:1fr;}
+  .filter-bar{align-items:stretch;}
+  .srch-wrap,.srch-inp,.sel,.filter-bar .ibtn{width:100%;}
+  .cnt-badge{margin-left:0;width:100%;text-align:center;}
+  .frm-actions{flex-direction:column;}
+  .frm-actions .ibtn{width:100%;justify-content:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ LOGIN SCREEN ══════════ -->
+<div class="screen auth-screen active" id="screenLogin">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="icon">📚</div>
+      <h1>BookList</h1>
+      <p>Student Reading Tracker</p>
+    </div>
+    <div class="auth-title">Sign In</div>
+    <p class="auth-sub">Welcome back! Please enter your details.</p>
+    <div class="form-group">
+      <label class="lbl">Email Address</label>
+      <input class="inp" id="loginEmail" type="email" placeholder="student@email.com">
+      <div class="err-msg" id="loginEmailErr">⚠ Please enter a valid email address.</div>
+    </div>
+    <div class="form-group">
+      <label class="lbl">Password</label>
+      <div class="pw-wrap">
+        <input class="inp" id="loginPw" type="password" placeholder="Enter your password…">
+        <button class="pw-eye" onclick="togglePw('loginPw',this)" type="button">👁</button>
+      </div>
+      <div class="err-msg" id="loginPwErr">⚠ Password is required.</div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12.5px;color:#3D4460;">
+        <input type="checkbox" id="rememberMe" style="accent-color:#4A6FA5;"> Remember me
+      </label>
+      <a href="#" style="font-size:12px;color:#4A6FA5;text-decoration:none;" onclick="toast('Password reset link sent!','info')">Forgot password?</a>
+    </div>
+    <button class="btn btn-primary" onclick="doLogin()">🔐 Sign In</button>
+    <p class="auth-link" style="margin-top:16px;">Don't have an account? <a onclick="showRegister()">Create account</a></p>
+  </div>
+</div>
+
+<!-- ══════════ REGISTER SCREEN ══════════ -->
+<div class="screen auth-screen" id="screenRegister">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="icon">📚</div>
+      <h1>BookList</h1>
+      <p>Student Reading Tracker</p>
+    </div>
+    <div class="auth-title">Create Account</div>
+    <p class="auth-sub">Join BookList and start tracking your reading.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group">
+        <label class="lbl">First Name</label>
+        <input class="inp" id="regFirst" type="text" placeholder="Anna">
+        <div class="err-msg" id="regFirstErr">⚠ Required.</div>
+      </div>
+      <div class="form-group">
+        <label class="lbl">Last Name</label>
+        <input class="inp" id="regLast" type="text" placeholder="Smith">
+        <div class="err-msg" id="regLastErr">⚠ Required.</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="lbl">Email Address</label>
+      <input class="inp" id="regEmail" type="email" placeholder="anna@student.edu">
+      <div class="err-msg" id="regEmailErr">⚠ Please enter a valid email.</div>
+    </div>
+    <div class="form-group">
+      <label class="lbl">Password</label>
+      <div class="pw-wrap">
+        <input class="inp" id="regPw" type="password" placeholder="Min. 8 characters…" oninput="checkStrength()">
+        <button class="pw-eye" onclick="togglePw('regPw',this)" type="button">👁</button>
+      </div>
+      <!-- Strength meter -->
+      <div style="margin-top:6px;">
+        <div style="height:5px;background:#C8D0DC;border-radius:3px;overflow:hidden;"><div id="strFill" style="height:100%;border-radius:3px;width:0%;transition:width .3s,background .3s;"></div></div>
+        <span id="strLbl" style="font-size:10.5px;font-weight:600;color:#6B7280;">Enter a password</span>
+      </div>
+      <div class="err-msg" id="regPwErr">⚠ Password must be at least 8 characters.</div>
+    </div>
+    <div class="form-group">
+      <label class="lbl">Confirm Password</label>
+      <div class="pw-wrap">
+        <input class="inp" id="regPw2" type="password" placeholder="Repeat password…">
+        <button class="pw-eye" onclick="togglePw('regPw2',this)" type="button">👁</button>
+      </div>
+      <div class="err-msg" id="regPw2Err">⚠ Passwords do not match.</div>
+    </div>
+    <button class="btn btn-primary" onclick="doRegister()" style="margin-bottom:12px;">✓ Create Account</button>
+    <button class="btn btn-ghost" onclick="showLogin()">← Back to Sign In</button>
+  </div>
+</div>
+
+<!-- ══════════ APP SCREEN ══════════ -->
+<div class="screen app-screen" id="screenApp">
+
+  <header class="header">
+    <div class="logo"><div class="logo-icon">📚</div>BookList</div>
+    <nav class="nav-tabs">
+      <button class="nav-tab active" id="nt-home"  onclick="showPage('home')">🏠 Home</button>
+      <button class="nav-tab"        id="nt-books" onclick="showPage('books')">📋 My Books</button>
+      <button class="nav-tab"        id="nt-stats" onclick="showPage('stats')">📊 Statistics</button>
+      <button class="nav-tab"        id="nt-settings" onclick="showPage('settings')">⚙️ Settings</button>
+    </nav>
+    <button class="user-btn" onclick="showPage('settings')" id="userBtn">
+      <div class="user-avatar" id="headerAvatar">A</div>
+      <span id="headerName">User</span>
+    </button>
+  </header>
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="page-home">
+    <h1 class="page-title" id="homeGreeting">👋 Welcome back!</h1>
+    <p class="page-sub">Here's your reading overview.</p>
+    <div class="stat-strip">
+      <div class="stat-c"><div class="stat-n" style="color:#4A6FA5;" id="hTotal">0</div><div class="stat-l">Total Books</div></div>
+      <div class="stat-c"><div class="stat-n" style="color:#3BAF7A;" id="hRead">0</div><div class="stat-l">Finished</div></div>
+      <div class="stat-c"><div class="stat-n" style="color:#F0A500;" id="hToRead">0</div><div class="stat-l">In Progress</div></div>
+      <div class="stat-c"><div class="stat-n" style="color:#D94F4F;" id="hPct">0</div><div class="stat-l">Need Attention</div></div>
+    </div>
+    <!-- Progress bar -->
+    <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px;margin-bottom:18px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:13px;font-weight:700;color:#2B4C8C;">Reading Progress</span>
+        <span style="font-size:13px;font-weight:700;color:#3BAF7A;" id="homePctLbl">0%</span>
+      </div>
+      <div style="width:100%;height:14px;background:#C8D0DC;border-radius:7px;overflow:hidden;">
+        <div style="height:100%;width:0%;background:linear-gradient(90deg,#3BAF7A,#7FA3D1);border-radius:7px;transition:width .5s;" id="homePctBar"></div>
+      </div>
+    </div>
+    <div class="dash-grid">
+      <div class="mini-card" id="deadlineWatchCard">
+        <div class="mini-title">⏰ Deadline Watch</div>
+        <div class="mini-list" id="deadlineWatch"></div>
+      </div>
+      <div class="mini-card" id="reminderSuggestionsCard">
+        <div class="mini-title">🔔 Smart Reminder Suggestions</div>
+        <div class="mini-list" id="reminderSuggestions"></div>
+      </div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px;">
+      <div style="font-size:13px;font-weight:700;color:#2B4C8C;margin-bottom:12px;">📚 Recently Added</div>
+      <div id="recentBooks" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+  </div>
+
+  <!-- MY BOOKS PAGE -->
+  <div class="page" id="page-books">
+    <h1 class="page-title">📋 My Books</h1>
+    <p class="page-sub">Manage your reading list. Click a row to see details, click a badge to toggle status.</p>
+
+    <!-- ACTION HISTORY BAR -->
+    <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:10px;padding:8px 14px;margin-bottom:13px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:11px;font-weight:700;color:#6B7280;white-space:nowrap;">⏱ History:</span>
+      <div style="display:flex;gap:5px;flex:1;overflow:hidden;" id="histList">
+        <span style="font-size:10.5px;background:#F4F6FA;border:1px solid #C8D0DC;color:#C8D0DC;padding:2px 9px;border-radius:20px;">No actions yet</span>
+      </div>
+      <button class="ibtn ibtn-ghost" style="font-size:11.5px;padding:5px 11px;" onclick="doUndo()">↩ Undo</button>
+      <button class="ibtn ibtn-ghost" style="font-size:11.5px;padding:5px 11px;" onclick="doRedo()">↪ Redo</button>
+    </div>
+
+    <div class="filter-bar">
+      <div class="srch-wrap"><span>🔍</span><input class="srch-inp" id="searchQ" type="text" placeholder="Search title or author…" oninput="renderTable()"></div>
+      <select class="sel" id="selSt" onchange="renderTable()"><option value="">All Statuses</option><option>Want to read</option><option>Currently reading</option><option>Finished</option><option>Did not finish</option></select>
+      <select class="sel" id="selGn" onchange="renderTable()"><option value="">All Genres</option><option>Fiction</option><option>Non-Fiction</option><option>Sci-Fi</option><option>Dystopian</option><option>Mystery</option><option>Fantasy</option><option>Productivity</option><option>Business</option><option>Psychology</option><option>Classic</option></select>
+      <select class="sel" id="selDeadline" onchange="renderTable()"><option value="">Any Deadline</option><option value="overdue">Overdue</option><option value="soon">Due in 7 days</option><option value="month">Due this month</option><option value="none">No deadline</option></select>
+      <select class="sel" id="selSort" onchange="sortBooks(this.value)"><option value="">Sort by...</option><option value="deadline">Deadline</option><option value="progress">Progress</option><option value="title">Title</option><option value="priority">Priority</option></select>
+      <button class="ibtn ibtn-ghost" onclick="clearF()">✕ Clear</button>
+      <span class="cnt-badge" id="cnt">0 books</span>
+    </div>
+    <div class="main-grid">
+      <div>
+        <div class="card">
+          <div class="card-head">
+            <h2>📋 Book List</h2>
+            <button class="ibtn ibtn-success" onclick="toggleForm()" id="addBtnTop" style="font-size:11px;padding:5px 11px;">➕ Add Book</button>
+          </div>
+          <div class="table-scroll"><table class="tbl">
+            <thead><tr>
+              <th onclick="sortBooks('title')">Title ↕</th>
+              <th onclick="sortBooks('author')">Author ↕</th>
+              <th>Genre</th>
+              <th onclick="sortBooks('status')">Status ↕</th>
+              <th onclick="sortBooks('progress')">Progress ↕</th>
+              <th onclick="sortBooks('deadline')">Deadline ↕</th>
+              <th onclick="sortBooks('priority')">Priority ↕</th>
+              <th>Action</th>
+            </tr></thead>
+            <tbody id="tbody"></tbody>
+            <tfoot><tr><td colspan="8" id="tfoot"></td></tr></tfoot>
+          </table></div>
+        </div>
+        <div class="add-card" id="addCard" style="display:none;">
+          <div class="add-head"><h3>➕ Add New Book</h3><button class="ibtn" style="background:rgba(255,255,255,.2);color:#fff;border:none;font-size:11px;padding:4px 9px;" onclick="toggleForm()">✕ Cancel</button></div>
+          <div class="add-body">
+            <div class="frm-row">
+              <div><label class="flbl">Title <span class="req">*</span></label><input class="finp" id="fTitle" placeholder="Book title…"><div class="ferr" id="eTitle">Required.</div></div>
+              <div><label class="flbl">Author <span class="req">*</span></label><input class="finp" id="fAuthor" placeholder="Author name…"><div class="ferr" id="eAuthor">Required.</div></div>
+            </div>
+            <div class="frm-row">
+              <div><label class="flbl">Category / Genre</label><select class="finp" id="fGenre"><option value="">Select…</option><option>Fiction</option><option>Non-Fiction</option><option>Sci-Fi</option><option>Dystopian</option><option>Mystery</option><option>Fantasy</option><option>Productivity</option><option>Business</option><option>Psychology</option><option>Classic</option></select></div>
+              <div><label class="flbl">Reading Status</label><select class="finp" id="fStatus"><option>Want to read</option><option>Currently reading</option><option>Finished</option><option>Did not finish</option></select></div>
+            </div>
+            <div class="frm-row">
+              <div><label class="flbl">Start Date</label><input class="finp" id="fStart" type="date"></div>
+              <div><label class="flbl">Deadline / Time Limit</label><input class="finp" id="fDeadline" type="date"><div class="hint">Used for deadline warnings and reminder suggestions.</div></div>
+            </div>
+            <div class="frm-row">
+              <div><label class="flbl">Number of Pages</label><input class="finp" id="fPages" type="number" min="1" placeholder="e.g. 320"></div>
+              <div><label class="flbl">Current Page Progress</label><input class="finp" id="fCurrent" type="number" min="0" placeholder="e.g. 75"></div>
+            </div>
+            <div class="frm-row">
+              <div><label class="flbl">Priority Level</label><select class="finp" id="fPriority"><option>Medium</option><option>High</option><option>Low</option></select></div>
+              <div><label class="flbl">Reminder</label><select class="finp" id="fReminder"><option value="auto">Use settings frequency</option><option value="deadline">Extra alerts near deadline</option><option value="off">No reminders for this book</option></select></div>
+            </div>
+            <div style="margin-bottom:11px;">
+              <label class="flbl">Personal Notes</label>
+              <textarea class="finp textarea" id="fNotes" placeholder="Why you want to read it, course relevance, favorite quote, etc."></textarea>
+            </div>
+            <div class="frm-actions">
+              <button class="ibtn ibtn-ghost" onclick="resetForm()">✕ Clear</button>
+              <button class="ibtn ibtn-success" onclick="addBook()">✓ Add Book</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="det-head"><h3>📖 Book Details</h3><p>Click a row to see details</p></div>
+        <div class="det-body" id="detBody"><div class="no-sel">👆 Click any row<br>to see details here.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATISTICS PAGE -->
+  <div class="page" id="page-stats">
+    <h1 class="page-title">📊 Statistics</h1>
+    <p class="page-sub">Your reading data at a glance.</p>
+    <div class="stat-strip">
+      <div class="stat-c"><div class="stat-n" style="color:#4A6FA5;" id="sTotal">0</div><div class="stat-l">Total</div></div>
+      <div class="stat-c"><div class="stat-n" style="color:#3BAF7A;" id="sRead">0</div><div class="stat-l">Finished</div></div>
+      <div class="stat-c"><div class="stat-n" style="color:#F0A500;" id="sToRead">0</div><div class="stat-l">Active</div></div>
+      <div class="stat-c"><div class="stat-n" style="color:#7b4cc0;" id="sPct">0%</div><div class="stat-l">Completion</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <!-- Bar chart -->
+      <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px;">
+        <div style="font-size:13px;font-weight:700;color:#2B4C8C;margin-bottom:14px;">Books by Genre</div>
+        <div id="genreChart" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+      <!-- Donut chart -->
+      <div style="background:#fff;border:1.5px solid #C8D0DC;border-radius:12px;padding:18px;">
+        <div style="font-size:13px;font-weight:700;color:#2B4C8C;margin-bottom:14px;">Finished vs Active</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;">
+          <svg width="130" height="130" viewBox="0 0 220 220">
+            <text x="110" y="103" font-size="26" font-weight="700" fill="#2B4C8C" text-anchor="middle" font-family="sans-serif" id="donutPct">0%</text>
+            <text x="110" y="122" font-size="11" fill="#6B7280" text-anchor="middle" font-family="sans-serif">Finished</text>
+            <path id="donutRead" d="M110,20 A90,90 0 0,1 110,20" fill="none" stroke="#3BAF7A" stroke-width="34" stroke-linecap="round"/>
+            <path id="donutToRead" d="M110,20 A90,90 0 1,0 110,20" fill="none" stroke="#F0A500" stroke-width="34" stroke-linecap="round"/>
+          </svg>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:7px;font-size:12px;"><div style="width:10px;height:10px;border-radius:50%;background:#3BAF7A;flex-shrink:0;"></div><span id="lgRead">Finished — 0</span></div>
+            <div style="display:flex;align-items:center;gap:7px;font-size:12px;"><div style="width:10px;height:10px;border-radius:50%;background:#F0A500;flex-shrink:0;"></div><span id="lgToRead">Active — 0</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS PAGE -->
+  <div class="page" id="page-settings">
+    <h1 class="page-title">⚙️ Settings</h1>
+    <p class="page-sub">Manage your profile and preferences.</p>
+
+    <div class="settings-section">
+      <div class="settings-card">
+        <div class="avatar-row">
+          <div class="big-avatar" id="settingsAvatar">A</div>
+          <div class="avatar-info">
+            <div class="avatar-name" id="settingsName">User</div>
+            <div class="avatar-email" id="settingsEmail">user@email.com</div>
+          </div>
+        </div>
+        <div class="settings-title">👤 Profile Information</div>
+        <div class="set-row">
+          <div><label class="flbl">First Name</label><input class="finp" id="setFirst" type="text" placeholder="First name…"></div>
+          <div><label class="flbl">Last Name</label><input class="finp" id="setLast" type="text" placeholder="Last name…"></div>
+        </div>
+        <div class="set-row">
+          <div><label class="flbl">Email Address</label><input class="finp" id="setEmail" type="email" placeholder="your@email.com"></div>
+          <div><label class="flbl">Reading Goal (books/year)</label><input class="finp" id="setGoal" type="number" min="1" max="365" placeholder="e.g. 20"></div>
+        </div>
+        <div class="set-row">
+          <div><label class="flbl">Preferred Daily Reading Goal</label><input class="finp" id="setDailyGoal" type="number" min="1" max="500" placeholder="pages per day"></div>
+          <div><label class="flbl">Monthly Reading Goal</label><input class="finp" id="setMonthlyGoal" type="number" min="1" max="50" placeholder="books per month"></div>
+        </div>
+        <div style="display:flex;gap:9px;margin-top:4px;">
+          <button class="ibtn ibtn-primary" onclick="saveSettings()">💾 Save Changes</button>
+          <button class="ibtn ibtn-ghost" onclick="cancelSettings()">✕ Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-card">
+        <div class="settings-title">🔔 Notifications</div>
+        <div class="set-row">
+          <div><label class="flbl">Email Reminder Frequency</label><select class="finp" id="setReminderFreq" onchange="toggleCustomFrequency()"><option value="daily">Daily reminders</option><option value="2days">Every 2 days</option><option value="weekly">Weekly</option><option value="custom">Custom frequency</option><option value="disabled">Disable reminders</option></select></div>
+          <div><label class="flbl">Default Reminder Time</label><input class="finp" id="setReminderTime" type="time"></div>
+        </div>
+        <div class="set-row" id="customFreqRow" style="display:none;">
+          <div><label class="flbl">Custom Frequency</label><input class="finp" id="setCustomDays" type="number" min="1" max="30" placeholder="Every N days"></div>
+          <div><label class="flbl">Default Deadline for New Books</label><input class="finp" id="setDeadlineDays" type="number" min="1" max="365" placeholder="days after start date"></div>
+        </div>
+        <div class="set-row" id="defaultDeadlineRow">
+          <div><label class="flbl">Default Deadline for New Books</label><input class="finp" id="setDeadlineDaysAlt" type="number" min="1" max="365" placeholder="days after start date"></div>
+          <div><label class="flbl">Default Status for New Books</label><select class="finp" id="setDefaultStatus"><option>Want to read</option><option>Currently reading</option><option>Finished</option><option>Did not finish</option></select></div>
+        </div>
+        <div class="sw-wrap"><span class="sw-label">Email reminders for active books</span><div class="sw-track on" id="sw1" onclick="toggleSw('sw1')"><div class="sw-thumb"></div></div></div>
+        <div class="sw-wrap"><span class="sw-label">Deadline and overdue alerts</span><div class="sw-track on" id="sw2" onclick="toggleSw('sw2')"><div class="sw-thumb"></div></div></div>
+        <div class="sw-wrap"><span class="sw-label">Weekly reading summary</span><div class="sw-track on" id="sw3" onclick="toggleSw('sw3')"><div class="sw-thumb"></div></div></div>
+        <div class="sw-wrap"><span class="sw-label">Smart progress suggestions</span><div class="sw-track on" id="sw4" onclick="toggleSw('sw4')"><div class="sw-thumb"></div></div></div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-card">
+        <div class="settings-title" style="color:#D94F4F;border-color:#D94F4F;">⚠️ Account</div>
+        <button class="ibtn ibtn-danger" style="margin-right:10px;" onclick="doLogout()">🚪 Log Out</button>
+        <button class="ibtn ibtn-ghost" style="color:#D94F4F;border-color:#D94F4F;" onclick="toast('Delete account — demo only','error')">🗑️ Delete Account</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>BookList App · Student Reading Tracker · 2026</footer>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="overlay" id="modal">
+  <div class="modal">
+    <div style="font-size:28px;margin-bottom:10px;">🗑️</div>
+    <h3>Remove Book?</h3>
+    <p>Are you sure you want to remove <strong id="modalTitle"></strong>? This cannot be undone.</p>
+    <div class="modal-btns">
+      <button class="ibtn ibtn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="ibtn" style="background:#D94F4F;color:#fff;" onclick="doRemove()">Yes, Remove</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+/* ═══ USER STATE ═══ */
+let currentUser = null; // { firstName, lastName, email, goal, preferences }
+let users = []; // registered users
+
+/* ═══ BOOK DATA ═══ */
+const gC = { Fiction:'badge-fiction','Sci-Fi':'badge-scifi','Non-Fiction':'badge-nonfic',Dystopian:'badge-dystopia',Mystery:'badge-mystery',Fantasy:'badge-fantasy',Productivity:'badge-scifi',Business:'badge-nonfic',Psychology:'badge-mystery',Classic:'badge-fiction',Other:'badge-neutral' };
+const covers = ['#2B4C8C','#3BAF7A','#D94F4F','#F0A500','#7b4cc0','#3d9cb5'];
+const statuses = ['Want to read','Currently reading','Finished','Did not finish'];
+const defaultPrefs = { dailyGoal:25, monthlyGoal:2, reminderFrequency:'daily', customDays:3, reminderTime:'18:00', defaultDeadlineDays:30, defaultStatus:'Want to read', emailReminders:true, deadlineAlerts:true, weeklySummary:true, smartSuggestions:true };
+
+let books = [
+  {id:1,title:'The Great Gatsby',author:'F. Scott Fitzgerald',genre:'Classic',status:'Finished',startDate:'2026-01-08',deadline:'2026-01-28',pages:180,currentPage:180,priority:'Medium',updatedAt:'2026-01-26',reminder:'auto',notes:'Classic American literature. Strong option for essay examples.'},
+  {id:2,title:'Dune',author:'Frank Herbert',genre:'Sci-Fi',status:'Currently reading',startDate:'2026-05-01',deadline:'2026-06-05',pages:688,currentPage:415,priority:'High',updatedAt:'2026-05-26',reminder:'deadline',notes:'Epic sci-fi. Needs steady progress because it is long.'},
+  {id:3,title:'Sapiens',author:'Yuval Noah Harari',genre:'Non-Fiction',status:'Finished',startDate:'2026-02-04',deadline:'2026-03-01',pages:464,currentPage:464,priority:'Medium',updatedAt:'2026-02-25',reminder:'auto',notes:'Useful for history and society references.'},
+  {id:4,title:'1984',author:'George Orwell',genre:'Dystopian',status:'Want to read',startDate:'',deadline:'2026-06-12',pages:328,currentPage:0,priority:'High',updatedAt:'2026-05-20',reminder:'auto',notes:'Classic dystopia, required reading for class.'},
+  {id:5,title:'To Kill a Mockingbird',author:'Harper Lee',genre:'Classic',status:'Finished',startDate:'2026-03-10',deadline:'2026-04-01',pages:336,currentPage:336,priority:'Medium',updatedAt:'2026-03-30',reminder:'auto',notes:'Timeless story about justice.'},
+  {id:6,title:'Gone Girl',author:'Gillian Flynn',genre:'Mystery',status:'Did not finish',startDate:'2026-01-15',deadline:'2026-02-20',pages:432,currentPage:160,priority:'Low',updatedAt:'2026-02-06',reminder:'off',notes:'Paused because it was not relevant to current study goals.'},
+  {id:7,title:'Atomic Habits',author:'James Clear',genre:'Productivity',status:'Currently reading',startDate:'2026-05-18',deadline:'2026-05-31',pages:320,currentPage:120,priority:'High',updatedAt:'2026-05-25',reminder:'deadline',notes:'Good for building a daily reading habit.'},
+  {id:8,title:'The Psychology of Money',author:'Morgan Housel',genre:'Business',status:'Want to read',startDate:'',deadline:'2026-07-10',pages:256,currentPage:0,priority:'Medium',updatedAt:'2026-05-10',reminder:'auto',notes:'Recommended for personal finance.'},
+  {id:9,title:'Thinking, Fast and Slow',author:'Daniel Kahneman',genre:'Psychology',status:'Currently reading',startDate:'2026-04-20',deadline:'2026-05-24',pages:499,currentPage:210,priority:'High',updatedAt:'2026-05-22',reminder:'deadline',notes:'Important but overdue. Needs catch-up plan.'},
+  {id:10,title:'Project Hail Mary',author:'Andy Weir',genre:'Sci-Fi',status:'Want to read',startDate:'',deadline:'2026-08-15',pages:496,currentPage:0,priority:'Low',updatedAt:'2026-05-11',reminder:'auto',notes:'Fun reading after exams.'},
+  {id:11,title:'Educated',author:'Tara Westover',genre:'Non-Fiction',status:'Finished',startDate:'2026-04-01',deadline:'2026-04-28',pages:352,currentPage:352,priority:'Medium',updatedAt:'2026-04-24',reminder:'auto',notes:'Strong memoir about education and family.'},
+  {id:12,title:'The Hobbit',author:'J.R.R. Tolkien',genre:'Fantasy',status:'Want to read',startDate:'',deadline:'2026-06-25',pages:310,currentPage:0,priority:'Low',updatedAt:'2026-05-19',reminder:'auto',notes:'Light fantasy reading.'},
+  {id:13,title:'Deep Work',author:'Cal Newport',genre:'Productivity',status:'Currently reading',startDate:'2026-05-12',deadline:'2026-06-02',pages:304,currentPage:245,priority:'Medium',updatedAt:'2026-05-26',reminder:'auto',notes:'Useful study strategy book. Almost finished.'},
+  {id:14,title:'Brave New World',author:'Aldous Huxley',genre:'Dystopian',status:'Want to read',startDate:'',deadline:'2026-05-30',pages:288,currentPage:0,priority:'High',updatedAt:'2026-05-18',reminder:'deadline',notes:'Close deadline; should start soon.'},
+];
+let nid=15, sel=null, pending=null, newSt='Want to read';
+let sortF=null, sortD=1;
+
+/* ═══ SCREEN SWITCHING ═══ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showLogin() { showScreen('screenLogin'); }
+function showRegister() { showScreen('screenRegister'); }
+
+/* ═══ LOGIN ═══ */
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pw    = document.getElementById('loginPw').value;
+  let ok = true;
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('loginEmail').classList.add('err'); document.getElementById('loginEmailErr').style.display='block'; ok=false; } else { document.getElementById('loginEmail').classList.remove('err'); document.getElementById('loginEmailErr').style.display='none'; }
+  if(!pw) { document.getElementById('loginPw').classList.add('err'); document.getElementById('loginPwErr').style.display='block'; ok=false; } else { document.getElementById('loginPw').classList.remove('err'); document.getElementById('loginPwErr').style.display='none'; }
+  if(!ok) return;
+  // Check registered users or use demo account
+  const found = users.find(u=>u.email===email && u.pw===pw);
+  if(found) { currentUser = found; }
+  else if(email==='demo@booklist.com' && pw==='demo123') { currentUser = { firstName:'Demo', lastName:'User', email:'demo@booklist.com', pw:'demo123', goal:20, preferences:{...defaultPrefs} }; }
+  else { toast('Incorrect email or password. Try demo@booklist.com / demo123','error'); return; }
+  enterApp();
+}
+
+function enterApp() {
+  updateHeaderUser();
+  renderTable();
+  updateStats();
+  updateHomeStats();
+  loadSettings();
+  showScreen('screenApp');
+  showPage('home');
+  toast(`Welcome back, ${currentUser.firstName}! 👋`,'success');
+}
+
+/* ═══ REGISTER ═══ */
+function doRegister() {
+  const first = document.getElementById('regFirst').value.trim();
+  const last  = document.getElementById('regLast').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pw    = document.getElementById('regPw').value;
+  const pw2   = document.getElementById('regPw2').value;
+  let ok = true;
+  if(!first) { document.getElementById('regFirst').classList.add('err'); document.getElementById('regFirstErr').style.display='block'; ok=false; } else { document.getElementById('regFirst').classList.remove('err'); document.getElementById('regFirstErr').style.display='none'; }
+  if(!last)  { document.getElementById('regLast').classList.add('err');  document.getElementById('regLastErr').style.display='block';  ok=false; } else { document.getElementById('regLast').classList.remove('err');  document.getElementById('regLastErr').style.display='none'; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('regEmail').classList.add('err'); document.getElementById('regEmailErr').style.display='block'; ok=false; } else { document.getElementById('regEmail').classList.remove('err'); document.getElementById('regEmailErr').style.display='none'; }
+  if(pw.length<8) { document.getElementById('regPw').classList.add('err'); document.getElementById('regPwErr').style.display='block'; ok=false; } else { document.getElementById('regPw').classList.remove('err'); document.getElementById('regPwErr').style.display='none'; }
+  if(pw!==pw2) { document.getElementById('regPw2').classList.add('err'); document.getElementById('regPw2Err').style.display='block'; ok=false; } else { document.getElementById('regPw2').classList.remove('err'); document.getElementById('regPw2Err').style.display='none'; }
+  if(!ok) return;
+  if(users.find(u=>u.email===email)) { toast('An account with this email already exists.','error'); return; }
+  const newUser = { firstName:first, lastName:last, email, pw, goal:20, preferences:{...defaultPrefs} };
+  users.push(newUser);
+  currentUser = newUser;
+  enterApp();
+}
+
+/* ═══ LOGOUT ═══ */
+function doLogout() {
+  currentUser = null; sel = null;
+  // clear login fields
+  ['loginEmail','loginPw'].forEach(id=>{ document.getElementById(id).value=''; document.getElementById(id).classList.remove('err'); });
+  showScreen('screenLogin');
+  toast('You have been signed out.','info');
+}
+
+/* ═══ HEADER USER ═══ */
+function updateHeaderUser() {
+  if(!currentUser) return;
+  const initials = (currentUser.firstName[0]+(currentUser.lastName?currentUser.lastName[0]:'')).toUpperCase();
+  document.getElementById('headerAvatar').textContent = initials;
+  document.getElementById('headerName').textContent = currentUser.firstName;
+}
+
+/* ═══ PAGES ═══ */
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  const nt=document.getElementById('nt-'+p); if(nt) nt.classList.add('active');
+  if(p==='stats') updateStats();
+  if(p==='home') updateHomeStats();
+  if(p==='books') renderTable();
+  if(p==='settings') loadSettings();
+}
+
+function prefs(){ if(currentUser&&!currentUser.preferences) currentUser.preferences={...defaultPrefs}; return currentUser?currentUser.preferences:defaultPrefs; }
+function statusClass(s){ return s==='Finished'?'badge-finished':s==='Currently reading'?'badge-current':s==='Did not finish'?'badge-dnf':'badge-want'; }
+function statusLabel(s){ return s==='Finished'?'✓ Finished':s==='Currently reading'?'↗ Reading':s==='Did not finish'?'✕ DNF':'⏳ Want'; }
+function priorityClass(p){ return p==='High'?'badge-high':p==='Low'?'badge-low':'badge-medium'; }
+function progressPct(b){ const pages=Number(b.pages)||0, cur=Math.min(Number(b.currentPage)||0,pages||Number(b.currentPage)||0); return pages?Math.max(0,Math.min(100,Math.round(cur/pages*100))):(b.status==='Finished'?100:0); }
+function today(){ const d=new Date(); d.setHours(0,0,0,0); return d; }
+function daysLeft(dateStr){ if(!dateStr)return null; const d=new Date(dateStr+'T00:00:00'); return Math.ceil((d-today())/86400000); }
+function deadlineBadge(b){
+  if(!b.deadline)return '<span class="badge badge-neutral">No deadline</span>';
+  if(b.status==='Finished')return '<span class="badge badge-ok">Completed</span>';
+  const d=daysLeft(b.deadline);
+  if(d<0)return `<span class="badge badge-urgent">${Math.abs(d)}d overdue</span>`;
+  if(d===0)return '<span class="badge badge-urgent">Due today</span>';
+  if(d<=7)return `<span class="badge badge-soon">${d}d left</span>`;
+  return `<span class="badge badge-ok">${d}d left</span>`;
+}
+function deadlineScore(b){ const d=daysLeft(b.deadline); return d===null?9999:d; }
+function priorityScore(p){ return p==='High'?1:p==='Medium'?2:3; }
+function reminderIntervalLabel(){
+  const p=prefs();
+  if(p.reminderFrequency==='disabled'||!p.emailReminders)return 'Reminders disabled';
+  if(p.reminderFrequency==='daily')return `Daily at ${p.reminderTime}`;
+  if(p.reminderFrequency==='2days')return `Every 2 days at ${p.reminderTime}`;
+  if(p.reminderFrequency==='weekly')return `Weekly at ${p.reminderTime}`;
+  return `Every ${p.customDays||3} days at ${p.reminderTime}`;
+}
+function pagesPerDayNeeded(b){
+  const left=(Number(b.pages)||0)-(Number(b.currentPage)||0), d=daysLeft(b.deadline);
+  if(!left||d===null||d<=0)return left;
+  return Math.ceil(left/d);
+}
+function smartSuggestion(b){
+  if(b.status==='Finished')return 'Finished';
+  if(!prefs().smartSuggestions)return '';
+  if(b.reminder==='off')return 'Book reminders off';
+  const d=daysLeft(b.deadline), pct=progressPct(b), ppd=pagesPerDayNeeded(b);
+  if(d!==null&&d<0)return `Overdue: schedule ${Math.max(ppd, prefs().dailyGoal)} pages/day`;
+  if(d!==null&&d<=7&&pct<90)return `Deadline soon: read ${ppd||prefs().dailyGoal} pages/day`;
+  if(b.status==='Currently reading'&&pct<50)return `Keep ${reminderIntervalLabel().toLowerCase()}`;
+  if(b.status==='Want to read'&&d!==null&&d<=10)return 'Start this week';
+  return reminderIntervalLabel();
+}
+function bookGoalPct(){
+  const goal=currentUser?(Number(currentUser.goal)||20):20;
+  const finished=books.filter(b=>b.status==='Finished').length;
+  return Math.min(100,Math.round(finished/goal*100));
+}
+function esc(v){ return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function donutArc(pct){
+  const r=90,c=110,start=-90,end=start+(pct/100)*359.99;
+  const sx=c+r*Math.cos(start*Math.PI/180), sy=c+r*Math.sin(start*Math.PI/180);
+  const ex=c+r*Math.cos(end*Math.PI/180), ey=c+r*Math.sin(end*Math.PI/180);
+  return `M${sx},${sy} A${r},${r} 0 ${pct>50?1:0},1 ${ex},${ey}`;
+}
+
+/* ═══ HOME STATS ═══ */
+function updateHomeStats() {
+  const r=books.filter(b=>b.status==='Finished').length, active=books.filter(b=>b.status==='Currently reading').length, t=books.length, pct=bookGoalPct();
+  const attention=books.filter(b=>b.status!=='Finished'&&b.deadline&&daysLeft(b.deadline)<=7).length;
+  document.getElementById('hTotal').textContent=t;
+  document.getElementById('hRead').textContent=r;
+  document.getElementById('hToRead').textContent=active;
+  document.getElementById('hPct').textContent=attention;
+  document.getElementById('homePctLbl').textContent=pct+'%';
+  document.getElementById('homePctBar').style.width=pct+'%';
+  if(currentUser) document.getElementById('homeGreeting').textContent=`👋 Welcome back, ${currentUser.firstName}!`;
+  const p=prefs();
+  const deadlineWatch=document.getElementById('deadlineWatch');
+  const deadlineCard=document.getElementById('deadlineWatchCard');
+  if(deadlineCard)deadlineCard.style.display=p.deadlineAlerts===false?'none':'block';
+  if(p.deadlineAlerts===false){deadlineWatch.innerHTML='';}
+  const risky=books.filter(b=>b.status!=='Finished'&&b.deadline).sort((a,b)=>deadlineScore(a)-deadlineScore(b)).slice(0,4);
+  if(p.deadlineAlerts!==false)deadlineWatch.innerHTML=risky.length?risky.map(b=>`
+    <div class="mini-item">
+      <div class="mini-main"><div class="mini-name">${b.title}</div><div class="mini-sub">${progressPct(b)}% complete · ${b.author}</div></div>
+      ${deadlineBadge(b)}
+    </div>`).join(''):`<div class="empty-state"><strong>No deadline pressure</strong>Add deadlines to books to track time limits.</div>`;
+  const reminders=document.getElementById('reminderSuggestions');
+  const reminderCard=document.getElementById('reminderSuggestionsCard');
+  const remindersEnabled=p.smartSuggestions!==false&&p.emailReminders!==false&&p.reminderFrequency!=='disabled';
+  if(reminderCard)reminderCard.style.display=remindersEnabled?'block':'none';
+  if(!remindersEnabled){reminders.innerHTML='';}
+  const suggested=remindersEnabled?books.filter(b=>b.status!=='Finished'&&b.status!=='Did not finish'&&b.reminder!=='off').sort((a,b)=>deadlineScore(a)-deadlineScore(b)).slice(0,4):[];
+  if(remindersEnabled)reminders.innerHTML=suggested.length?suggested.map(b=>`
+    <div class="mini-item">
+      <div class="mini-main"><div class="mini-name">${b.title}</div><div class="mini-sub">${smartSuggestion(b)}</div></div>
+      <span class="badge ${priorityClass(b.priority)}">${b.priority}</span>
+    </div>`).join(''):`<div class="empty-state"><strong>Nothing to remind</strong>Your active reading list is clear.</div>`;
+  // Recent books
+  const rb=document.getElementById('recentBooks');
+  rb.innerHTML=books.slice().sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||'')).slice(0,4).map(b=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#F4F6FA;border-radius:8px;">
+      <div><div style="font-size:12.5px;font-weight:600;color:#1A1A2E;">${b.title}</div><div style="font-size:11px;color:#6B7280;">${b.author} · ${progressPct(b)}%</div></div>
+      <span class="badge ${statusClass(b.status)}">${statusLabel(b.status)}</span>
+    </div>`).join('');
+}
+
+/* ═══ STATS ═══ */
+function updateStats() {
+  const r=books.filter(b=>b.status==='Finished').length, active=books.filter(b=>b.status==='Currently reading').length, t=books.length, pct=t?Math.round(r/t*100):0;
+  const pagesRead=books.reduce((sum,b)=>sum+(Number(b.currentPage)||0),0);
+  document.getElementById('sTotal').textContent=t;
+  document.getElementById('sRead').textContent=r;
+  document.getElementById('sToRead').textContent=active;
+  document.getElementById('sPct').textContent=pct+'%';
+  document.getElementById('lgRead').textContent=`Finished — ${r} (${pct}%)`;
+  document.getElementById('lgToRead').textContent=`Active — ${active} · ${pagesRead} pages logged`;
+  document.getElementById('donutPct').textContent=pct+'%';
+  document.getElementById('donutRead').setAttribute('d',donutArc(Math.max(pct,1)));
+  document.getElementById('donutToRead').setAttribute('d',donutArc(Math.max(100-pct,1)));
+  // Simple genre bar chart
+  const genres={};
+  books.forEach(b=>{genres[b.genre]=(genres[b.genre]||0)+1;});
+  const gc=document.getElementById('genreChart');
+  const max=Math.max(...Object.values(genres),1);
+  const colors=['#3d4cc0','#2563b0','#6b35c0','#c05a20','#1d6b47','#8b00c0'];
+  gc.innerHTML=Object.entries(genres).map(([g,n],i)=>`
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px;"><span style="font-weight:600;color:#3D4460;">${g}</span><span style="color:#6B7280;">${n} book${n!==1?'s':''}</span></div>
+      <div style="height:9px;background:#E8EFF8;border-radius:5px;overflow:hidden;"><div style="height:100%;background:${colors[i%colors.length]};border-radius:5px;width:${(n/max*100).toFixed(0)}%;opacity:.85;"></div></div>
+    </div>`).join('');
+}
+
+/* ═══ RENDER TABLE ═══ */
+function renderTable() {
+  const q=document.getElementById('searchQ').value.trim().toLowerCase();
+  const st=document.getElementById('selSt').value;
+  const gn=document.getElementById('selGn').value;
+  const dl=document.getElementById('selDeadline').value;
+  const list=books.filter(b=>{
+    const d=daysLeft(b.deadline);
+    const matchDeadline=!dl||(dl==='none'&&!b.deadline)||(dl==='overdue'&&d!==null&&d<0&&b.status!=='Finished')||(dl==='soon'&&d!==null&&d>=0&&d<=7&&b.status!=='Finished')||(dl==='month'&&d!==null&&d>=0&&d<=30);
+    return (!q||b.title.toLowerCase().includes(q)||b.author.toLowerCase().includes(q))&&(!st||b.status===st)&&(!gn||b.genre===gn)&&matchDeadline;
+  });
+  document.getElementById('cnt').textContent=list.length+' book'+(list.length!==1?'s':'');
+  const tb=document.getElementById('tbody');
+  tb.innerHTML=!list.length?`<tr><td colspan="8"><div class="empty-state"><strong>No books found</strong>Try clearing filters or add a book with a deadline and progress data.</div></td></tr>`:list.map(b=>`
+    <tr id="r${b.id}" class="${sel===b.id?'selected':''}" onclick="selectBook(${b.id})">
+      <td>${esc(b.title)}</td>
+      <td style="color:#6B7280;">${esc(b.author)}</td>
+      <td><span class="badge ${gC[b.genre]||''}">${esc(b.genre||'—')}</span></td>
+      <td><span class="badge ${statusClass(b.status)}" onclick="toggleSt(event,${b.id})">${statusLabel(b.status)}</span></td>
+      <td><div class="progress-wrap"><div class="progress-line"><div class="progress-fill" style="width:${progressPct(b)}%;"></div></div><div class="progress-text">${progressPct(b)}%</div></div></td>
+      <td>${deadlineBadge(b)}</td>
+      <td><span class="badge ${priorityClass(b.priority)}">${esc(b.priority||'Medium')}</span></td>
+      <td><select class="status-select" onclick="event.stopPropagation()" onchange="setBookStatus(event,${b.id},this.value)">${statuses.map(s=>`<option ${s===b.status?'selected':''}>${s}</option>`).join('')}</select></td>
+    </tr>`).join('');
+  document.getElementById('tfoot').textContent=`${list.length} of ${books.length} books shown`;
+  if(sel) renderDetail();
+  updateHomeStats();
+}
+
+/* ═══ SELECT + DETAIL ═══ */
+function selectBook(id){sel=id;renderTable();renderDetail();}
+function renderDetail(){
+  const b=books.find(x=>x.id===sel); const db=document.getElementById('detBody');
+  if(!b){db.innerHTML=`<div class="no-sel">👆 Click any row<br>to see details here.</div>`;return;}
+  const bg=covers[(b.id-1)%covers.length];
+  const pct=progressPct(b);
+  db.innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:40px;height:54px;border-radius:6px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📚</div>
+      <div><div class="det-title">${esc(b.title)}</div><div class="det-author">${esc(b.author)}</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="det-row"><span class="det-key">Status</span><span class="badge ${statusClass(b.status)}" onclick="toggleSt(null,${b.id})" style="cursor:pointer;">${statusLabel(b.status)}</span></div>
+    <div class="det-row"><span class="det-key">Genre</span><span class="badge ${gC[b.genre]||''}">${esc(b.genre||'—')}</span></div>
+    <div class="det-row"><span class="det-key">Priority</span><span class="badge ${priorityClass(b.priority)}">${esc(b.priority||'Medium')}</span></div>
+    <div class="det-row"><span class="det-key">Deadline</span>${deadlineBadge(b)}</div>
+    <div><div class="det-row" style="margin-bottom:5px;"><span class="det-key">Page Progress</span><span class="det-key">${Number(b.currentPage)||0}/${Number(b.pages)||0} pages</span></div><div class="progress-line"><div class="progress-fill" style="width:${pct}%;"></div></div><div class="progress-text">${pct}% complete</div></div>
+    <div class="det-row"><span class="det-key">Start Date</span><span>${b.startDate||'Not started'}</span></div>
+    <div class="det-row"><span class="det-key">Reminder Plan</span><span style="font-size:11px;color:#3D4460;text-align:right;">${esc(smartSuggestion(b))}</span></div>
+    <div class="divider"></div>
+    <div class="det-notes">${esc(b.notes||'No notes yet.')}</div>
+    <div style="display:flex;flex-direction:column;gap:7px;margin-top:4px;">
+      <button class="ibtn ibtn-outline" style="width:100%;justify-content:center;" onclick="toggleSt(null,${b.id})">✏️ Move to Next Status</button>
+      <div style="display:grid;grid-template-columns:1fr auto;gap:7px;align-items:center;">
+        <input class="finp" id="progressAdd${b.id}" type="number" min="1" ${Number(b.pages)?`max="${Math.max(1,Number(b.pages)-Number(b.currentPage||0))}"`:''} value="${Math.max(1,Math.min(Number(prefs().dailyGoal)||25,Number(b.pages)?Math.max(1,Number(b.pages)-Number(b.currentPage||0)):Number(prefs().dailyGoal)||25))}" placeholder="Pages read">
+        <button class="ibtn ibtn-primary" style="justify-content:center;height:36px;" onclick="quickProgress(${b.id})">＋ Log</button>
+      </div>
+      <button class="ibtn ibtn-danger" style="width:100%;justify-content:center;" onclick="openModal(null,${b.id})">✕ Remove Book</button>
+    </div>`;
+}
+
+/* ═══ UNDO / REDO ═══ */
+let hist=[], redoStack=[];
+
+function pushHist(label) {
+  hist.push({ snapshot: books.map(b=>({...b})), label });
+  if(hist.length>10) hist.shift();
+  redoStack=[];
+  updateHistBar();
+}
+
+function doUndo() {
+  if(!hist.length){ toast('Nothing to undo','info'); return; }
+  const h=hist.pop();
+  redoStack.push({ snapshot: books.map(b=>({...b})), label:'Redo: '+h.label });
+  books=h.snapshot.map(b=>({...b}));
+  if(sel && !books.find(x=>x.id===sel)){ sel=null; document.getElementById('detBody').innerHTML=`<div class="no-sel">👆 Click any row<br>to see details here.</div>`; }
+  renderTable(); toast('Undone: '+h.label,'info'); updateHistBar();
+}
+
+function doRedo() {
+  if(!redoStack.length){ toast('Nothing to redo','info'); return; }
+  const r=redoStack.pop();
+  hist.push({ snapshot: books.map(b=>({...b})), label:r.label });
+  books=r.snapshot.map(b=>({...b}));
+  renderTable(); toast(r.label,'info'); updateHistBar();
+}
+
+function updateHistBar() {
+  const hl=document.getElementById('histList');
+  if(!hl) return;
+  if(!hist.length){ hl.innerHTML=`<span style="font-size:10.5px;background:#F4F6FA;border:1px solid #C8D0DC;color:#C8D0DC;padding:2px 9px;border-radius:20px;">No actions yet</span>`; return; }
+  hl.innerHTML=hist.slice(-5).map((h,i,a)=>`<span style="font-size:10.5px;background:${i===a.length-1?'#E8EFF8':'#F4F6FA'};border:1px solid ${i===a.length-1?'#4A6FA5':'#C8D0DC'};color:${i===a.length-1?'#2B4C8C':'#6B7280'};font-weight:${i===a.length-1?'600':'400'};padding:2px 9px;border-radius:20px;white-space:nowrap;">${h.label}</span>`).join('');
+}
+
+/* ═══ SORT ═══ */
+function sortBooks(f){
+  if(!f)return;
+  if(sortF===f)sortD*=-1;else{sortF=f;sortD=1;}
+  pushHist('Sort by '+f);
+  books.sort((a,b)=>{
+    let av,bv;
+    if(f==='progress'){av=progressPct(a);bv=progressPct(b);}
+    else if(f==='deadline'){av=deadlineScore(a);bv=deadlineScore(b);}
+    else if(f==='priority'){av=priorityScore(a.priority);bv=priorityScore(b.priority);}
+    else {av=(a[f]||'').toString().toLowerCase();bv=(b[f]||'').toString().toLowerCase();}
+    return av<bv?-sortD:av>bv?sortD:0;
+  });
+  renderTable(); toast('Sorted by '+f,'info');
+}
+
+/* ═══ TOGGLE STATUS ═══ */
+function toggleSt(e,id){
+  if(e)e.stopPropagation();
+  const b=books.find(x=>x.id===id);if(!b)return;
+  pushHist(`"${b.title}" was ${b.status}`);
+  const next=statuses[(statuses.indexOf(b.status)+1)%statuses.length];
+  b.status=next;
+  if(next==='Finished'){b.currentPage=Number(b.pages)||b.currentPage;b.updatedAt=new Date().toISOString().slice(0,10);}
+  renderTable();toast(`"${b.title}" → ${b.status}`,b.status==='Finished'?'success':'info');
+}
+
+function setBookStatus(e,id,status){
+  if(e)e.stopPropagation();
+  const b=books.find(x=>x.id===id); if(!b||b.status===status)return;
+  pushHist(`"${b.title}" status changed`);
+  b.status=status;
+  if(status==='Finished')b.currentPage=Number(b.pages)||b.currentPage;
+  if(status==='Want to read')b.currentPage=0;
+  b.updatedAt=new Date().toISOString().slice(0,10);
+  renderTable(); toast(`"${b.title}" is now ${status}`,status==='Finished'?'success':'info');
+}
+
+function quickProgress(id){
+  const b=books.find(x=>x.id===id); if(!b)return;
+  const pages=Number(b.pages)||0, current=Number(b.currentPage)||0;
+  const remaining=pages?Math.max(0,pages-current):null;
+  if(remaining!==null&&remaining<=0){toast(`"${b.title}" is already finished.`,'info');return;}
+  const input=document.getElementById(`progressAdd${id}`);
+  const add=Math.floor(Number(input?input.value:0));
+  if(!Number.isFinite(add)||add<=0){toast('Please enter a positive number of pages.','error');return;}
+  const logged=Math.min(add,remaining??add);
+  pushHist(`Logged ${logged} page${logged===1?'':'s'} for "${b.title}"`);
+  b.currentPage=Math.min(pages||current+add,current+add);
+  if(pages&&b.currentPage>=pages)b.status='Finished';
+  else if(b.status==='Want to read')b.status='Currently reading';
+  if(!b.startDate)b.startDate=new Date().toISOString().slice(0,10);
+  b.updatedAt=new Date().toISOString().slice(0,10);
+  renderTable(); toast(`Logged ${logged} page${logged===1?'':'s'} for "${b.title}"`,'success');
+}
+
+/* ═══ REMOVE ═══ */
+function openModal(e,id){if(e)e.stopPropagation();pending=id;document.getElementById('modalTitle').textContent='"'+books.find(x=>x.id===id).title+'"';document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');pending=null;}
+function doRemove(){
+  const b=books.find(x=>x.id===pending);if(!b){closeModal();return;}
+  pushHist(`Removed "${b.title}"`);
+  books=books.filter(x=>x.id!==pending);
+  if(sel===pending){sel=null;document.getElementById('detBody').innerHTML=`<div class="no-sel">👆 Click any row<br>to see details here.</div>`;}
+  closeModal();renderTable();toast(`"${b.title}" removed`,'error');
+}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+
+/* ═══ CLEAR FILTERS ═══ */
+function clearF(){document.getElementById('searchQ').value='';document.getElementById('selSt').value='';document.getElementById('selGn').value='';document.getElementById('selDeadline').value='';document.getElementById('selSort').value='';renderTable();toast('Filters cleared','info');}
+
+/* ═══ ADD BOOK ═══ */
+function toggleForm(){
+  const c=document.getElementById('addCard'),b=document.getElementById('addBtnTop');const open=c.style.display!=='none';
+  c.style.display=open?'none':'block';b.textContent=open?'➕ Add Book':'✕ Cancel';
+  if(!open) applyFormDefaults();
+}
+function setSt(s){newSt=s;const fs=document.getElementById('fStatus');if(fs)fs.value=s;}
+function applyFormDefaults(){
+  const p=prefs(), start=new Date().toISOString().slice(0,10);
+  document.getElementById('fStatus').value=p.defaultStatus||'Want to read';
+  document.getElementById('fStart').value='';
+  const d=new Date(); d.setDate(d.getDate()+(Number(p.defaultDeadlineDays)||30));
+  document.getElementById('fDeadline').value=d.toISOString().slice(0,10);
+}
+function resetForm(){
+  ['fTitle','fAuthor','fPages','fCurrent','fNotes'].forEach(id=>{document.getElementById(id).value='';document.getElementById(id).classList.remove('err');});
+  document.getElementById('fGenre').value='';document.getElementById('fPriority').value='Medium';document.getElementById('fReminder').value='auto';
+  applyFormDefaults();['eTitle','eAuthor'].forEach(id=>document.getElementById(id).style.display='none');
+}
+function addBook(){
+  const t=document.getElementById('fTitle').value.trim(), a=document.getElementById('fAuthor').value.trim();
+  const pages=parseInt(document.getElementById('fPages').value)||0, current=parseInt(document.getElementById('fCurrent').value)||0;
+  let ok=true;
+  if(!t){document.getElementById('fTitle').classList.add('err');document.getElementById('eTitle').style.display='block';ok=false;}else{document.getElementById('fTitle').classList.remove('err');document.getElementById('eTitle').style.display='none';}
+  if(!a){document.getElementById('fAuthor').classList.add('err');document.getElementById('eAuthor').style.display='block';ok=false;}else{document.getElementById('fAuthor').classList.remove('err');document.getElementById('eAuthor').style.display='none';}
+  if(pages&&current>pages){toast('Current page cannot be greater than total pages.','error');return;}
+  if(!ok)return;
+  pushHist(`Added "${t}"`);
+  const status=document.getElementById('fStatus').value;
+  const todayStr=new Date().toISOString().slice(0,10);
+  books.push({
+    id:nid++,title:t,author:a,genre:document.getElementById('fGenre').value||'Other',status,
+    startDate:document.getElementById('fStart').value,deadline:document.getElementById('fDeadline').value,
+    pages,currentPage:status==='Finished'&&pages?pages:current,priority:document.getElementById('fPriority').value,
+    reminder:document.getElementById('fReminder').value,updatedAt:todayStr,
+    notes:document.getElementById('fNotes').value.trim()||`Added ${new Date().toLocaleDateString()}.`
+  });
+  resetForm();toggleForm();renderTable();toast(`"${t}" added! 📚`,'success');
+}
+
+/* ═══ SETTINGS ═══ */
+function loadSettings(){
+  if(!currentUser)return;
+  const p=prefs();
+  document.getElementById('setFirst').value=currentUser.firstName||'';
+  document.getElementById('setLast').value=currentUser.lastName||'';
+  document.getElementById('setEmail').value=currentUser.email||'';
+  document.getElementById('setGoal').value=currentUser.goal||20;
+  document.getElementById('setDailyGoal').value=p.dailyGoal||25;
+  document.getElementById('setMonthlyGoal').value=p.monthlyGoal||2;
+  document.getElementById('setReminderFreq').value=p.reminderFrequency||'daily';
+  document.getElementById('setReminderTime').value=p.reminderTime||'18:00';
+  document.getElementById('setCustomDays').value=p.customDays||3;
+  document.getElementById('setDeadlineDays').value=p.defaultDeadlineDays||30;
+  document.getElementById('setDeadlineDaysAlt').value=p.defaultDeadlineDays||30;
+  document.getElementById('setDefaultStatus').value=p.defaultStatus||'Want to read';
+  setSwitch('sw1',p.emailReminders!==false);setSwitch('sw2',p.deadlineAlerts!==false);setSwitch('sw3',p.weeklySummary!==false);setSwitch('sw4',p.smartSuggestions!==false);
+  toggleCustomFrequency();
+  document.getElementById('settingsName').textContent=currentUser.firstName+' '+currentUser.lastName;
+  document.getElementById('settingsEmail').textContent=currentUser.email;
+  const initials=((currentUser.firstName||'?')[0]+(currentUser.lastName||'?')[0]).toUpperCase();
+  document.getElementById('settingsAvatar').textContent=initials;
+}
+function saveSettings(){
+  const first=document.getElementById('setFirst').value.trim();
+  const last=document.getElementById('setLast').value.trim();
+  const email=document.getElementById('setEmail').value.trim();
+  const goal=parseInt(document.getElementById('setGoal').value)||20;
+  const freq=document.getElementById('setReminderFreq').value;
+  const deadlineDays=parseInt((freq==='custom'?document.getElementById('setDeadlineDays').value:document.getElementById('setDeadlineDaysAlt').value))||30;
+  if(!first||!last){toast('First and last name are required.','error');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Please enter a valid email.','error');return;}
+  currentUser.firstName=first;currentUser.lastName=last;currentUser.email=email;currentUser.goal=goal;
+  currentUser.preferences={
+    dailyGoal:parseInt(document.getElementById('setDailyGoal').value)||25,
+    monthlyGoal:parseInt(document.getElementById('setMonthlyGoal').value)||2,
+    reminderFrequency:freq,
+    customDays:parseInt(document.getElementById('setCustomDays').value)||3,
+    reminderTime:document.getElementById('setReminderTime').value||'18:00',
+    defaultDeadlineDays:deadlineDays,
+    defaultStatus:document.getElementById('setDefaultStatus').value,
+    emailReminders:document.getElementById('sw1').classList.contains('on'),
+    deadlineAlerts:document.getElementById('sw2').classList.contains('on'),
+    weeklySummary:document.getElementById('sw3').classList.contains('on'),
+    smartSuggestions:document.getElementById('sw4').classList.contains('on')
+  };
+  updateHeaderUser();loadSettings();toast('Settings saved! ✓','success');
+  renderTable();updateHomeStats();
+}
+function cancelSettings(){loadSettings();toast('Changes discarded.','info');}
+function setSwitch(id,on){const t=document.getElementById(id);if(t)t.classList.toggle('on',!!on);}
+function toggleSw(id){
+  const t=document.getElementById(id);t.classList.toggle('on');
+  if(currentUser){
+    currentUser.preferences=currentUser.preferences||{};
+    const map={sw1:'emailReminders',sw2:'deadlineAlerts',sw3:'weeklySummary',sw4:'smartSuggestions'};
+    if(map[id])currentUser.preferences[map[id]]=t.classList.contains('on');
+    updateHomeStats();
+    if(sel)renderDetail();
+  }
+  toast(t.classList.contains('on')?'Enabled':'Disabled','info');
+}
+function toggleCustomFrequency(){
+  const isCustom=document.getElementById('setReminderFreq').value==='custom';
+  document.getElementById('customFreqRow').style.display=isCustom?'grid':'none';
+  document.getElementById('defaultDeadlineRow').style.display=isCustom?'none':'grid';
+  if(currentUser){
+    currentUser.preferences=currentUser.preferences||{};
+    currentUser.preferences.reminderFrequency=document.getElementById('setReminderFreq').value;
+    updateHomeStats();
+    if(sel)renderDetail();
+  }
+}
+
+/* ═══ PASSWORD HELPERS ═══ */
+function togglePw(id,btn){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'👁':'🙈';}
+function checkStrength(){const v=document.getElementById('regPw').value,f=document.getElementById('strFill'),l=document.getElementById('strLbl');if(!v){f.style.width='0%';l.textContent='Enter a password';l.style.color='#6B7280';return;}let s=0;if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;const lv=[{w:'25%',c:'#D94F4F',t:'Weak'},{w:'50%',c:'#F0A500',t:'Fair'},{w:'75%',c:'#7FA3D1',t:'Good'},{w:'100%',c:'#3BAF7A',t:'Strong'}];const d=lv[Math.max(0,s-1)];f.style.width=d.w;f.style.background=d.c;l.textContent=d.t;l.style.color=d.c;}
+
+/* ═══ TOAST ═══ */
+function toast(msg,type='success'){const icons={success:'✅',error:'⚠️',info:'ℹ️'};const w=document.getElementById('toasts');const t=document.createElement('div');t.className=`toast ${type}`;t.innerHTML=`${icons[type]} ${msg}`;w.appendChild(t);requestAnimationFrame(()=>t.classList.add('show'));setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),250);},3000);}
+
+/* ═══ KEYBOARD ═══ */
+document.addEventListener('keydown',e=>{
+  if(!currentUser)return;
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT'||e.target.tagName==='TEXTAREA')return;
+  if(e.key==='Escape'){closeModal();}
+  if(e.key==='Delete'&&sel)openModal(null,sel);
+});
+</script>
+</body>
+</html>
